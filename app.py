@@ -24,12 +24,12 @@ warnings.filterwarnings("ignore")
 app = Flask(__name__)
 # 载入系统配置
 app.config.from_object(__name__)
+app.secret_key="8E9852FD04BA946D51DE36DFB08E1DB6"
 
 # 数据库连接
 db = MySQLdb.connect(host=HOST, user=USER, passwd=PASSWORD, db=DATABASE, port=PORT, charset=CHARSET, cursorclass = MySQLdb.cursors.DictCursor)
 db.autocommit(True)
 cursor = db.cursor()
-app.secret_key="8E9852FD04BA946D51DE36DFB08E1DB6"
 
 # 随机码生成器
 def genKey():
