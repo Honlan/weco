@@ -112,7 +112,7 @@ $(document).ready(function(){
     });
     $('#idea #edit_idea_info #save').click(function(){
         $.ajax({
-            url: '/api/idea/edit',
+            url: '{{url_for("api_idea_edit")}}',
             type: 'POST',
             data: {
                 ideaId: "{{idea.id}}",
@@ -135,7 +135,7 @@ $(document).ready(function(){
             storeCurrentUrl();
         } else {
             $.ajax({
-                url: '/api/idea/follow',
+                url: '{{url_for("api_idea_follow")}}',
                 type: 'POST',
                 data: {
                     ideaId: "{{idea.id}}",

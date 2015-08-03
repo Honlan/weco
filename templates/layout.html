@@ -19,7 +19,7 @@
     <script>
     function storeCurrentUrl() {
         $.ajax({
-            url: '/storeCurrentUrl',
+            url: '{{url_for("storeCurrentUrl")}}',
             type: 'POST',
             data: {
                 url: window.location.href

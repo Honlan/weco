@@ -72,7 +72,7 @@ $(document).ready(function() {
     $('#register input[name="username"]').blur(function() {
         var username = $(this).val();
         $.ajax({
-            url: '/api/user/existName',
+            url: '{{url_for("api_user_exist_name")}}',
             type: 'POST',
             data: {
                 username: username
@@ -97,7 +97,7 @@ $(document).ready(function() {
     $('#register input[name="email"]').blur(function() {
         var email = $(this).val();
         $.ajax({
-            url: '/api/user/existEmail',
+            url: '{{url_for("api_user_exist_email")}}',
             type: 'POST',
             data: {
                 email: email
