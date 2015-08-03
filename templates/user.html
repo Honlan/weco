@@ -1,0 +1,163 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#user #user-basic-info {
+	padding: 10px 20px;
+}
+
+#user #user-basic-info #user-protrait img {
+    width: 100%;
+}
+
+#user #user-basic-info #user-username p.tag {
+    display: inline-block;
+}
+
+#user #user-basic-info #user-username .fa-male {
+    color: #6060FF;
+}
+
+#user #user-basic-info #user-username .fa-female {
+    color: #FF6060;
+}
+
+#user #user-basic-info #user-control {
+    text-align: right;
+}
+
+#user #user-profile {
+    margin-top: 10px;
+}
+
+#user #user-profile ul {
+	margin-top: 10px;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#user #user-profile ul li {
+    width: 20%;
+    text-align: center;
+}
+
+#user #user-profile .tab-content {
+    padding: 20px 30px;
+}
+</style>
+{% endblock %} {% block body %}
+<div id='user'>
+    <div id="user-basic-info">
+        <div class='row'>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                <div id="user-protrait">
+                    <img src="{{url_for('static', filename='img/user.png')}}">
+                </div>
+            </div>
+            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                <div id="user-username">
+                    <p>{{user.nickname}} {% if user.gender == 1 %}
+                        <span class="fa fa-fw fa-male"></span> {% else %}
+                        <span class="fa fa-fw fa-female"></span> {% endif %}
+                    </p>
+                    {% for tag in user.tags.split(',') %}
+                    <p class="tag">{{tag}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <div id="user-control">
+                    {% if followed %}
+                    <span class="btn btn-default disabled" id="followed">已关注</span>
+                    {% else %}
+                    <span class="btn btn-default" id="follow">关注Ta</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="user-profile">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#user-info" aria-controls="user-info" role="tab" data-toggle="tab">资料</a></li>
+            <li role="presentation"><a href="#user-idea" aria-controls="user-idea" role="tab" data-toggle="tab">创意</a></li>
+            <li role="presentation"><a href="#user-like" aria-controls="user-like" role="tab" data-toggle="tab">喜欢</a></li>
+            <li role="presentation"><a href="#user-follow" aria-controls="user-follow" role="tab" data-toggle="tab">关注</a></li>
+            <li role="presentation"><a href="#user-fan" aria-controls="user-fan" role="tab" data-toggle="tab">粉丝</a></li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="user-info">
+                <h5>个性签名</h5>
+                <p>{{user.description}}</p>
+                <h5>邮箱</h5>
+                <p>{{user.email}}</p>
+                <h5>微信</h5>
+                <p>{{user.wechat}}</p>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="user-idea">
+            	{% if ideas == None %}
+            	<p><span class="fa fa-fw fa-frown-o"></span> Ta还没有发布任何创意</p>
+            	{% else %}
+            	<p>Ta一共发布了 {{ideasCount}} 个创意</p>
+            	{% for item in ideas%}
+            	<p><a href="/idea/{{item.id}}">{{item.title}}</a></p>
+            	{% endfor %}
+            	{% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane" id="user-like">
+            	{% if followIdeas == None %}
+            	<p><span class="fa fa-fw fa-frown-o"></span> Ta还没有喜欢任何创意</p>
+            	{% else %}
+            	<p>Ta一共喜欢了 <span id="followIdeasCount">{{followIdeasCount}}</span> 个创意</p>
+            	{% for item in followIdeas%}
+            	<p><a href="/idea/{{item.id}}">{{item.title}}</a></p>
+            	{% endfor %}
+            	{% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane" id="user-follow">
+                {% if followUsers == None %}
+                <p><span class="fa fa-fw fa-frown-o"></span> Ta还没有关注任何用户</p>
+                {% else %}
+                <p>Ta一共关注了 <span id="followUsersCount">{{followUsersCount}}</span> 名用户</p>
+                {% for item in followUsers%}
+                <p><a href="/user/{{item.username}}">{{item.nickname}}</a></p>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane" id="user-fan">
+                {% if fans == None %}
+                <p><span class="fa fa-fw fa-frown-o"></span> 还没有任何用户关注Ta</p>
+                {% else %}
+                <p>一共有 {{fansCount}} 名用户关注Ta</p>
+                {% for item in fans%}
+                <p><a href="/user/{{item.username}}">{{item.nickname}}</a></p>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function(){
+	$('#user #user-control #follow').click(function(){
+        var username = $('#session_username').text();
+        if (username == 'None') {
+            storeCurrentUrl();
+        } else {
+            $.ajax({
+                url: '/api/user/follow',
+                type: 'POST',
+                data: {
+                    target: "{{user.username}}",
+                    source: "{{session.get('username')}}",
+                    token: "{{session.get('token')}}"
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    $('#user #user-control #follow').addClass('disabled').text('已关注');
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

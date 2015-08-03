@@ -1,0 +1,155 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#idea {
+    padding: 10px 20px;
+}
+
+#idea #thumbnail {
+    width: 100%;
+}
+
+#idea h2 {
+    margin: 0;
+    color: #444;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    padding: 15px 20px;
+    width: 60%;
+    font-size: 25px;
+    background-color: rgba(240, 240, 240, 0.6);
+    border-top-right-radius: 10px;
+}
+
+#idea #ideaInfo {
+    margin: 20px 10px;
+    position: relative;
+}
+
+#idea #ideaInfo #tags {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+#idea #ideaInfo #category {
+    display: inline-block;
+}
+
+#idea #ideaInfo #edit,
+#idea #ideaInfo #follow,
+#idea #ideaInfo #followed {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#idea #edit_idea_info {
+    display: none;
+}
+
+#idea #edit_idea_info .input-group {
+    margin-bottom: 20px;
+}
+
+#idea #edit_idea_info #save {
+    float: right;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="idea">
+    <div id="idea_info">
+        <div style="position:relative;">
+            <img id="thumbnail" src="{{url_for('static',filename='img/idea.jpg')}}">
+            <h2>{{idea.title}}</h2>
+        </div>
+        <div id="ideaInfo">
+            <div id="tags">
+                <p>
+                    <span class="fa fa-fw fa-tag"></span> {% for tag in idea.tags.split(',') %}
+                    <span>{{tag}}</span> {% endfor %}
+                </p>
+            </div>
+            <div id="category">
+                <p><span class="fa fa-fw fa-bookmark"></span> <span>{{idea.category}}<span></p>
+            </div>
+            <div id="owner">
+                <p><span class="fa fa-fw fa-user"></span> <a href="/user/{{idea.owner}}">{{owner}}</a> 发布于 {{idea.timestamp}}</p>
+            </div>
+            {% if idea.owner == session.get('username') %}
+            <span class="btn btn-default" id="edit">编辑</span> {% elif liked %}
+            <span class="btn btn-default disabled" id="followed">已喜欢</span> {% else %}
+            <span class="btn btn-default" id="follow">喜欢</span> {% endif %}
+        </div>
+    </div>
+    <div id="edit_idea_info">
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-addon">标题</div>
+                <input type="text" name="title" class="form-control" value="{{idea.title}}">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">标签</div>
+                <input type="text" name="tags" class="form-control" value="{{idea.tags}}">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">分类</div>
+                <input type="text" name="category" class="form-control" value="{{idea.category}}">
+            </div>
+        </div>
+        <span class="btn btn-default" id="save">保存</span>
+    </div>
+    {% if idea.owner == session.get('username') %}
+    <div id="idea_control">
+        
+    </div>
+    {% endif %}
+</div>
+<script>
+$(document).ready(function(){
+    $('#idea #idea_info #edit').click(function(){
+        $('#idea #idea_info').hide();
+        $('#idea #edit_idea_info').show();
+    });
+    $('#idea #edit_idea_info #save').click(function(){
+        $.ajax({
+            url: '/api/idea/edit',
+            type: 'POST',
+            data: {
+                ideaId: "{{idea.id}}",
+                username: "{{session.get('username')}}",
+                token: "{{session.get('token')}}",
+                title: $('#idea #edit_idea_info input[name="title"]').val(),
+                category: $('#idea #edit_idea_info input[name="category"]').val(),
+                tags: $('#idea #edit_idea_info input[name="tags"]').val()
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                window.location.reload()
+            }
+        });
+    });
+    $('#idea #ideaInfo #follow').click(function(){
+        var username = $('#session_username').text();
+        if (username == 'None') {
+            storeCurrentUrl();
+        } else {
+            $.ajax({
+                url: '/api/idea/follow',
+                type: 'POST',
+                data: {
+                    ideaId: "{{idea.id}}",
+                    username: "{{session.get('username')}}",
+                    token: "{{session.get('token')}}"
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    $('#idea #ideaInfo #follow').addClass('disabled').text('已喜欢');
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,13 +1,13 @@
-{% extends "layout.html" %} 
-
-{% block style %} 
-{% endblock %} 
-
-{% block body %}
-<h1>index</h1>
-
-<script>
-$(document).ready(function(){
-});
-</script>
+{% extends "layout.html" %} {% block style %}
+<style>
+#index {
+	padding: 20px 30px;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="index">
+{% for item in ideas %}
+<h2><a href="/idea/{{item.id}}">{{item.title}}</a></h2>
+{% endfor %}
+</div>
 {% endblock %}

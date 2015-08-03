@@ -1,0 +1,42 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#idea_new {
+    padding-top: 40px;
+    text-align: center;
+    padding-bottom: 50px;
+}
+#idea_new #category {
+	margin-left: 5px;
+	margin-right: 5px;
+	color: red;
+	border: 1px solid #60E860;
+	border-radius: 10%;
+	padding: 5px 20px;
+	cursor: pointer;
+}
+#idea_new form {
+	width: 60%;
+	margin: 30px auto;
+}
+#idea_new form input {
+	margin-top: 20px;
+}
+#idea_new form button {
+	margin-top: 30px;
+	width: 120px;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="idea_new">
+    <h1>我想和世界分享</h1>
+    <h2>一个关于<span id="category">艺术</span>的创意</h2>
+    <form method="post" action="{{url_for('idea_new')}}">
+        <div class="form-group">
+            <input type="text" name="title" class="form-control" placeholder="标题">
+            <input type="text" name="tags" class="form-control" placeholder="标签">
+            <input type="text" name="category" style="display:none;" value="艺术">
+        </div>
+        <button type="submit" class="btn btn-default">下一步</button>
+    </form>
+</div>
+{% endblock %}

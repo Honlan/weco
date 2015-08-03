@@ -1,23 +1,10 @@
 {% extends "layout.html" %} {% block style %}
 <style>
-#main {
-    background-image: url("{{url_for('static', filename='img/login.jpg')}}");
-    background-size: cover;
-}
-
-#content {
-    padding-top: 70px;
-    padding-bottom: 80px;
-}
-
 #register {
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.7);
-    width: 320px;
-    margin: 0 auto;
-    padding: 30px;
-    border-radius: 5px;
-    box-shadow: 5px 5px 10px rgba(20, 20, 20, 0.3);
+    width: 100%;
+    padding-top: 40px;
+    padding-bottom: 50px;
 }
 
 #register h1 {
@@ -25,7 +12,7 @@
 }
 
 #register form {
-    width: 200px;
+    width: 60%;
     margin: 0 auto;
 }
 
@@ -36,10 +23,15 @@
 
 #register form button {
     color: #666;
-    width: 100px;
+    width: 100%;
 }
+
 #register #register_error {
-    display: none;
+    opacity: 0;
+    font-size: 12px;
+    color: #F75E5E;
+    margin: 0;
+    height: 17px;
 }
 </style>
 {% endblock %} {% block body %}
@@ -61,31 +53,102 @@
                 <input type="password" class="form-control" name="password" placeholder="密码">
             </div>
             <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-fw fa-lock"></span></div>
+                <div class="input-group-addon"><span class="fa fa-fw fa-repeat"></span></div>
                 <input type="password" class="form-control" name="password1" placeholder="确认密码">
             </div>
             <p id="register_error"></p>
         </div>
         <button type="submit" class="btn btn-default disabled">注册</button>
+        <div class="input-group" style="margin-top:30px;">
+            <p>已有账号？<a href="/login">立即登陆</a></p>
+        </div>
     </form>
 </div>
 <script>
 $(document).ready(function() {
-    var register_error = false;
-    $('header li#nav-register').addClass('active');
+    var ok1 = false,
+        ok2 = false,
+        ok3 = false;
     $('#register input[name="username"]').blur(function() {
         var username = $(this).val();
-        console.log(username);
         $.ajax({
             url: '/api/user/existName',
             type: 'POST',
-            data: {},
+            data: {
+                username: username
+            },
             dataType: 'json',
             error: function() {},
             success: function(data) {
-                console.log(data);
+                if (data['exist']) {
+                    $('#register #register_error').css('opacity', '1').text('用户名已存在');
+                    $('#register button[type="submit"]').addClass('disabled');
+                } else {
+                    ok1 = true;
+                }
+                if (ok1 && ok2 && ok3) {
+                    $('#register #register_error').css('opacity', '0');
+                    $('#register button[type="submit"]').removeClass('disabled');
+                }
             }
         });
+    });
+
+    $('#register input[name="email"]').blur(function() {
+        var email = $(this).val();
+        $.ajax({
+            url: '/api/user/existEmail',
+            type: 'POST',
+            data: {
+                email: email
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                if (data['exist']) {
+                    $('#register #register_error').css('opacity', '1').text('邮箱已注册');
+                    $('#register button[type="submit"]').addClass('disabled');
+                } else {
+                    ok2 = true;
+                }
+                if (ok1 && ok2 && ok3) {
+                    $('#register #register_error').css('opacity', '0');
+                    $('#register button[type="submit"]').removeClass('disabled');
+                }
+            }
+        });
+    });
+
+    $('#register input[name="password"]').blur(function() {
+        var pwd = $(this).val();
+        var pwd1 = $('#register input[name="password1"]').val();
+        if (pwd == pwd1) {
+            ok3 = true;
+        } else {
+            console.log('error3');
+            $('#register #register_error').css('opacity', '1').text('两次密码不一致');
+            $('#register button[type="submit"]').addClass('disabled');
+        }
+        if (ok1 && ok2 && ok3) {
+            $('#register #register_error').css('opacity', '0');
+            $('#register button[type="submit"]').removeClass('disabled');
+        }
+    });
+
+    $('#register input[name="password1"]').keyup(function() {
+        var pwd1 = $(this).val();
+        var pwd = $('#register input[name="password"]').val();
+        if (pwd == pwd1) {
+            ok3 = true;
+        } else {
+            console.log('error3');
+            $('#register #register_error').css('opacity', '1').text('两次密码不一致');
+            $('#register button[type="submit"]').addClass('disabled');
+        }
+        if (ok1 && ok2 && ok3) {
+            $('#register #register_error').css('opacity', '0');
+            $('#register button[type="submit"]').removeClass('disabled');
+        }
     });
 });
 </script>

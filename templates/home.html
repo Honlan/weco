@@ -1,0 +1,269 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#me #user-basic-info {
+	padding: 10px 20px;
+}
+
+#me #user-basic-info #user-protrait img {
+    width: 100%;
+}
+
+#me #user-basic-info #user-username p.tag {
+    display: inline-block;
+}
+
+#me #user-basic-info #user-username .fa-male {
+    color: #6060FF;
+}
+
+#me #user-basic-info #user-username .fa-female {
+    color: #FF6060;
+}
+
+#me #user-basic-info #user-control {
+    text-align: right;
+}
+
+#me #user-basic-info #user-control a {
+    margin-bottom: 8px;
+}
+
+#me #user-profile {
+    margin-top: 10px;
+}
+
+#me #user-profile ul {
+	margin-top: 10px;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#me #user-profile ul li {
+    width: 20%;
+    text-align: center;
+}
+
+#me #user-profile .tab-content {
+    padding: 20px 30px;
+}
+#me #user-profile a.disfollow_idea, #me #user-profile a.disfollow_user {
+	float: right;
+}
+#me #edit_user_info {
+	margin: 20px 30px;
+	margin-bottom: 80px;
+	position: relative;
+	display: none;
+}
+#me #edit_user_info .input-group {
+    margin-bottom: 20px;
+}
+
+#me #edit_user_info #save {
+	position: absolute;
+	right: 0;
+}
+#me #logout_a {
+	text-align: center;
+	border-top: 1px solid #ddd;
+	padding-top: 30px;
+	padding-bottom: 30px;
+	margin-bottom: 0;
+}
+#me #logout_a a {
+	width: 60%;
+}
+</style>
+{% endblock %} {% block body %}
+<div id='me'>
+    <div id="user-basic-info">
+        <div class='row'>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                <div id="user-protrait">
+                    <img src="{{url_for('static', filename='img/user.png')}}">
+                </div>
+            </div>
+            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                <div id="user-username">
+                    <p>{{user.nickname}} {% if user.gender == 1 %}
+                        <span class="fa fa-fw fa-male"></span> {% else %}
+                        <span class="fa fa-fw fa-female"></span> {% endif %}
+                    </p>
+                    {% for tag in user.tags.split(',') %}
+                    <p class="tag">{{tag}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <div id="user-control">
+                    <a href="/idea/new" class="btn btn-default">发布创意</a>
+                    <span class="btn btn-default" id="edit_a">编辑资料</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="user-profile">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#user-info" aria-controls="user-info" role="tab" data-toggle="tab">资料</a></li>
+            <li role="presentation"><a href="#user-idea" aria-controls="user-idea" role="tab" data-toggle="tab">创意</a></li>
+            <li role="presentation"><a href="#user-like" aria-controls="user-like" role="tab" data-toggle="tab">喜欢</a></li>
+            <li role="presentation"><a href="#user-follow" aria-controls="user-follow" role="tab" data-toggle="tab">关注</a></li>
+            <li role="presentation"><a href="#user-fan" aria-controls="user-fan" role="tab" data-toggle="tab">粉丝</a></li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="user-info">
+                <h5>个性签名</h5>
+                <p>{{user.description}}</p>
+                <h5>邮箱</h5>
+                <p>{{user.email}}</p>
+                <h5>微信</h5>
+                <p>{{user.wechat}}</p>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="user-idea">
+            	{% if ideas == None %}
+            	<p><span class="fa fa-fw fa-frown-o"></span> 你还没有发布任何创意</p>
+            	{% else %}
+            	<p>您一共发布了 {{ideasCount}} 个创意</p>
+            	{% for item in ideas%}
+            	<p><a href="/idea/{{item.id}}">{{item.title}}</a></p>
+            	{% endfor %}
+            	{% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane" id="user-like">
+            	{% if followIdeas == None %}
+            	<p><span class="fa fa-fw fa-frown-o"></span> 你还没有喜欢任何创意</p>
+            	{% else %}
+            	<p>您一共喜欢了 <span id="followIdeasCount">{{followIdeasCount}}</span> 个创意</p>
+            	{% for item in followIdeas%}
+            	<p><a href="/idea/{{item.id}}">{{item.title}}</a> <a href="" class="disfollow_idea">不喜欢了</a></p>
+            	{% endfor %}
+            	{% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane" id="user-follow">
+            	{% if followUsers == None %}
+            	<p><span class="fa fa-fw fa-frown-o"></span> 你还没有关注任何用户</p>
+            	{% else %}
+            	<p>您一共关注了 <span id="followUsersCount">{{followUsersCount}}</span> 名用户</p>
+            	{% for item in followUsers%}
+            	<p><a href="/user/{{item.username}}">{{item.nickname}}</a> <a href="" class="disfollow_user">不关注了</a></p>
+            	{% endfor %}
+            	{% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane" id="user-fan">
+            	{% if fans == None %}
+            	<p><span class="fa fa-fw fa-frown-o"></span> 还没有任何用户关注您</p>
+            	{% else %}
+            	<p>一共有 {{fansCount}} 名用户关注您</p>
+            	{% for item in fans%}
+            	<p><a href="/user/{{item.username}}">{{item.nickname}}</a></p>
+            	{% endfor %}
+            	{% endif %}
+            </div>
+        </div>
+    </div>
+    <div id="edit_user_info">
+    	<div class="form-group">
+            <div class="input-group">
+                <div class="input-group-addon">昵称</div>
+                <input type="text" name="nickname" class="form-control" value="{{user.nickname}}">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">性别</div>
+                <input type="text" name="gender" class="form-control" value="{{user.gender}}">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">标签</div>
+                <input type="text" name="tags" class="form-control" value="{{user.tags}}">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">签名</div>
+                <input type="text" name="description" class="form-control" value="{{user.description}}">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">邮箱</div>
+                <input type="text" name="email" class="form-control" value="{{user.email}}">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">微信</div>
+                <input type="text" name="wechat" class="form-control" value="{{user.wechat}}">
+            </div>
+        </div>
+        <span class="btn btn-default" id="save">保存</span>
+    </div>
+    <p id="logout_a"><a href="/logout" class="btn btn-default">退出登录</a></p>
+</div>
+<script>
+$(document).ready(function(){
+	$('#me #user-profile a.disfollow_idea').click(function(){
+		event.preventDefault();
+		var $p = $(this).parent('p');
+		var ideaId = $(this).prev('a').attr('href');
+		$.ajax({
+			url: '/api/idea/disfollow',
+			type: 'POST',
+			data: {
+				ideaId: ideaId.substr(ideaId.lastIndexOf('/')+1),
+				username: "{{session.get('username')}}",
+				token: "{{session.get('token')}}"
+			},
+			dataType: 'json',
+			error: function() {},
+			success: function(data) {
+				$p.remove();
+				$('#me #user-profile #followIdeasCount').text(parseInt($('#me #user-profile #followIdeasCount').text()) - 1); 
+			}
+		});
+	});
+
+	$('#me #user-profile a.disfollow_user').click(function(){
+		event.preventDefault();
+		var $p = $(this).parent('p');
+		var username = $(this).prev('a').attr('href');
+		$.ajax({
+			url: '/api/user/disfollow',
+			type: 'POST',
+			data: {
+				target: username.substr(username.lastIndexOf('/')+1),
+				source: "{{session.get('username')}}",
+				token: "{{session.get('token')}}"
+			},
+			dataType: 'json',
+			error: function() {},
+			success: function(data) {
+				$p.remove();
+				$('#me #user-profile #followUsersCount').text(parseInt($('#me #user-profile #followUsersCount').text()) - 1); 
+			}
+		});
+	});
+
+	$('#me #edit_a').click(function(){
+		$('#me #user-basic-info').hide();
+		$('#me #user-profile').hide();
+		$('#me #edit_user_info').show();
+	});
+
+	$('#me #save').click(function(){
+		$.ajax({
+            url: '/api/user/edit',
+            type: 'POST',
+            data: {
+                username: "{{session.get('username')}}",
+                token: "{{session.get('token')}}",
+                nickname: $('#me #edit_user_info input[name="nickname"]').val(),
+                gender: $('#me #edit_user_info input[name="gender"]').val(),
+                tags: $('#me #edit_user_info input[name="tags"]').val(),
+                description: $('#me #edit_user_info input[name="description"]').val(),
+                email: $('#me #edit_user_info input[name="email"]').val(),
+                wechat: $('#me #edit_user_info input[name="wechat"]').val()
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                window.location.reload()
+            }
+        });
+	});
+});
+</script>
+{% endblock %}
