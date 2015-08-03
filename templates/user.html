@@ -98,7 +98,7 @@
             	{% else %}
             	<p>Ta一共发布了 {{ideasCount}} 个创意</p>
             	{% for item in ideas%}
-            	<p><a href="/idea/{{item.id}}">{{item.title}}</a></p>
+            	<p><a href="{{url_for('idea',ideaId=item.id)}}">{{item.title}}</a></p>
             	{% endfor %}
             	{% endif %}
             </div>
@@ -108,7 +108,7 @@
             	{% else %}
             	<p>Ta一共喜欢了 <span id="followIdeasCount">{{followIdeasCount}}</span> 个创意</p>
             	{% for item in followIdeas%}
-            	<p><a href="/idea/{{item.id}}">{{item.title}}</a></p>
+            	<p><a href="{{url_for('idea',ideaId=item.id)}}">{{item.title}}</a></p>
             	{% endfor %}
             	{% endif %}
             </div>
@@ -118,7 +118,7 @@
                 {% else %}
                 <p>Ta一共关注了 <span id="followUsersCount">{{followUsersCount}}</span> 名用户</p>
                 {% for item in followUsers%}
-                <p><a href="/user/{{item.username}}">{{item.nickname}}</a></p>
+                <p><a href="{{url_for('user',username=item.username)}}">{{item.nickname}}</a></p>
                 {% endfor %}
                 {% endif %}
             </div>
@@ -128,7 +128,7 @@
                 {% else %}
                 <p>一共有 {{fansCount}} 名用户关注Ta</p>
                 {% for item in fans%}
-                <p><a href="/user/{{item.username}}">{{item.nickname}}</a></p>
+                <p><a href="{{url_for('user',username=item.username)}}">{{item.nickname}}</a></p>
                 {% endfor %}
                 {% endif %}
             </div>

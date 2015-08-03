@@ -7,7 +7,7 @@
 {% endblock %} {% block body %}
 <div id="index">
 {% for item in ideas %}
-<h2><a href="/idea/{{item.id}}">{{item.title}}</a></h2>
+<h2><a href="{{url_for('idea',ideaId=item.id)}}">{{item.title}}</a></h2>
 {% endfor %}
 </div>
 {% endblock %}

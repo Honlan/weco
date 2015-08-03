@@ -73,7 +73,7 @@
                 <p><span class="fa fa-fw fa-bookmark"></span> <span>{{idea.category}}<span></p>
             </div>
             <div id="owner">
-                <p><span class="fa fa-fw fa-user"></span> <a href="/user/{{idea.owner}}">{{owner}}</a> 发布于 {{idea.timestamp}}</p>
+                <p><span class="fa fa-fw fa-user"></span> <a href="{{url_for('user',username=idea.owner)}}">{{owner}}</a> 发布于 {{idea.timestamp}}</p>
             </div>
             {% if idea.owner == session.get('username') %}
             <span class="btn btn-default" id="edit">编辑</span> {% elif liked %}

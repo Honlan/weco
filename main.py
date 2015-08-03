@@ -295,13 +295,13 @@ def home():
 
 		return render_template('home.html', user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount)
 	else:
-		return redirect('/login')
+		return redirect(url_for('login'))
 
 # 其他用户主页
 @app.route('/user/<username>')
 def user(username):
 	if session.get('username') == username:
-		return redirect('user.html')
+		return redirect(url_for('home'))
 	else:
 		cursor.execute('select username,email,nickname,portrait,tags,description,gender,wechat,ideas,followIdeas,fans,followUsers,lastActive from user where username=%s',[username])
 		user = cursor.fetchone()
@@ -371,7 +371,7 @@ def idea_new():
 		if not session.get('username') == None:
 			return render_template('idea_new.html')
 		else:
-			return redirect('/login')
+			return redirect(url_for('login'))
 	elif request.method == 'POST':
 		if not session.get('username') == None:
 			username = session.get('username')
@@ -387,9 +387,9 @@ def idea_new():
 			ideas = ideas + ',' + str(ideaId)
 			ideas = ideas.lstrip(',')
 			cursor.execute('update user set ideas=%s where username=%s',[ideas,username])
-			return redirect('/idea/' + str(ideaId))
+			return redirect(url_for('idea',ideaId=ideaId))
 		else:
-			return redirect('/login')
+			return redirect(url_for('login'))
 
 # 创意主页
 @app.route('/idea/<ideaId>')
@@ -409,13 +409,23 @@ def idea(ideaId):
 			liked = False
 	return render_template('idea.html', idea=idea, owner=owner,liked=liked)
 
+# 搜索创意
+@app.route('/search')
+def search():
+	return 'search'
+
+# 通知提醒
+@app.route('/notice')
+def notice():
+	return 'notice'
+
 # 登陆
 @app.route('/login', methods=['GET','POST'])
 def login():
 	error = None
 	if request.method == 'GET':
 		if not session.get('username') == None:
-			return redirect('/user')
+			return redirect(url_for('home'))
 		else:
 			return render_template('login.html', error=error)
 	elif request.method == 'POST':
@@ -438,23 +448,23 @@ def login():
 				session.pop('url', None)
 				return redirect(url)
 			else:
-				return redirect('/user')
+				return redirect(url_for('home'))
 
 # 注销
 @app.route('/logout')
 def logout():
 	if not session.get('username') == None:
 		session.pop('username', None)
-		return redirect('/login')
+		return redirect(url_for('login'))
 	else:
-		return redirect('/login') 
+		return redirect(url_for('login')) 
 
 # 注册
 @app.route('/register', methods=['GET','POST'])
 def register():
 	if request.method == 'GET':
 		if not session.get('username') == None:
-			return redirect('/')
+			return redirect(url_for('/'))
 		else:
 			return render_template('register.html')
 	elif request.method == 'POST':
@@ -462,7 +472,7 @@ def register():
 		password = request.form['password']
 		email = request.form['email']
 		cursor.execute("insert into user(username,nickname,password,email) values(%s,%s,%s,%s)", [username,username,unicode(md5(password).hexdigest().upper()),email])
-		return redirect('/login')
+		return redirect(url_for('login'))
 
 if __name__ == '__main__':
 	app.run()
