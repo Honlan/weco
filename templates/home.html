@@ -200,7 +200,7 @@ $(document).ready(function(){
 		var $p = $(this).parent('p');
 		var ideaId = $(this).prev('a').attr('href');
 		$.ajax({
-			url: "{{url_for('api_idea_disfollow')",
+			url: "{{url_for('api_idea_disfollow')}}",
 			type: 'POST',
 			data: {
 				ideaId: ideaId.substr(ideaId.lastIndexOf('/')+1),
