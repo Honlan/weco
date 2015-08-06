@@ -185,8 +185,9 @@ def api_attachment_remove():
 		attachmentId = data['attachmentId']
 		cursor.execute('select url, fileType from attachment where id=%s', [attachmentId])
 		attachment = cursor.fetchone()
-		if (not attachment['fileType'] == 0) and os.path.exists(attachment['url']):
-			os.remove(attachment['url'])
+		if not attachment['fileType'] == 0:
+			if os.path.exists(attachment['url']):
+				os.remove(attachment['url'])
 		cursor.execute('delete from attachment where id=%s', [attachmentId])
 		return json.dumps({"ok": True})
 	else:
