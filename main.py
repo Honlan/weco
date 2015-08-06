@@ -516,7 +516,7 @@ def idea_add_img(ideaId):
 		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
 		filepath = os.path.join(app.config['UPLOAD_FOLDER'] + '/img/', filename)
 		image.save(filepath)
-		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time())),session.get('username')])
+		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time())), session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
 		return redirect(url_for('login'))
@@ -525,7 +525,7 @@ def idea_add_img(ideaId):
 def idea_add_text(ideaId):
 	if not session.get('username') == None:
 		text = request.form['content']
-		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s)",[ideaId,0,text,str(int(time.time())),session.get('username')])
+		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,text,str(int(time.time())), session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
 		return redirect(url_for('login'))
