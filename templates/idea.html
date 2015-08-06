@@ -235,7 +235,7 @@
         {% if item.fileType == 0 %}
         <p>{{item.url}}</p>
         {% elif item.fileType == 1 %}
-        <img src="/{{item.url}}">
+        <img src="{{url_for('static',filename=item.url[7:])}}">
         {% elif item.fileType == 2 %}
         <p>这是个视频！</p>
         {% endif %}
