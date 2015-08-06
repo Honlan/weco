@@ -183,10 +183,10 @@ def api_attachment_remove():
 	data = request.form
 	if validate(data['username'], data['token']) and data['owner'] == data['username']:
 		attachmentId = data['attachmentId']
-		cursor.execute('select url from attachment where id=%s', [attachmentId])
-		url = cursor.fetchone()['url']
-		if os.path.exists(url):
-			os.remove(url)
+		cursor.execute('select url, fileType from attachment where id=%s', [attachmentId])
+		attachment = cursor.fetchone()
+		if (not attachment['fileType'] == 0) and os.path.exists(attachment['url']):
+			os.remove(attachment['url'])
 		cursor.execute('delete from attachment where id=%s', [attachmentId])
 		return json.dumps({"ok": True})
 	else:
