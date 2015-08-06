@@ -11,7 +11,7 @@
  Target Server Version : 50538
  File Encoding         : utf-8
 
- Date: 08/06/2015 09:38:19 AM
+ Date: 08/06/2015 11:12:04 AM
 */
 
 SET NAMES utf8;
@@ -28,13 +28,13 @@ CREATE TABLE `attachment` (
   `url` text NOT NULL,
   `timestamp` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `attachment`
 -- ----------------------------
 BEGIN;
-INSERT INTO `attachment` VALUES ('8', '9', '1', 'static/uploads/img/20150806/BE811EEF5C_2015_DDSS_copy-26.jpg', '1438822627'), ('9', '13', '0', '我也可以说话了，这真是极好的', '1438824272'), ('10', '13', '1', 'static/uploads/img/20150806/CE96407AAE_NewBeeLogo_Google_256.png', '1438824288'), ('11', '13', '0', '我又说了一段话', '1438824309');
+INSERT INTO `attachment` VALUES ('8', '9', '1', 'static/uploads/img/20150806/BE811EEF5C_2015_DDSS_copy-26.jpg', '1438822627'), ('9', '13', '0', '我也可以说话了，这真是极好的', '1438824272'), ('10', '13', '1', 'static/uploads/img/20150806/CE96407AAE_NewBeeLogo_Google_256.png', '1438824288'), ('11', '13', '0', '我又说了一段话', '1438824309'), ('12', '13', '1', 'static/uploads/img/20150806/46ADA90569_omni.jpg', '1438825961'), ('13', '13', '1', 'static/uploads/img/20150806_6FF2C4CD3A_sw.png', '1438830609');
 COMMIT;
 
 -- ----------------------------
@@ -112,7 +112,7 @@ CREATE TABLE `user` (
 --  Records of `user`
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES ('1', 'honlan', 'aaa493722771@qq.com', '202CB962AC59075B964B07152D234B70', '伦大锤就是我', '', '啦啦啦,程序员,设计师,学生,90后,创业者,技术宅', '笑死生命不息，奋斗不止。生命不息，奋斗不止。生命不息，奋斗不止。生命不息，奋斗不止。生命不息，奋斗不止。', '0', 'Honlann111', '9,10,11', '13', 'bibi,zhl,bibi2', 'bibi', '1438759848', '6B8886395C6C7BA6FC33934D9C38F0B1', '90'), ('2', 'zhl', '493722771@qq.com', '202CB962AC59075B964B07152D234B70', 'zhl', '', '', '', '1', '', '12', '11', 'bibi', 'honlan', '1438587631', '77ABBAF50A111B3B61977BEE4F0D0861', '98'), ('3', 'bibi', 'asdasdasfa@qq.com', '202CB962AC59075B964B07152D234B70', 'bibi', '', '', '', '1', '', '', '12,11,10', 'honlan,bibi2', 'zhl,honlan', '1438587678', '18F5372F8AD279CCDD7D5D1FB3D85F7F', '100'), ('4', 'bibi2', 'adsaafa@qq.com', '202CB962AC59075B964B07152D234B70', 'bibi2', '', '我叫乖比比', '你叫臭大宝', '0', 'guaibibi', '13', '', '', 'honlan,bibi', '1438823631', '97D981E25214EEF2087852C9867424E8', '99');
+INSERT INTO `user` VALUES ('1', 'honlan', 'aaa493722771@qq.com', '202CB962AC59075B964B07152D234B70', '伦大锤就是我', '', '啦啦啦,程序员,设计师,学生,90后,创业者,技术宅', '笑死生命不息，奋斗不止。生命不息，奋斗不止。生命不息，奋斗不止。生命不息，奋斗不止。生命不息，奋斗不止。', '0', 'Honlann111', '9,10,11', '13', 'bibi,zhl,bibi2', 'bibi', '1438759848', '6B8886395C6C7BA6FC33934D9C38F0B1', '90'), ('2', 'zhl', '493722771@qq.com', '202CB962AC59075B964B07152D234B70', 'zhl', '', '', '', '1', '', '12', '11', 'bibi', 'honlan', '1438587631', '77ABBAF50A111B3B61977BEE4F0D0861', '98'), ('3', 'bibi', 'asdasdasfa@qq.com', '202CB962AC59075B964B07152D234B70', 'bibi', '', '', '', '1', '', '', '12,11,10', 'honlan,bibi2', 'zhl,honlan', '1438587678', '18F5372F8AD279CCDD7D5D1FB3D85F7F', '100'), ('4', 'bibi2', 'adsaafa@qq.com', '202CB962AC59075B964B07152D234B70', 'bibi2', '', '我叫乖比比', '你叫臭大宝', '0', 'guaibibi', '13', '', '', 'honlan,bibi', '1438825932', 'E48B7D3770B2ACE40BED44BCDD670A00', '100');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

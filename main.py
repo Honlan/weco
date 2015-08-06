@@ -493,11 +493,9 @@ def idea(ideaId):
 def idea_add_img(ideaId):
 	if not session.get('username') == None:
 		image = request.files['content']
-		filename = secure_filename(genKey()[:10] + '_' + image.filename)
 		today = time.strftime('%Y%m%d', time.localtime(time.time()))
-		if not os.path.exists(app.config['UPLOAD_FOLDER'] + '/img/' + today):
-			os.makedirs(app.config['UPLOAD_FOLDER'] + '/img/' + today)
-		filepath = os.path.join(app.config['UPLOAD_FOLDER'] + '/img/' + today, filename)
+		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
+		filepath = os.path.join(app.config['UPLOAD_FOLDER'] + '/img/', filename)
 		image.save(filepath)
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp) values(%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time()))])
 		return redirect(url_for('idea', ideaId=ideaId))
