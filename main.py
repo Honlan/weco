@@ -6,7 +6,9 @@
 	@ author by Honlan
 	@ last updated 2015-07-28 
 '''
-
+import sys
+reload(sys)
+sys.setdefaultencoding( "utf-8" )
 import os
 from flask import *
 from configure_weco import *
@@ -185,6 +187,7 @@ def api_attachment_remove():
 		attachmentId = data['attachmentId']
 		cursor.execute('select url, fileType from attachment where id=%s', [attachmentId])
 		attachment = cursor.fetchone()
+		print attachment['fileType']
 		if not attachment['fileType'] == 0:
 			if os.path.exists(attachment['url']):
 				os.remove(attachment['url'])
