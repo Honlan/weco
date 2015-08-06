@@ -2,3 +2,4 @@
 configure_weco.py
 *.pyc
 venv/
+static/uploads/
