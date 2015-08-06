@@ -45,6 +45,7 @@
 
 #idea #edit_idea_info {
     display: none;
+    padding-bottom: 60px;
 }
 
 #idea #edit_idea_info .input-group {
@@ -53,6 +54,119 @@
 
 #idea #edit_idea_info #save {
     float: right;
+}
+
+#idea #idea_add_content {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px 20px;
+}
+
+#idea #idea_add_content h5 {
+    margin-top: 0;
+}
+
+#idea #idea_add_content #add_text,
+#idea #idea_add_content #add_image,
+#idea #idea_add_content #add_video {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 40px;
+}
+
+#idea #idea_add_content #add_image {
+    padding-top: 15px;
+}
+
+#idea #idea_add_content #add_image .form-control:hover {
+    cursor: pointer;
+}
+
+#idea #idea_add_content #add_video {
+    padding-top: 15px;
+    border-bottom: none;
+    padding-bottom: 30px;
+}
+
+#idea #idea_add_content button {
+    float: right;
+    margin-top: 10px;
+    padding: 4px 8px;
+}
+
+#idea #idea_content {
+    margin: 20px 0px 30px 0;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 5px 20px;
+}
+#idea #idea_content .content_cell {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+#idea #idea_content img {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+#idea #idea_control #praise,
+#idea #idea_control #readCount,
+#idea #idea_control #comment {
+    display: inline-block;
+    margin-left: 20px;
+    margin-right: 10px;
+}
+
+#idea #idea_control #praise span.active,
+#idea #idea_comments .single_comment .comment_praise span.glyphicon.active {
+    color: #FF3900;
+}
+
+#idea #idea_control #share {
+    float: right;
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 20px;
+}
+
+#idea #idea_control span.glyphicon {
+    position: relative;
+    top: -3px;
+}
+
+#idea #idea_comments {
+    margin-top: 20px;
+}
+
+#idea #idea_comments #publish_comment {
+    background-color: #A9A9FF;
+    color: white;
+    cursor: pointer;
+}
+
+#idea #idea_comments .single_comment {
+    font-size: 13px;
+    position: relative;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#idea #idea_comments .single_comment img {
+    width: 90%;
+    margin-left: 10%;
+    margin-right: 0;
+}
+
+#idea #idea_comments .single_comment .comment_praise {
+    text-align: right;
+    margin-right: 10px;
+}
+
+#idea #idea_comments .single_comment .comment_praise .glyphicon {
+    margin-right: 10px;
+    margin-top: 10px;
 }
 </style>
 {% endblock %} {% block body %}
@@ -98,19 +212,112 @@
         </div>
         <span class="btn btn-default" id="save">保存</span>
     </div>
-    {% if idea.owner == session.get('username') %}
     <div id="idea_control">
-        
+        <div id="praise">
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+            <span style="position:relative;top:-5px;left:10px;">{{idea.praise}}</span>
+        </div>
+        <div id="readCount">
+            <span class="glyphicon glyphicon-eye-open"></span>
+            <span style="position:relative;top:-5px;left:10px;">{{idea.readCount}}</span>
+        </div>
+        <div id="comment">
+            <span class="glyphicon glyphicon-comment"></span>
+            <span style="position:relative;top:-5px;left:10px;">{{commentsCount}}</span>
+        </div>
+        <div id="share">
+            <span class="glyphicon glyphicon-share"></span>
+        </div>
+    </div>
+    <div id="idea_content">
+        {% for item in attachments %}
+        <div class="content_cell">
+        {% if item.fileType == 0 %}
+        <p>{{item.url}}</p>
+        {% elif item.fileType == 1 %}
+        <img src="/{{item.url}}">
+        {% elif item.fileType == 2 %}
+        <p>这是个视频！</p>
+        {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% if idea.owner == session.get('username') %}
+    <div id="idea_add_content">
+        <div id="add_text">
+            <h5>添加文本</h5>
+            <form method="post" action="{{url_for('idea_add_text',ideaId=idea.id)}}">
+                <div class="form-group">
+                    <textarea class="form-control" rows="5" name="content"></textarea>
+                    <button type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-plus"></span></button>
+                </div>
+            </form>
+        </div>
+        <div id="add_image">
+            <h5>添加图片</h5>
+            <form enctype="multipart/form-data" method="post" action="{{url_for('idea_add_img',ideaId=idea.id)}}">
+                <div class="form-group">
+                    <div class="form-control" style="position:relative;cursor:pointer;">
+                        <p>上传图片</p>
+                        <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content">
+                    </div>
+                    <button type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-plus"></span></button>
+                </div>
+            </form>
+        </div>
+        <div id="add_video">
+            <h5>添加视频</h5>
+            <form>
+                <div class="form-group">
+                    <textarea class="form-control" rows="5"></textarea>
+                    <button type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-plus"></span></button>
+                </div>
+            </form>
+        </div>
     </div>
     {% endif %}
+    <div id="idea_comments">
+        <div id="add_comment">
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></div>
+                    <input class="form-control" name="comment" type="text" placeholder="写下您的评论" />
+                    <div class="input-group-addon" id="publish_comment"><span>发布</span></div>
+                </div>
+            </div>
+        </div>
+        {% for item in comments %}
+        <div class="row">
+            <div class="single_comment">
+                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                    <div>
+                        <img src="{{url_for('static', filename='img/user.png')}}">
+                    </div>
+                </div>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                    <div>
+                        <p><a href="{{url_for('user',username=item.username)}}">{{item.nickname}}</a> <span>{{item.timestamp}}</span></p>
+                        <div>{{item.content}}</div>
+                        <p class="comment_praise"><span name="{{item.id}}" class="glyphicon glyphicon-thumbs-up"></span><span>{{item.praise}}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p style="text-align:center;margin-top:30px;">沙发空缺，还不快抢～</p>
+        {% endfor%}
+    </div>
 </div>
 <script>
-$(document).ready(function(){
-    $('#idea #idea_info #edit').click(function(){
+$(document).ready(function() {
+    $('#idea #idea_info #edit').click(function() {
         $('#idea #idea_info').hide();
+        $('#idea #idea_control').hide();
+        $('#idea #idea_add_content').hide();
+        $('#idea #idea_comments').hide();
         $('#idea #edit_idea_info').show();
     });
-    $('#idea #edit_idea_info #save').click(function(){
+    $('#idea #edit_idea_info #save').click(function() {
         $.ajax({
             url: '{{url_for("api_idea_edit")}}',
             type: 'POST',
@@ -125,11 +332,11 @@ $(document).ready(function(){
             dataType: 'json',
             error: function() {},
             success: function(data) {
-                window.location.reload()
+                window.location.reload();
             }
         });
     });
-    $('#idea #ideaInfo #follow').click(function(){
+    $('#idea #ideaInfo #follow').click(function() {
         var username = $('#session_username').text();
         if (username == 'None') {
             storeCurrentUrl();
@@ -148,6 +355,87 @@ $(document).ready(function(){
                     $('#idea #ideaInfo #follow').addClass('disabled').text('已喜欢');
                 }
             });
+        }
+    });
+
+    $('#idea #idea_control #praise span:first-child').click(function() {
+        $.ajax({
+            url: '{{url_for("api_idea_praise")}}',
+            type: 'POST',
+            data: {
+                ideaId: "{{idea.id}}"
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $('#idea #idea_control #praise span:last-child').text(data['praise']);
+                $('#idea #idea_control #praise span:first-child').toggleClass('active');
+            }
+        });
+    });
+
+    $('#idea #idea_comments #publish_comment').click(function() {
+        var username = $('#session_username').text();
+        if (username == 'None') {
+            storeCurrentUrl();
+        } else {
+            if ($('#idea #idea_comments #add_comment input').val() != '') {
+                console.log("ajax");
+                $.ajax({
+                    url: '{{url_for("api_idea_comment")}}',
+                    type: 'POST',
+                    data: {
+                        ideaId: "{{idea.id}}",
+                        username: "{{session.get('username')}}",
+                        token: "{{session.get('token')}}",
+                        content: $('#idea #idea_comments #add_comment input').val()
+                    },
+                    dataType: 'json',
+                    error: function() {},
+                    success: function(data) {
+                        window.location.reload();
+                    }
+                });
+            }
+        }
+    });
+
+    $('#idea #idea_comments .single_comment .comment_praise span.glyphicon').click(function() {
+        var commentId = $(this).attr('name');
+        $.ajax({
+            url: '{{url_for("api_comment_praise")}}',
+            type: 'POST',
+            data: {
+                commentId: commentId
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                console.log(11111);
+                $('#idea #idea_comments .single_comment .comment_praise span:last-child').text(data['praise']);
+                $('#idea #idea_comments .single_comment .comment_praise span.glyphicon').toggleClass('active');
+            }
+        });
+    });
+
+    $('#idea #idea_add_content #add_text textarea').keyup(function() {
+        if ($(this).val() != '') {
+            $('#idea #idea_add_content #add_text button').removeClass('disabled');
+        } else {
+            $('#idea #idea_add_content #add_text button').addClass('disabled');
+        }
+    });
+    $('#idea #idea_add_content #add_image input').change(function() {
+        if ($(this)[0].files[0].size / 1024 / 1024 > 5) {
+            $('#idea #idea_add_content #add_image p').text("图片大小大于5M");
+            $('#idea #idea_add_content #add_image p').css("color", "#F36148");
+            $('#idea #idea_add_content #add_image button').addClass('disabled');
+        } else {
+            var filename = $(this).val();
+            filename = filename.substr(filename.lastIndexOf("\\") + 1);
+            $('#idea #idea_add_content #add_image p').text(filename);
+            $('#idea #idea_add_content #add_image p').css("color", "#333");
+            $('#idea #idea_add_content #add_image button').removeClass('disabled');
         }
     });
 });

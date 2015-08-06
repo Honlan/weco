@@ -7,6 +7,7 @@
 	@ last updated 2015-07-28 
 '''
 
+import os
 from flask import *
 from configure_weco import *
 import MySQLdb
@@ -19,11 +20,14 @@ from email.mime.text import MIMEText
 import time
 import warnings
 warnings.filterwarnings("ignore")
+from werkzeug import secure_filename
 
 # 载入系统配置
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.secret_key="8E9852FD04BA946D51DE36DFB08E1DB6"
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # 数据库连接
 db = MySQLdb.connect(host=HOST, user=USER, passwd=PASSWORD, db=DATABASE, port=PORT, charset=CHARSET, cursorclass = MySQLdb.cursors.DictCursor)
@@ -126,6 +130,65 @@ def api_idea_disfollow():
 			temp = temp + item + ','
 		followIdeas = temp[:-1]
 		cursor.execute("update user set followIdeas = %s where username = %s", [followIdeas, username])
+		return json.dumps({"ok": True})
+	else:
+		return json.dumps({"ok": False, "error": "invalid token"})
+
+# 用户点赞创意
+@app.route('/api/idea/praise', methods=['POST'])
+def api_idea_praise():
+	ideaId = request.form['ideaId']
+	if (not session.get('ideas') == None) and (not session['ideas'].get(str(ideaId)) == None):
+		if session['ideas'][str(ideaId)] == 0:
+			# 点赞
+			cursor.execute('select praise from idea where id=%s', [ideaId])
+			praise = int(cursor.fetchone()['praise']) + 1
+			cursor.execute('update idea set praise=%s where id=%s', [praise,ideaId])
+			session['ideas'][str(ideaId)] = 1
+			return json.dumps({"ok": True, "praise": praise})
+		else:
+			cursor.execute('select praise from idea where id=%s', [ideaId])
+			praise = int(cursor.fetchone()['praise']) - 1
+			cursor.execute('update idea set praise=%s where id=%s', [praise,ideaId])
+			session['ideas'][str(ideaId)] = 0
+			return json.dumps({"ok": True, "praise": praise})
+	else:
+		return json.dumps({"ok": False})
+
+# 用户点赞评论
+@app.route('/api/comment/praise', methods=['POST'])
+def api_comment_praise():
+	commentId = request.form['commentId']
+	if session.get('comments') == None:
+		session['comments'] = {}
+	if session['comments'].get(str(commentId)) == None:
+		session['comments'][str(commentId)] = True
+		cursor.execute('select praise from comment where id=%s', [commentId])
+		praise = int(cursor.fetchone()['praise']) + 1
+		cursor.execute('update comment set praise=%s where id=%s', [praise,commentId])
+		print praise
+		return json.dumps({"ok": True, "praise": praise})
+	else:
+		session['comments'].pop(str(commentId), None)
+		cursor.execute('select praise from comment where id=%s', [commentId])
+		praise = int(cursor.fetchone()['praise']) - 1
+		cursor.execute('update comment set praise=%s where id=%s', [praise,commentId])
+		print praise
+		return json.dumps({"ok": True, "praise": praise})
+
+# 用户评论创意
+# 需要进行token验证
+@app.route('/api/idea/comment', methods=['POST'])
+def api_idea_comment():
+	data = request.form
+	if validate(data['username'], data['token']):
+		ideaId = data['ideaId']
+		username = data['username']
+		timestamp = str(int(time.time()))
+		content = data['content']
+		cursor.execute('select nickname from user where username=%s', [username])
+		nickname = cursor.fetchone()['nickname']
+		cursor.execute("insert into comment(username,nickname,ideaId,timestamp,content) values(%s, %s, %s, %s, %s)", [username, nickname, ideaId, timestamp, content])
 		return json.dumps({"ok": True})
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
@@ -394,6 +457,13 @@ def idea_new():
 # 创意主页
 @app.route('/idea/<ideaId>')
 def idea(ideaId):
+	if session.get('ideas') == None:
+		session['ideas'] = {}
+	if not session['ideas'].has_key(str(ideaId)):
+		cursor.execute('select readCount from idea where id=%s', [ideaId])
+		readCount = int(cursor.fetchone()['readCount']) + 1
+		cursor.execute('update idea set readCount=%s where id=%s', [readCount,ideaId])
+		session['ideas'][str(ideaId)] = 0
 	cursor.execute('select * from idea where id=%s', [ideaId])
 	idea = cursor.fetchone()
 	idea['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(idea['timestamp'])))
@@ -407,7 +477,41 @@ def idea(ideaId):
 			liked = True
 		else:
 			liked = False
-	return render_template('idea.html', idea=idea, owner=owner,liked=liked)
+	cursor.execute("select * from attachment where ideaId=%s order by timestamp asc",[ideaId])
+	attachments = cursor.fetchall()
+	for item in attachments:
+		item['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(item['timestamp'])))
+	cursor.execute("select * from comment where ideaId=%s order by praise desc, timestamp desc", [ideaId])
+	comments = cursor.fetchall()
+	for item in comments:
+		item['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(item['timestamp'])))
+	commentsCount = len(comments)
+	return render_template('idea.html', idea=idea, owner=owner, liked=liked, attachments=attachments, comments=comments, commentsCount=commentsCount)
+
+# 为创意添加图片内容
+@app.route('/idea/<ideaId>/addImg',methods=['POST'])
+def idea_add_img(ideaId):
+	if not session.get('username') == None:
+		image = request.files['content']
+		filename = secure_filename(genKey()[:10] + '_' + image.filename)
+		today = time.strftime('%Y%m%d', time.localtime(time.time()))
+		if not os.path.exists(app.config['UPLOAD_FOLDER'] + '/img/' + today):
+			os.makedirs(app.config['UPLOAD_FOLDER'] + '/img/' + today)
+		filepath = os.path.join(app.config['UPLOAD_FOLDER'] + '/img/' + today, filename)
+		image.save(filepath)
+		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp) values(%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time()))])
+		return redirect(url_for('idea', ideaId=ideaId))
+	else:
+		return redirect(url_for('login'))
+
+@app.route('/idea/<ideaId>/addText',methods=['POST'])
+def idea_add_text(ideaId):
+	if not session.get('username') == None:
+		text = request.form['content']
+		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp) values(%s,%s,%s,%s)",[ideaId,0,text,str(int(time.time()))])
+		return redirect(url_for('idea', ideaId=ideaId))
+	else:
+		return redirect(url_for('login'))
 
 # 搜索创意
 @app.route('/search')
