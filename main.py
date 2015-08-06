@@ -192,6 +192,8 @@ def api_attachment_remove():
 				os.remove(attachment['url'])
 			cursor.execute('delete from attachment where id=%s', [attachmentId])
 			return json.dumps({"ok": True})
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
 
