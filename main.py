@@ -176,6 +176,22 @@ def api_comment_praise():
 		print praise
 		return json.dumps({"ok": True, "praise": praise})
 
+# 删除创意附件
+# 需要进行token验证
+@app.route('/api/idea/attachment/remove',methods=['POST'])
+def api_idea_attachment_remove():
+	data = request.form
+	if validate(data['username'], data['token']) and data['owner'] == data['username']:
+		attachmentId = data['attachmentId']
+		cursor.execute('select url from attachment where id=%s', [attachmentId])
+		url = cursor.fetchone()['url']
+		if os.path.exists(url):
+			os.remove(url)
+		cursor.execute('delete from attachment where id=%s', [attachmentId])
+		return json.dumps({"ok": True})
+	else:
+		return json.dumps({"ok": False, "error": "invalid token"})
+
 # 用户评论创意
 # 需要进行token验证
 @app.route('/api/idea/comment', methods=['POST'])
