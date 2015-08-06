@@ -472,7 +472,7 @@ $(document).ready(function() {
     $('#idea #idea_content .content_cell span.glyphicon').click(function() {
         var attachmentId = $(this).attr('name');
         $.ajax({
-            url: '{{url_for("api_idea_attachment_remove")}}',
+            url: '{{url_for("api_attachment_remove")}}',
             type: 'POST',
             data: {
                 owner: "{{idea.owner}}",

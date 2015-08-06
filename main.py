@@ -178,8 +178,8 @@ def api_comment_praise():
 
 # 删除创意附件
 # 需要进行token验证
-@app.route('/api/idea/attachment/remove',methods=['POST'])
-def api_idea_attachment_remove():
+@app.route('/api/attachment/remove',methods=['POST'])
+def api_attachment_remove():
 	data = request.form
 	if validate(data['username'], data['token']) and data['owner'] == data['username']:
 		attachmentId = data['attachmentId']
