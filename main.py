@@ -183,16 +183,15 @@ def api_comment_praise():
 @app.route('/api/attachment/remove',methods=['POST'])
 def api_attachment_remove():
 	data = request.form
-	if validate(data['username'], data['token']) and data['owner'] == data['username']:
+	if validate(data['username'], data['token']):
 		attachmentId = data['attachmentId']
-		cursor.execute('select url, fileType from attachment where id=%s', [attachmentId])
+		cursor.execute("select * from attachment where id=%s",[attachmentId])
 		attachment = cursor.fetchone()
-		print attachment['fileType']
-		if not attachment['fileType'] == 0:
-			if os.path.exists(attachment['url']):
+		if attachment['username'] == data['username']:
+			if (not attachment['fileType'] == 0) and (os.path.exists(attachment['url'])):
 				os.remove(attachment['url'])
-		cursor.execute('delete from attachment where id=%s', [attachmentId])
-		return json.dumps({"ok": True})
+			cursor.execute('delete from attachment where id=%s', [attachmentId])
+			return json.dumps({"ok": True})
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
 
@@ -517,7 +516,7 @@ def idea_add_img(ideaId):
 		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
 		filepath = os.path.join(app.config['UPLOAD_FOLDER'] + '/img/', filename)
 		image.save(filepath)
-		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp) values(%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time()))])
+		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time())),session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
 		return redirect(url_for('login'))
@@ -526,7 +525,7 @@ def idea_add_img(ideaId):
 def idea_add_text(ideaId):
 	if not session.get('username') == None:
 		text = request.form['content']
-		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp) values(%s,%s,%s,%s)",[ideaId,0,text,str(int(time.time()))])
+		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s)",[ideaId,0,text,str(int(time.time())),session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
 		return redirect(url_for('login'))
