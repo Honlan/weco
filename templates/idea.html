@@ -188,7 +188,7 @@
 <div id="idea">
     <div id="idea_info">
         <div style="position:relative;">
-            <img id="thumbnail" src="{{url_for('static',filename='img/idea.jpg')}}">
+            <img id="thumbnail" src="{{url_for('static',filename=idea.thumbnail[7:])}}">
             <h2>{{idea.title}}</h2>
         </div>
         <div id="ideaInfo">
@@ -211,15 +211,6 @@
         </div>
     </div>
     <div id="edit_idea_info">
-        <form enctype="multipart/form-data" method="post" action="{{url_for('idea_add_img',ideaId=idea.id)}}">
-            <div class="form-group">
-                <div class="form-control" style="position:relative;cursor:pointer;">
-                    <p>上传图片</p>
-                    <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content">
-                </div>
-                <button type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-plus"></span></button>
-            </div>
-        </form>
         <div class="form-group">
             <div class="input-group">
                 <div class="input-group-addon">标题</div>

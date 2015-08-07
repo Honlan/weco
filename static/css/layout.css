@@ -2,6 +2,7 @@ body, html {
 	width: 100%;
 	margin: 0;
 	padding: 0;
+	background:#fdfdfd;
 }
 a:hover {
 	text-decoration: none;

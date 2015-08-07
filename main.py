@@ -88,6 +88,14 @@ def api_idea_edit():
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
 
+# 根据offset获取热门创意
+@app.route('/api/idea/hot', methods=['POST'])
+def api_idea_hot():
+	offset = int(request.form['offset'])
+	cursor.execute('select * from idea order by praise desc, timestamp desc limit ' + str(offset) + ',10')
+	ideas = cursor.fetchall()
+	return json.dumps({"ok": True, "ideas": ideas})
+
 # 用户关注创意
 # 需要进行token验证
 @app.route('/api/idea/follow', methods=['POST'])
@@ -210,6 +218,9 @@ def api_idea_comment():
 		cursor.execute('select nickname from user where username=%s', [username])
 		nickname = cursor.fetchone()['nickname']
 		cursor.execute("insert into comment(username,nickname,ideaId,timestamp,content) values(%s, %s, %s, %s, %s)", [username, nickname, ideaId, timestamp, content])
+		cursor.execute("select commentCount from idea where id=%s",[ideaId])
+		commentCount = int(cursor.fetchone()['commentCount']) + 1
+		cursor.execute("update idea set commentCount=%s where id=%s",[commentCount,ideaId])
 		return json.dumps({"ok": True})
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
@@ -320,9 +331,9 @@ def storeCurrentUrl():
 # 主页，展示最新热门创意
 @app.route('/')
 def index():
-	cursor.execute('select * from idea order by timestamp desc limit 10')
+	cursor.execute('select * from idea order by praise desc, timestamp desc limit 10')
 	ideas = cursor.fetchall()
-	return render_template('index.html',ideas=ideas)
+	return render_template('index.html', ideas=ideas)
 
 # 我的主页
 @app.route('/user')
@@ -488,6 +499,7 @@ def idea(ideaId):
 	cursor.execute('select * from idea where id=%s', [ideaId])
 	idea = cursor.fetchone()
 	idea['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(idea['timestamp'])))
+	print idea
 	cursor.execute('select nickname from user where username=%s', [idea['owner']])
 	owner = cursor.fetchone()['nickname']
 	liked = None
