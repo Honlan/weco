@@ -151,7 +151,6 @@
 }
 
 #idea #idea_comments {
-    display: none;
     margin-top: 20px;
 }
 
@@ -392,9 +391,6 @@ $(document).ready(function() {
                 $('#idea #idea_control #praise span:first-child').toggleClass('active');
             }
         });
-    });
-    $('#idea #idea_control #comment span:first-child').click(function() {
-        $('#idea #idea_comments').slideToggle();
     });
 
     $('#idea #idea_comments #publish_comment').click(function() {
