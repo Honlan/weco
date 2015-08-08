@@ -28,7 +28,7 @@ from werkzeug import secure_filename
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.secret_key="8E9852FD04BA946D51DE36DFB08E1DB6"
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = './static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # 数据库连接
