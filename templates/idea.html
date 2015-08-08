@@ -108,14 +108,14 @@
     position: relative;
 }
 
-#idea #idea_content .content_cell span.glyphicon {
+#idea #idea_content .content_cell span.fa {
     position: absolute;
     right: 0px;
     top: 50%;
     margin-top: -7px;
 }
 
-#idea #idea_content .content_cell span.glyphicon:hover {
+#idea #idea_content .content_cell span.fa:hover {
     cursor: pointer;
 }
 
@@ -134,7 +134,7 @@
 }
 
 #idea #idea_control #praise span.active,
-#idea #idea_comments .single_comment .comment_praise span.glyphicon.active {
+#idea #idea_comments .single_comment .comment_praise span.fa.active {
     color: #FF3900;
 }
 
@@ -145,7 +145,7 @@
     margin-right: 20px;
 }
 
-#idea #idea_control span.glyphicon {
+#idea #idea_control span.fa {
     position: relative;
     top: -3px;
 }
@@ -179,7 +179,7 @@
     margin-right: 10px;
 }
 
-#idea #idea_comments .single_comment .comment_praise .glyphicon {
+#idea #idea_comments .single_comment .comment_praise .fa {
     margin-right: 10px;
     margin-top: 10px;
 }
@@ -229,26 +229,26 @@
     </div>
     <div id="idea_control">
         <div id="praise">
-            <span class="glyphicon glyphicon-thumbs-up"></span>
+            <span class="fa fa-fw fa-thumbs-o-up"></span>
             <span style="position:relative;top:-5px;left:10px;">{{idea.praise}}</span>
         </div>
         <div id="readCount">
-            <span class="glyphicon glyphicon-eye-open"></span>
+            <span class="fa fa-fw fa-eye"></span>
             <span style="position:relative;top:-5px;left:10px;">{{idea.readCount}}</span>
         </div>
         <div id="comment">
-            <span class="glyphicon glyphicon-comment"></span>
+            <span class="fa fa-fw fa-comment"></span>
             <span style="position:relative;top:-5px;left:10px;">{{commentsCount}}</span>
         </div>
         <div id="share">
-            <span class="glyphicon glyphicon-share"></span>
+            <span class="fa fa-fw fa-share-square-o"></span>
         </div>
     </div>
     <div id="idea_content">
         {% for item in attachments %}
         <div class="content_cell">
             {% if idea.owner == session.get('username') %}
-            <span class="glyphicon glyphicon-remove" name="{{item.id}}"></span> {% endif %} {% if item.fileType == 0 %}
+            <span class="fa fa-fw fa-times" name="{{item.id}}"></span> {% endif %} {% if item.fileType == 0 %}
             <p>{{item.url}}</p>
             {% elif item.fileType == 1 %}
             <img src="{{url_for('static',filename=item.url[7:])}}"> {% elif item.fileType == 2 %}
@@ -266,7 +266,7 @@
             <form method="post" action="{{url_for('idea_add_text',ideaId=idea.id)}}">
                 <div class="form-group">
                     <textarea class="form-control" rows="3" name="content"></textarea>
-                    <button type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-plus"></span></button>
+                    <button type="submit" class="btn btn-default disabled"><span class="fa fa-fw fa-plus"></span></button>
                 </div>
             </form>
         </div>
@@ -278,7 +278,7 @@
                         <p>上传图片</p>
                         <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content">
                     </div>
-                    <button type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-plus"></span></button>
+                    <button type="submit" class="btn btn-default disabled"><span class="fa fa-fw fa-plus"></span></button>
                 </div>
             </form>
         </div>
@@ -290,7 +290,7 @@
                         <p>上传小视频</p>
                         <input type="file" accept="video/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content">
                     </div>
-                    <button type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-plus"></span></button>
+                    <button type="submit" class="btn btn-default disabled"><span class="fa fa-fw fa-plus"></span></button>
                 </div>
             </form>
         </div>
@@ -300,7 +300,7 @@
         <div id="add_comment">
             <div class="form-group">
                 <div class="input-group">
-                    <div class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></div>
+                    <div class="input-group-addon"><span class="fa fa-fw fa-pencil"></span></div>
                     <input class="form-control" name="comment" type="text" placeholder="写下您的评论" />
                     <div class="input-group-addon" id="publish_comment"><span>发布</span></div>
                 </div>
@@ -318,7 +318,7 @@
                     <div>
                         <p><a href="{{url_for('user',username=item.username)}}">{{item.nickname}}</a> <span>{{item.timestamp}}</span></p>
                         <div>{{item.content}}</div>
-                        <p class="comment_praise"><span name="{{item.id}}" class="glyphicon glyphicon-thumbs-up"></span><span>{{item.praise}}</span></p>
+                        <p class="comment_praise"><span name="{{item.id}}" class="fa fa-fw fa-thumbs-o-up"></span><span>{{item.praise}}</span></p>
                     </div>
                 </div>
             </div>
@@ -423,7 +423,7 @@ $(document).ready(function() {
         }
     });
 
-    $('#idea #idea_comments .single_comment .comment_praise span.glyphicon').click(function() {
+    $('#idea #idea_comments .single_comment .comment_praise span.fa').click(function() {
         var commentId = $(this).attr('name');
         $.ajax({
             url: '{{url_for("api_comment_praise")}}',
@@ -434,8 +434,8 @@ $(document).ready(function() {
             dataType: 'json',
             error: function() {},
             success: function(data) {
-                $('#idea #idea_comments .single_comment .comment_praise span:last-child').text(data['praise']);
-                $('#idea #idea_comments .single_comment .comment_praise span.glyphicon').toggleClass('active');
+                $('#idea #idea_comments .single_comment .comment_praise span.fa[name="' + commentId + '"]').next().text(data['praise']);
+                $('#idea #idea_comments .single_comment .comment_praise span.fa[name="' + commentId + '"]').toggleClass('active');
             }
         });
     });
@@ -460,7 +460,7 @@ $(document).ready(function() {
             $('#idea #idea_add_content #add_image button').removeClass('disabled');
         }
     });
-    $('#idea #idea_content .content_cell span.glyphicon').click(function() {
+    $('#idea #idea_content .content_cell span.fa').click(function() {
         var attachmentId = $(this).attr('name');
         $.ajax({
             url: '{{url_for("api_attachment_remove")}}',

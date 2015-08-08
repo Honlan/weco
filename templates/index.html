@@ -61,7 +61,7 @@ $(document).ready(function() {
             } else {
                 nextContent = '';
                 for (var i = 0; i < ideas.length; i++) {
-                    nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><img src="' + window.location.href + ideas[i]['thumbnail'] + '"><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span style="position:relative;top:-1px;">' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span style="position:relative;top:-1px;">' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span style="position:relative;top:-1px">' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + window.location.href + 'idea/' + ideas[i]['id'] + '"><p style="margin-bottom:0;">' + ideas[i]['title'] + '</p></a></div></div>';
+                    nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><img src="' + window.location.href + ideas[i]['thumbnail'] + '"><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + window.location.href + 'idea/' + ideas[i]['id'] + '"><p style="margin-bottom:0;">' + ideas[i]['title'] + '</p></a></div></div>';
                 }
             }
         }
@@ -210,7 +210,7 @@ $(document).ready(function() {
         $.waterfall.load_index++;
         if (nextContent == '' && !noMore) {
         	noMore = true;
-        	$('#index').append('<p style="text-align:center;margin-top:10px;"><span>没有更多新鲜创意啦</p>')
+        	$('#index').append('<p style="text-align:center;margin-top:10px;"><span class="fa fa-fw fa-frown-o"></span>没有更多新鲜创意啦</p>')
         }
         $.ajax({
             url: '{{url_for("api_idea_hot")}}',
@@ -227,7 +227,7 @@ $(document).ready(function() {
                 } else {
                 	nextContent = '';
                     for (var i = 0; i < ideas.length; i++) {
-                        nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><img src="' + window.location.href + ideas[i]['thumbnail'] + '"><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span style="position:relative;top:-1px;">' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span style="position:relative;top:-1px;">' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span style="position:relative;top:-1px">' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + window.location.href + 'idea/' + ideas[i]['id'] + '"><p style="margin-bottom:0;">' + ideas[i]['title'] + '</p></a></div></div>';
+                        nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><img src="' + window.location.href + ideas[i]['thumbnail'] + '"><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + window.location.href + 'idea/' + ideas[i]['id'] + '"><p style="margin-bottom:0;">' + ideas[i]['title'] + '</p></a></div></div>';
                     }
                 }
             }
@@ -265,15 +265,15 @@ $(document).ready(function() {
             <div class="idea_info">
                 <div>
                     <span class="fa fa-fw fa-thumbs-o-up"></span>
-                    <span style="position:relative;top:-1px;">{{item.praise}}</span>
+                    <span>{{item.praise}}</span>
                 </div>
                 <div>
                     <span class="fa fa-fw fa-eye"></span>
-                    <span style="position:relative;top:-1px;">{{item.readCount}}</span>
+                    <span>{{item.readCount}}</span>
                 </div>
                 <div>
                     <span class="fa fa-fw fa-comment-o"></span>
-                    <span style="position:relative;top:-1px">{{item.commentCount}}</span>
+                    <span>{{item.commentCount}}</span>
                 </div>
             </div>
         </div>
