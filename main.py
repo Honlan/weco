@@ -28,8 +28,6 @@ from werkzeug import secure_filename
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.secret_key="8E9852FD04BA946D51DE36DFB08E1DB6"
-UPLOAD_FOLDER = './static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # 数据库连接
 db = MySQLdb.connect(host=HOST, user=USER, passwd=PASSWORD, db=DATABASE, port=PORT, charset=CHARSET, cursorclass = MySQLdb.cursors.DictCursor)
@@ -528,7 +526,9 @@ def idea_add_img(ideaId):
 		image = request.files['content']
 		today = time.strftime('%Y%m%d', time.localtime(time.time()))
 		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
-		filepath = os.path.join(app.config['UPLOAD_FOLDER'] + '/img/', filename)
+		UPLOAD_FOLDER = ''
+		print UPLOAD_FOLDER
+		filepath = os.path.join(UPLOAD_FOLDER, filename)
 		image.save(filepath)
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time())), session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
