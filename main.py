@@ -550,6 +550,22 @@ def idea_add_text(ideaId):
 	else:
 		return redirect(url_for('login'))
 
+# 为创意添加视频内容
+@app.route('/idea/addVideo/<ideaId>', methods=['POST'])
+def idea_add_video(ideaId):
+	if not session.get('username') == None:
+		image = request.files['content']
+		today = time.strftime('%Y%m%d', time.localtime(time.time()))
+		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
+		UPLOAD_FOLDER = '/static/uploads/video'
+		filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+		relapath = os.path.join(UPLOAD_FOLDER, filename)
+		image.save(filepath)
+		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,2,relapath,str(int(time.time())), session.get('username')])
+		return redirect(url_for('idea', ideaId=ideaId))
+	else:
+		return redirect(url_for('login'))
+
 # 搜索创意
 @app.route('/search',methods=['GET','POST'])
 def search():

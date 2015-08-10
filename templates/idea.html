@@ -143,7 +143,7 @@
     cursor: pointer;
 }
 
-#idea #idea_content img {
+#idea #idea_content img, #idea #idea_content video {
     width: 80%;
     margin-left: 10%;
     margin-right: 10%;
@@ -285,8 +285,8 @@
             <p>{{item.url}}</p>
             {% elif item.fileType == 1 %}
             <img src="{{url_for('static',filename=item.url[8:])}}"> {% elif item.fileType == 2 %}
-            <p>这是个视频！</p>
-            {% endif %}
+            <video src="{{url_for('static',filename=item.url[8:])}}" controls="controls" loop="loop" muted>
+            </video> {% endif %}
         </div>
         {% else %}
         <p style="text-align:center;margin-top:10px;">该创意暂无详细内容</p>
@@ -317,7 +317,7 @@
         </div>
         <div id="add_video">
             <h5>添加视频</h5>
-            <form enctype="multipart/form-data" method="post" action="{{url_for('idea_add_img',ideaId=idea.id)}}">
+            <form enctype="multipart/form-data" method="post" action="{{url_for('idea_add_video',ideaId=idea.id)}}">
                 <div class="form-group">
                     <div class="form-control" style="position:relative;cursor:pointer;">
                         <p>上传小视频</p>
@@ -475,6 +475,19 @@ $(document).ready(function() {
             $('#idea #idea_add_content #add_image p').text(filename);
             $('#idea #idea_add_content #add_image p').css("color", "#333");
             $('#idea #idea_add_content #add_image button').removeClass('disabled');
+        }
+    });
+    $('#idea #idea_add_content #add_video input').change(function() {
+        if ($(this)[0].files[0].size / 1024 / 1024 > 5) {
+            $('#idea #idea_add_content #add_video p').text("视频大小大于5M");
+            $('#idea #idea_add_content #add_video p').css("color", "#F36148");
+            $('#idea #idea_add_content #add_video button').addClass('disabled');
+        } else {
+            var filename = $(this).val();
+            filename = filename.substr(filename.lastIndexOf("\\") + 1);
+            $('#idea #idea_add_content #add_video p').text(filename);
+            $('#idea #idea_add_content #add_video p').css("color", "#333");
+            $('#idea #idea_add_content #add_video button').removeClass('disabled');
         }
     });
     $('#idea #idea_content .content_cell span.fa').click(function() {
