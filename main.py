@@ -525,7 +525,7 @@ def idea_edit(ideaId):
 		return redirect(url_for('login'))
 
 # 为创意添加图片内容
-@app.route('/idea/addImg/<ideaId>',methods=['POST'])
+@app.route('/idea/addImg/<ideaId>', methods=['POST'])
 def idea_add_img(ideaId):
 	if not session.get('username') == None:
 		image = request.files['content']
