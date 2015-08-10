@@ -15,7 +15,6 @@
     left: 0px;
     bottom: 0px;
     padding: 15px 20px;
-    width: 60%;
     font-size: 25px;
     background-color: rgba(240, 240, 240, 0.6);
     border-top-right-radius: 10px;
@@ -46,6 +45,31 @@
 #idea #edit_idea_info {
     display: none;
     padding-bottom: 60px;
+}
+
+#idea #edit_idea_info #header {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+#idea #edit_idea_info #header img {
+    width: 100%;
+}
+
+#idea #edit_idea_info #header #change_thumbnail {
+    position: absolute;
+    width: auto;
+    right: 0;
+    bottom: 0;
+}
+
+#idea #edit_idea_info #header #change_thumbnail p {
+    color: #333;
+    background-color: rgba(240, 240, 240, 0.6);
+    margin-bottom: 0;
+    font-size: 15px;
+    padding: 8px 12px;
+    border-top-left-radius: 5px;
 }
 
 #idea #edit_idea_info .input-group {
@@ -186,7 +210,7 @@
 <div id="idea">
     <div id="idea_info">
         <div style="position:relative;">
-            <img id="thumbnail" src="{{url_for('static',filename=idea.thumbnail[7:])}}">
+            <img id="thumbnail" src="{{url_for('static',filename=idea.thumbnail[8:])}}">
             <h2>{{idea.title}}</h2>
         </div>
         <div id="ideaInfo">
@@ -209,21 +233,32 @@
         </div>
     </div>
     <div id="edit_idea_info">
-        <div class="form-group">
-            <div class="input-group">
-                <div class="input-group-addon">标题</div>
-                <input type="text" name="title" class="form-control" value="{{idea.title}}">
+        <form enctype="multipart/form-data" method="post" action="{{url_for('idea_edit',ideaId=idea.id)}}">
+            <div class="form-group">
+                <div id="header">
+                    <img src="{{url_for('static',filename=idea.thumbnail[8:])}}">
+                    <div id="change_thumbnail">
+                        <div style="position:relative;cursor:pointer;">
+                            <p>更换封面</p>
+                            <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="thumbnail">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">标题</div>
+                    <input type="text" name="title" class="form-control" value="{{idea.title}}">
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">标签</div>
+                    <input type="text" name="tags" class="form-control" value="{{idea.tags}}">
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">分类</div>
+                    <input type="text" name="category" class="form-control" value="{{idea.category}}">
+                </div>
             </div>
-            <div class="input-group">
-                <div class="input-group-addon">标签</div>
-                <input type="text" name="tags" class="form-control" value="{{idea.tags}}">
-            </div>
-            <div class="input-group">
-                <div class="input-group-addon">分类</div>
-                <input type="text" name="category" class="form-control" value="{{idea.category}}">
-            </div>
-        </div>
-        <span class="btn btn-default" id="save">保存</span>
+            <button type="submit" class="btn btn-default" id="save">保存</button>
+        </form>
     </div>
     <div id="idea_control">
         <div id="praise">
@@ -331,29 +366,16 @@ $(document).ready(function() {
     $('#idea #idea_info #edit').click(function() {
         $('#idea #idea_info').hide();
         $('#idea #idea_control').hide();
+        $('#idea #idea_content').hide();
         $('#idea #idea_add_content').hide();
         $('#idea #idea_comments').hide();
         $('#idea #edit_idea_info').show();
     });
-    $('#idea #edit_idea_info #save').click(function() {
-        $.ajax({
-            url: '{{url_for("api_idea_edit")}}',
-            type: 'POST',
-            data: {
-                ideaId: "{{idea.id}}",
-                username: "{{session.get('username')}}",
-                token: "{{session.get('token')}}",
-                title: $('#idea #edit_idea_info input[name="title"]').val(),
-                category: $('#idea #edit_idea_info input[name="category"]').val(),
-                tags: $('#idea #edit_idea_info input[name="tags"]').val()
-            },
-            dataType: 'json',
-            error: function() {},
-            success: function(data) {
-                window.location.reload();
-            }
-        });
+
+    $('#idea #edit_idea_info #change_thumbnail input').change(function() {
+        $('#idea #edit_idea_info #header img').attr("src", window.URL.createObjectURL($(this)[0].files[0]));
     });
+
     $('#idea #ideaInfo #follow').click(function() {
         var username = $('#session_username').text();
         if (username == 'None') {

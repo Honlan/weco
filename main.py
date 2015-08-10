@@ -75,17 +75,6 @@ def api_user_exist_email():
 	else:
 		return json.dumps({"ok": True, "exist": False})
 
-# 编辑创意
-# 需要进行token验证
-@app.route('/api/idea/edit', methods=['POST'])
-def api_idea_edit():
-	data = request.form
-	if validate(data['username'], data['token']):
-		cursor.execute("update idea set title=%s,category=%s,tags=%s,lastUpdate=%s where id=%s and owner=%s",[data['title'],data['category'],data['tags'],str(int(time.time())),data['ideaId'],data['username']])
-		return json.dumps({"ok": True})
-	else:
-		return json.dumps({"ok": False, "error": "invalid token"})
-
 # 根据offset获取热门创意
 @app.route('/api/idea/hot', methods=['POST'])
 def api_idea_hot():
@@ -451,8 +440,6 @@ def user(username):
 				followed = True
 			else:
 				followed = False
-
-
 		return render_template('user.html',user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount, followed=followed)
 
 # 发布创意
@@ -516,8 +503,29 @@ def idea(ideaId):
 	commentsCount = len(comments)
 	return render_template('idea.html', idea=idea, owner=owner, liked=liked, attachments=attachments, comments=comments, commentsCount=commentsCount)
 
+# 编辑创意
+@app.route('/idea/edit/<ideaId>', methods=['POST'])
+def idea_edit(ideaId):
+	if not session.get('username') == None:
+		data = request.form
+		image = request.files['thumbnail']
+		today = time.strftime('%Y%m%d', time.localtime(time.time()))
+		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
+		UPLOAD_FOLDER = '/static/uploads/img'
+		filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+		relapath = os.path.join(UPLOAD_FOLDER, filename)
+		image.save(filepath)
+		cursor.execute("select thumbnail from idea where id=%s",[ideaId])
+		prevThumb = cursor.fetchone()['thumbnail']
+		if (not prevThumb == "/static/img/idea.jpg") and (os.path.exists(WECOROOT + prevThumb)):
+			os.remove(WECOROOT + prevThumb)
+		cursor.execute("update idea set title=%s,category=%s,tags=%s,lastUpdate=%s,thumbnail=%s where id=%s and owner=%s",[data['title'],data['category'],data['tags'],str(int(time.time())),relapath,ideaId,session.get('username')])
+		return redirect(url_for('idea', ideaId=ideaId))
+	else:
+		return redirect(url_for('login'))
+
 # 为创意添加图片内容
-@app.route('/idea/<ideaId>/addImg',methods=['POST'])
+@app.route('/idea/addImg/<ideaId>',methods=['POST'])
 def idea_add_img(ideaId):
 	if not session.get('username') == None:
 		image = request.files['content']
@@ -532,7 +540,8 @@ def idea_add_img(ideaId):
 	else:
 		return redirect(url_for('login'))
 
-@app.route('/idea/<ideaId>/addText',methods=['POST'])
+# 为创意添加文本内容
+@app.route('/idea/addText/<ideaId>',methods=['POST'])
 def idea_add_text(ideaId):
 	if not session.get('username') == None:
 		text = request.form['content']
