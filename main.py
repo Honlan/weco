@@ -523,7 +523,7 @@ def idea_add_img(ideaId):
 		image = request.files['content']
 		today = time.strftime('%Y%m%d', time.localtime(time.time()))
 		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
-		UPLOAD_FOLDER = './static/uploads/img'
+		UPLOAD_FOLDER = '/var/www/zhl/weco/weco/static/uploads/img'
 		filepath = os.path.join(UPLOAD_FOLDER, filename)
 		image.save(filepath)
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time())), session.get('username')])
