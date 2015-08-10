@@ -233,8 +233,7 @@
         </div>
     </div>
     <div id="edit_idea_info">
-        <!-- <form enctype="multipart/form-data" method="post" action="{{url_for('idea_edit',ideaId=idea.id)}}"> -->
-        <form enctype="multipart/form-data" method="post" action="">
+        <form enctype="multipart/form-data" method="post" action="{{url_for('idea_edit',ideaId=idea.id)}}">
             <div class="form-group">
                 <div id="header">
                     <img src="{{url_for('static',filename=idea.thumbnail[8:])}}">
