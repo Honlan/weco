@@ -465,8 +465,8 @@ $(document).ready(function() {
         }
     });
     $('#idea #idea_add_content #add_image input').change(function() {
-        if ($(this)[0].files[0].size / 1024 / 1024 > 5) {
-            $('#idea #idea_add_content #add_image p').text("图片大小大于5M");
+        if ($(this)[0].files[0].size / 1024 / 1024 > 2) {
+            $('#idea #idea_add_content #add_image p').text("图片大小大于1M");
             $('#idea #idea_add_content #add_image p').css("color", "#F36148");
             $('#idea #idea_add_content #add_image button').addClass('disabled');
         } else {
@@ -479,7 +479,7 @@ $(document).ready(function() {
     });
     $('#idea #idea_add_content #add_video input').change(function() {
         if ($(this)[0].files[0].size / 1024 / 1024 > 5) {
-            $('#idea #idea_add_content #add_video p').text("视频大小大于5M");
+            $('#idea #idea_add_content #add_video p').text("视频大小大于3M");
             $('#idea #idea_add_content #add_video p').css("color", "#F36148");
             $('#idea #idea_add_content #add_video button').addClass('disabled');
         } else {
