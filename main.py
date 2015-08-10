@@ -174,14 +174,12 @@ def api_comment_praise():
 		cursor.execute('select praise from comment where id=%s', [commentId])
 		praise = int(cursor.fetchone()['praise']) + 1
 		cursor.execute('update comment set praise=%s where id=%s', [praise,commentId])
-		print praise
 		return json.dumps({"ok": True, "praise": praise})
 	else:
 		session['comments'].pop(str(commentId), None)
 		cursor.execute('select praise from comment where id=%s', [commentId])
 		praise = int(cursor.fetchone()['praise']) - 1
 		cursor.execute('update comment set praise=%s where id=%s', [praise,commentId])
-		print praise
 		return json.dumps({"ok": True, "praise": praise})
 
 # 删除创意附件
@@ -497,7 +495,6 @@ def idea(ideaId):
 	cursor.execute('select * from idea where id=%s', [ideaId])
 	idea = cursor.fetchone()
 	idea['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(idea['timestamp'])))
-	print idea
 	cursor.execute('select nickname from user where username=%s', [idea['owner']])
 	owner = cursor.fetchone()['nickname']
 	liked = None
@@ -526,7 +523,7 @@ def idea_add_img(ideaId):
 		image = request.files['content']
 		today = time.strftime('%Y%m%d', time.localtime(time.time()))
 		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
-		UPLOAD_FOLDER = ''
+		UPLOAD_FOLDER = os.getcwd() + '/static/uploads/img'
 		print UPLOAD_FOLDER
 		filepath = os.path.join(UPLOAD_FOLDER, filename)
 		image.save(filepath)
@@ -545,9 +542,22 @@ def idea_add_text(ideaId):
 		return redirect(url_for('login'))
 
 # 搜索创意
-@app.route('/search')
+@app.route('/search',methods=['GET','POST'])
 def search():
-	return 'search'
+	if request.method == 'GET':
+		return render_template('search.html')
+	elif request.method == 'POST':
+		data = request.form
+		keyword = data['keyword']
+		return render_template('index.html')
+
+# 根据分类返回创意
+@app.route('/search/<category>/<pageId>')
+def search_category(category,pageId):
+	print category,pageId
+	cursor.execute('select * from idea where category=%s order by praise desc, timestamp desc limit %s,10',[category,int(pageId)*10])
+	ideas = cursor.fetchall()
+	return render_template('search_result.html', ideas=ideas)
 
 # 通知提醒
 @app.route('/notice')
