@@ -249,7 +249,7 @@
             <span class="fa fa-fw fa-times" name="{{item.id}}"></span> {% endif %} {% if item.fileType == 0 %}
             <p>{{item.url}}</p>
             {% elif item.fileType == 1 %}
-            <img src="{{url_for('static',filename=item.url[9:])}}"> {% elif item.fileType == 2 %}
+            <img src="{{url_for('static',filename=item.url[8:])}}"> {% elif item.fileType == 2 %}
             <p>这是个视频！</p>
             {% endif %}
         </div>

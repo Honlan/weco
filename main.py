@@ -192,8 +192,8 @@ def api_attachment_remove():
 		cursor.execute("select * from attachment where id=%s",[attachmentId])
 		attachment = cursor.fetchone()
 		if attachment['username'] == data['username']:
-			if (not attachment['fileType'] == 0) and (os.path.exists(attachment['url'])):
-				os.remove(attachment['url'])
+			if (not attachment['fileType'] == 0) and (os.path.exists(os.path.abspath('.') + attachment['url'])):
+				os.remove(os.path.abspath('.') + attachment['url'])
 			cursor.execute('delete from attachment where id=%s', [attachmentId])
 			return json.dumps({"ok": True})
 		else:
@@ -523,10 +523,11 @@ def idea_add_img(ideaId):
 		image = request.files['content']
 		today = time.strftime('%Y%m%d', time.localtime(time.time()))
 		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
-		UPLOAD_FOLDER = os.path.abspath('.') + '/static/uploads/img'
-		filepath = os.path.join(UPLOAD_FOLDER, filename)
+		UPLOAD_FOLDER = '/static/uploads/img'
+		filepath = os.path.join(os.path.abspath('.') + UPLOAD_FOLDER, filename)
+		relapath = os.path.join(UPLOAD_FOLDER, filename)
 		image.save(filepath)
-		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time())), session.get('username')])
+		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,relapath,str(int(time.time())), session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
 		return redirect(url_for('login'))
