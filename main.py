@@ -525,9 +525,9 @@ def idea_add_img(ideaId):
 		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
 		UPLOAD_FOLDER = '/static/uploads/img'
 		filepath = os.path.join(os.path.abspath('.') + UPLOAD_FOLDER, filename)
-		relapath = os.path.join(UPLOAD_FOLDER, filename)
+		# relapath = os.path.join(UPLOAD_FOLDER, filename)
 		image.save(filepath)
-		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,relapath,str(int(time.time())), session.get('username')])
+		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,filepath,str(int(time.time())), session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
 		return redirect(url_for('login'))
