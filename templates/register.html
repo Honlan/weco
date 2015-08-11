@@ -71,83 +71,107 @@ $(document).ready(function() {
         ok3 = false;
     $('#register input[name="username"]').blur(function() {
         var username = $(this).val();
-        $.ajax({
-            url: '{{url_for("api_user_exist_name")}}',
-            type: 'POST',
-            data: {
-                username: username
-            },
-            dataType: 'json',
-            error: function() {},
-            success: function(data) {
-                if (data['exist']) {
-                    $('#register #register_error').css('opacity', '1').text('用户名已存在');
-                    $('#register button[type="submit"]').addClass('disabled');
-                } else {
-                    ok1 = true;
+        if (username != '') {
+            $.ajax({
+                url: '{{url_for("api_user_exist_name")}}',
+                type: 'POST',
+                data: {
+                    username: username
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    if (data['exist']) {
+                        $('#register #register_error').css('opacity', '1').text('用户名已存在');
+                        $('#register button[type="submit"]').addClass('disabled');
+                        $('#register input[name="username"]').focus();
+                        ok1 = false;
+                    } else {
+                        ok1 = true;
+                        if ($('#register #register_error').text() == '用户名已存在') {
+                            $('#register #register_error').text('');
+                        }
+                    }
+                    if (ok1 && ok2 && ok3) {
+                        $('#register #register_error').css('opacity', '0');
+                        $('#register button[type="submit"]').removeClass('disabled');
+                    }
                 }
-                if (ok1 && ok2 && ok3) {
-                    $('#register #register_error').css('opacity', '0');
-                    $('#register button[type="submit"]').removeClass('disabled');
-                }
-            }
-        });
+            });
+        }
     });
 
     $('#register input[name="email"]').blur(function() {
         var email = $(this).val();
-        $.ajax({
-            url: '{{url_for("api_user_exist_email")}}',
-            type: 'POST',
-            data: {
-                email: email
-            },
-            dataType: 'json',
-            error: function() {},
-            success: function(data) {
-                if (data['exist']) {
-                    $('#register #register_error').css('opacity', '1').text('邮箱已注册');
-                    $('#register button[type="submit"]').addClass('disabled');
-                } else {
-                    ok2 = true;
+        if (email != '') {
+            $.ajax({
+                url: '{{url_for("api_user_exist_email")}}',
+                type: 'POST',
+                data: {
+                    email: email
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    if (data['exist']) {
+                        $('#register #register_error').css('opacity', '1').text('邮箱已注册');
+                        $('#register button[type="submit"]').addClass('disabled');
+                        $('#register input[name="email"]').focus();
+                        ok2 = false;
+                    } else {
+                        ok2 = true;
+                        if ($('#register #register_error').text() == '邮箱已注册') {
+                            $('#register #register_error').text('');
+                        }
+                    }
+                    if (ok1 && ok2 && ok3) {
+                        $('#register #register_error').css('opacity', '0');
+                        $('#register button[type="submit"]').removeClass('disabled');
+                    }
                 }
-                if (ok1 && ok2 && ok3) {
-                    $('#register #register_error').css('opacity', '0');
-                    $('#register button[type="submit"]').removeClass('disabled');
-                }
-            }
-        });
+            });
+        }
     });
 
     $('#register input[name="password"]').blur(function() {
         var pwd = $(this).val();
-        var pwd1 = $('#register input[name="password1"]').val();
-        if (pwd == pwd1) {
-            ok3 = true;
-        } else {
-            console.log('error3');
-            $('#register #register_error').css('opacity', '1').text('两次密码不一致');
-            $('#register button[type="submit"]').addClass('disabled');
-        }
-        if (ok1 && ok2 && ok3) {
-            $('#register #register_error').css('opacity', '0');
-            $('#register button[type="submit"]').removeClass('disabled');
+        if (pwd != '') {
+            var pwd1 = $('#register input[name="password1"]').val();
+            if (pwd == pwd1) {
+                ok3 = true;
+                if ($('#register #register_error').text() == '两次密码不一致') {
+                    $('#register #register_error').text('');
+                }
+            } else {
+                ok3 = false;
+                $('#register #register_error').css('opacity', '1').text('两次密码不一致');
+                $('#register button[type="submit"]').addClass('disabled');
+            }
+            if (ok1 && ok2 && ok3) {
+                $('#register #register_error').css('opacity', '0');
+                $('#register button[type="submit"]').removeClass('disabled');
+            }
         }
     });
 
     $('#register input[name="password1"]').keyup(function() {
         var pwd1 = $(this).val();
-        var pwd = $('#register input[name="password"]').val();
-        if (pwd == pwd1) {
-            ok3 = true;
-        } else {
-            console.log('error3');
-            $('#register #register_error').css('opacity', '1').text('两次密码不一致');
-            $('#register button[type="submit"]').addClass('disabled');
-        }
-        if (ok1 && ok2 && ok3) {
-            $('#register #register_error').css('opacity', '0');
-            $('#register button[type="submit"]').removeClass('disabled');
+        if (pwd1 != '') {
+            var pwd = $('#register input[name="password"]').val();
+            if (pwd == pwd1) {
+                ok3 = true;
+                if ($('#register #register_error').text() == '两次密码不一致') {
+                    $('#register #register_error').text('');
+                }
+            } else {
+                ok3 = false;
+                $('#register #register_error').css('opacity', '1').text('两次密码不一致');
+                $('#register button[type="submit"]').addClass('disabled');
+            }
+            if (ok1 && ok2 && ok3) {
+                $('#register #register_error').css('opacity', '0');
+                $('#register button[type="submit"]').removeClass('disabled');
+            }
         }
     });
 });

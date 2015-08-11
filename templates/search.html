@@ -1,14 +1,20 @@
 {% extends "layout.html" %} {% block style %}
 <style>
 #search {
-    padding: 20px 30px;
+    padding: 15px 20px;
 }
 
 #search #search_form {
     margin-bottom: 30px;
 }
+#search #search_form .input-group-addon span.fa.active {
+	color: #000;
+}
+#search #search_form .input-group-addon span.fa.inactive {
+	color: #B9B7B7;
+}
 #search #keywords {
-	display: none;
+    margin-bottom: 30px;
 }
 
 #search #categories .col-xs-4>div {
@@ -35,79 +41,126 @@
 {% endblock %} {% block body %}
 <div id="search">
     <div id="search_form">
-        <form method="post" action="{{url_for('search')}}" class="form-inline">
+        <form>
             <div class="form-group">
-                <input type="text" name="keyword" class="form-control" placeholder="搜索创意" style="width:80%;display:inline-block;">
-                <button type="submit" class="btn btn-default"><span class="fa fa-fw fa-search"></span></button>
+            	<div class="input-group">
+            		<div class="input-group-addon"><span class="fa fa-fw fa-lightbulb-o active" style="margin-right:5px;"></span><span class="fa fa-fw fa-user inactive" style="margin-left:5px;"></span></div>
+            		<input type="text" name="keyword" class="form-control" placeholder="搜索创意" style="width:75%;display:inline-block;">
+            		<a href="{{url_for('search_keyword',keyword='', target='idea',pageId=0)}}" class="btn btn-default" style="border-left:none;border-top-left-radius:0px;border-bottom-left-radius:0px;"><span class="fa fa-fw fa-search"></span></a>
+            	</div>
             </div>
         </form>
     </div>
     <div id="keywords">
+        {% if not recent == None %}
     	<div id="recent">
-    		最近搜索
+            <h4>搜索记录</h4>
+            {% for item in recent %}
+            <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}"><span>{{item.keyword}}</span></a>
+            {% endfor %}
     	</div>
+        {% endif %}
     	<div id="hot">
-    		实时热搜
+            <h4>最近热搜</h4>
+            {% for item in hot %}
+            <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}"><span>{{item.keyword}} {{item.count}}</span></a>
+            {% endfor %}
     	</div>
     </div>
     <div id="categories">
         <div class="row">
             <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                 <div>
-                    <a href="{{url_for('search_category',category='life',pageId=0)}}">
+                    <a href="{{url_for('search_category',category='社会',pageId=0)}}">
                         <img src="{{url_for('static',filename='img/category/1.jpg')}}">
-                        <h3>生活</h3></a>
+                        <h3>社会</h3></a>
                 </div>
                 <div>
-                    <a href="{{url_for('search_category',category='life',pageId=0)}}">
-                        <img src="{{url_for('static',filename='img/category/4.jpg')}}">
-                        <h3>生活</h3>
-                    </a>
-                </div>
-                <div>
-                    <a href="{{url_for('search_category',category='life',pageId=0)}}">
-                        <img src="{{url_for('static',filename='img/category/7.jpg')}}">
-                        <h3>生活</h3>
-                    </a>
-                </div>
-            </div>
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <div>
-                    <a href="{{url_for('search_category',category='life',pageId=0)}}">
+                    <a href="{{url_for('search_category',category='设计',pageId=0)}}">
                         <img src="{{url_for('static',filename='img/category/2.jpg')}}">
-                        <h3>生活</h3>
+                        <h3>设计</h3>
                     </a>
                 </div>
                 <div>
-                    <a href="{{url_for('search_category',category='life',pageId=0)}}">
-                        <img src="{{url_for('static',filename='img/category/5.jpg')}}">
-                        <h3>生活</h3>
-                    </a>
-                </div>
-                <div>
-                    <a href="{{url_for('search_category',category='life',pageId=0)}}">
-                        <img src="{{url_for('static',filename='img/category/8.jpg')}}">
-                        <h3>生活</h3>
-                    </a>
-                </div>
-            </div>
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <div>
-                    <a href="{{url_for('search_category',category='life',pageId=0)}}">
+                    <a href="{{url_for('search_category',category='生活',pageId=0)}}">
                         <img src="{{url_for('static',filename='img/category/3.jpg')}}">
                         <h3>生活</h3>
                     </a>
                 </div>
                 <div>
-                    <a href="{{url_for('search_category',category='life',pageId=0)}}">
-                        <img src="{{url_for('static',filename='img/category/6.jpg')}}">
-                        <h3>生活</h3>
+                    <a href="{{url_for('search_category',category='城市',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/4.jpg')}}">
+                        <h3>城市</h3>
                     </a>
                 </div>
                 <div>
-                    <a href="{{url_for('search_category',category='life',pageId=0)}}">
+                    <a href="{{url_for('search_category',category='娱乐',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/5.jpg')}}">
+                        <h3>娱乐</h3>
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <div>
+                    <a href="{{url_for('search_category',category='健康',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/6.jpg')}}">
+                        <h3>健康</h3>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{url_for('search_category',category='旅行',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/7.jpg')}}">
+                        <h3>旅行</h3>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{url_for('search_category',category='教育',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/8.jpg')}}">
+                        <h3>教育</h3>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{url_for('search_category',category='运动',pageId=0)}}">
                         <img src="{{url_for('static',filename='img/category/9.jpg')}}">
-                        <h3>生活</h3>
+                        <h3>运动</h3>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{url_for('search_category',category='产品',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/10.jpg')}}">
+                        <h3>产品</h3>
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <div>
+                    <a href="{{url_for('search_category',category='艺术',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/11.jpg')}}">
+                        <h3>艺术</h3>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{url_for('search_category',category='科技',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/12.jpg')}}">
+                        <h3>科技</h3>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{url_for('search_category',category='工程',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/13.jpg')}}">
+                        <h3>工程</h3>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{url_for('search_category',category='广告',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/14.jpg')}}">
+                        <h3>广告</h3>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{url_for('search_category',category='其他',pageId=0)}}">
+                        <img src="{{url_for('static',filename='img/category/15.jpg')}}">
+                        <h3>其他</h3>
                     </a>
                 </div>
             </div>
@@ -116,11 +169,23 @@
 </div>
 <script>
 $(document).ready(function(){
-	$('#search #search_form input').focus(function(){
-		$('#search #keywords').slideDown();
+    var target = "idea";
+	$('#search #search_form input').keyup(function(){
+        $('#search #search_form a').attr('href', "{{url_for('search_keyword')}}" + "?target=" + target + "&keyword=" + $('#search #search_form input').val() + "&pageId=0");
+    });
+	$('#search #search_form .input-group-addon span.fa:first-child').click(function(){
+		$(this).removeClass('inactive').addClass('active');
+		$('#search #search_form .input-group-addon span.fa:last-child').removeClass('active').addClass('inactive');
+		$('#search #search_form input[name="keyword"]').attr('placeholder', '搜索创意');
+        target = "idea";
+        $('#search #search_form a').attr('href', "{{url_for('search_keyword')}}" + "?target=" + target + "&keyword=" + $('#search #search_form input').val() + "&pageId=0");
 	});
-	$('#search #search_form input').blur(function(){
-		$('#search #keywords').slideUp();
+	$('#search #search_form .input-group-addon span.fa:last-child').click(function(){
+		$(this).removeClass('inactive').addClass('active');
+		$('#search #search_form .input-group-addon span.fa:first-child').removeClass('active').addClass('inactive');
+		$('#search #search_form input[name="keyword"]').attr('placeholder', '搜索用户');
+        target = "user";
+        $('#search #search_form a').attr('href', "{{url_for('search_keyword')}}" + "?target=" + target + "&keyword=" + $('#search #search_form input').val() + "&pageId=0");
 	});
 });
 </script>

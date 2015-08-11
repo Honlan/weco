@@ -4,39 +4,124 @@
     padding-top: 40px;
     text-align: center;
     padding-bottom: 50px;
+    position: relative;
 }
+
 #idea_new #category {
-	margin-left: 5px;
-	margin-right: 5px;
-	color: red;
-	border: 1px solid #60E860;
-	border-radius: 10%;
-	padding: 5px 20px;
-	cursor: pointer;
+    margin-left: 5px;
+    margin-right: 5px;
+    color: red;
+    border: 1px solid #60E860;
+    border-radius: 10%;
+    padding: 5px 15px;
+    cursor: pointer;
 }
+
+#idea_new #all_categories {
+    display: none;
+    position: absolute;
+    width: 60%;
+    left: 50%;
+    margin-left: -30%;
+    top: 160px;
+    background-color: #FF8585;
+    color: #fff;
+    padding: 20px 30px;
+    border-radius: 5px;
+}
+
+#idea_new #all_categories p {
+    display: inline-block;
+    margin-bottom: 0;
+    border: 1px solid white;
+    padding: 3px 6px;
+    border-radius: 3px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 #idea_new form {
-	width: 60%;
-	margin: 30px auto;
+    width: 60%;
+    margin: 30px auto;
 }
+
 #idea_new form input {
-	margin-top: 20px;
+    margin-top: 20px;
 }
+
 #idea_new form button {
-	margin-top: 30px;
-	width: 120px;
+    margin-top: 30px;
+    width: 120px;
 }
 </style>
 {% endblock %} {% block body %}
 <div id="idea_new">
     <h1>我想和世界分享</h1>
     <h2>一个关于<span id="category">艺术</span>的创意</h2>
+    <div id="all_categories">
+        <p>社会</p>
+        <p>设计</p>
+        <p>生活</p>
+        <p>城市</p>
+        <p>娱乐</p>
+        <p>健康</p>
+        <p>旅行</p>
+        <p>教育</p>
+        <p>运动</p>
+        <p>产品</p>
+        <p>艺术</p>
+        <p>科技</p>
+        <p>工程</p>
+        <p>科技</p>
+        <p>广告</p>
+        <p>其他</p>
+    </div>
     <form method="post" action="{{url_for('idea_new')}}">
         <div class="form-group">
             <input type="text" name="title" class="form-control" placeholder="标题">
             <input type="text" name="tags" class="form-control" placeholder="标签">
             <input type="text" name="category" style="display:none;" value="艺术">
         </div>
-        <button type="submit" class="btn btn-default">下一步</button>
+        <button type="submit" class="btn btn-default" style="display:none;">发布创意</button>
     </form>
 </div>
+<script>
+$(document).ready(function() {
+    $('#idea_new #category').click(function() {
+        $('#idea_new #all_categories').fadeIn(300);
+    });
+    $('#idea_new #all_categories p').click(function() {
+        var category = $(this).text();
+        $(this).parent().fadeOut(300);
+        $('#idea_new #category').text(category);
+        $('#idea_new input[name="category"]').val(category);
+    });
+    var title = false,
+        tag = false;
+    $('#idea_new input[name="title"]').keyup(function() {
+        if ($(this).val() != '') {
+            title = true;
+        } else {
+            title = false;
+        }
+        if (title && tag) {
+            $('#idea_new button').show();
+        } else {
+            $('#idea_new button').hide();
+        }
+    });
+    $('#idea_new input[name="tags"]').keyup(function() {
+        if ($(this).val() != '') {
+            tag = true;
+        } else {
+            tag = false;
+        }
+        if (title && tag) {
+            $('#idea_new button').show();
+        } else {
+            $('#idea_new button').hide();
+        }
+    });
+});
+</script>
 {% endblock %}

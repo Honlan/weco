@@ -23,6 +23,8 @@ import time
 import warnings
 warnings.filterwarnings("ignore")
 from werkzeug import secure_filename
+import math
+import pprint
 
 # 载入系统配置
 app = Flask(__name__)
@@ -457,8 +459,10 @@ def idea_new():
 			category = request.form['category']
 			tags = request.form['tags']
 			timestamp = str(int(time.time()))
-			cursor.execute('insert into idea(title,category,tags,timestamp,owner) values(%s,%s,%s,%s,%s)',[title,category,tags,timestamp,username])
-			cursor.execute('select id from idea where title=%s and category=%s and tags=%s and timestamp=%s and owner=%s',[title,category,tags,timestamp,username])
+			cursor.execute('select nickname from user where username=%s',[username])
+			nickname = cursor.fetchone()['nickname']
+			cursor.execute('insert into idea(title,category,tags,timestamp,owner,nickname) values(%s,%s,%s,%s,%s,%s)',[title,category,tags,timestamp,username,nickname])
+			cursor.execute('select id from idea where title=%s and category=%s and tags=%s and timestamp=%s and owner=%s and nickname=%s',[title,category,tags,timestamp,username,nickname])
 			ideaId = cursor.fetchone()['id']
 			cursor.execute('select ideas from user where username=%s',[username])
 			ideas = cursor.fetchone()['ideas']
@@ -482,8 +486,6 @@ def idea(ideaId):
 	cursor.execute('select * from idea where id=%s', [ideaId])
 	idea = cursor.fetchone()
 	idea['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(idea['timestamp'])))
-	cursor.execute('select nickname from user where username=%s', [idea['owner']])
-	owner = cursor.fetchone()['nickname']
 	liked = None
 	username = session.get('username')
 	if (not username == None) and (not username == idea['owner']):
@@ -501,7 +503,7 @@ def idea(ideaId):
 	for item in comments:
 		item['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(item['timestamp'])))
 	commentsCount = len(comments)
-	return render_template('idea.html', idea=idea, owner=owner, liked=liked, attachments=attachments, comments=comments, commentsCount=commentsCount)
+	return render_template('idea.html', idea=idea, liked=liked, attachments=attachments, comments=comments, commentsCount=commentsCount)
 
 # 编辑创意
 @app.route('/idea/edit/<ideaId>', methods=['POST'])
@@ -567,22 +569,84 @@ def idea_add_video(ideaId):
 		return redirect(url_for('login'))
 
 # 搜索创意
-@app.route('/search',methods=['GET','POST'])
+@app.route('/search')
 def search():
-	if request.method == 'GET':
-		return render_template('search.html')
-	elif request.method == 'POST':
-		data = request.form
-		keyword = data['keyword']
-		return render_template('index.html')
+	recent = None
+	hot = None
+	if not session.get('username') == None:
+		cursor.execute("select * from search where username=%s and keyword!='' group by keyword order by timestamp desc limit 10",[session.get('username')])
+		recent = cursor.fetchall()
+	cursor.execute("select keyword, target, count(*) as count from search where timestamp > %s and keyword!='' group by keyword order by count(*) desc limit 10",[int(time.time())-3600*24*7])
+	hot = cursor.fetchall();
+	return render_template('search.html',recent=recent,hot=hot)
+
+# 关键词搜索
+@app.route('/search/keyword')
+def search_keyword():
+	target = request.args.get('target')
+	keyword = request.args.get('keyword')
+	key = keyword
+	print key
+	pageId = request.args.get('pageId')
+	numPerPage = 2
+	pageId = int(pageId)
+	keyword = keyword.split(' ')
+	if session.get('username') == None:
+		username = ''
+	else:
+		username = session.get('username')
+	result = []
+	if target == 'idea':
+		for item in keyword:
+			cursor.execute("insert into search(username,target,keyword,timestamp) values(%s,%s,%s,%s)",[username,target,item,str(int(time.time()))])
+			cursor.execute("select * from idea where title like '%%%s%%' or tags like '%%%s%%' or category like '%%%s%%'" % (item,item,item))
+			ideas = cursor.fetchall()
+			for i in ideas:
+				result.append(i)
+		result = sorted(result, key=lambda x:(x['praise'], x['timestamp']), reverse=True)
+	elif target == 'user': 
+		for item in keyword:
+			cursor.execute("insert into search(username,target,keyword,timestamp) values(%s,%s,%s,%s)",[username,target,item,str(int(time.time()))])
+			cursor.execute("select username,nickname,portrait,tags,description,lastActive from user where nickname like '%%%s%%' or tags like '%%%s%%' or description like '%%%s%%'" % (item,item,item))
+			ideas = cursor.fetchall()
+			for i in ideas:
+				result.append(i)
+		result = sorted(result, key=lambda x:(x['lastActive']), reverse=True)
+	count = len(result)
+	result = result[pageId*numPerPage:pageId*numPerPage+numPerPage]
+	start = int(pageId) - 3
+	end = int(pageId) + 3
+	total = int(math.ceil(float(count) / numPerPage)) - 1
+	if start < 0:
+		start = 0
+	if end > total:
+		end = total
+	pages = []
+	for i in xrange(start, end + 1):
+		pages.append(i)
+	return render_template('search_keyword.html', target=target, keyword=key, count=count, start=start, end=end, current=int(pageId), pages=pages, total=total, result=result)
 
 # 根据分类返回创意
-@app.route('/search/<category>/<pageId>')
-def search_category(category,pageId):
-	print category,pageId
-	cursor.execute('select * from idea where category=%s order by praise desc, timestamp desc limit %s,10',[category,int(pageId)*10])
+@app.route('/search/category')
+def search_category():
+	category = request.args.get('category')
+	pageId = request.args.get('pageId')
+	numPerPage = 10
+	cursor.execute('select count(*) as count from idea where category=%s',[category])
+	count = cursor.fetchone()['count']
+	cursor.execute('select * from idea where category=%s order by praise desc, timestamp desc limit %s,%s',[category,int(pageId)*numPerPage,numPerPage])
 	ideas = cursor.fetchall()
-	return render_template('search_result.html', ideas=ideas)
+	start = int(pageId) - 3
+	end = int(pageId) + 3
+	total = int(math.ceil(float(count) / numPerPage)) - 1
+	if start < 0:
+		start = 0
+	if end > total:
+		end = total
+	pages = []
+	for i in xrange(start, end + 1):
+		pages.append(i)
+	return render_template('search_category.html', category=category, count=count, start=start, end=end, current=int(pageId), pages=pages, total=total, ideas=ideas)
 
 # 通知提醒
 @app.route('/notice')

@@ -143,7 +143,8 @@
     cursor: pointer;
 }
 
-#idea #idea_content img, #idea #idea_content video {
+#idea #idea_content img,
+#idea #idea_content video {
     width: 80%;
     margin-left: 10%;
     margin-right: 10%;
@@ -153,8 +154,8 @@
 #idea #idea_control #readCount,
 #idea #idea_control #comment {
     display: inline-block;
-    margin-left: 20px;
-    margin-right: 10px;
+    margin-left: 10px;
+    margin-right: 0;
 }
 
 #idea #idea_control #praise span.active,
@@ -167,6 +168,13 @@
     display: inline-block;
     margin-left: 5px;
     margin-right: 20px;
+    text-align: right;
+}
+#idea #idea_control #share .bdsharebuttonbox {
+    position: relative;
+    top: -25px;
+    left: -15px;
+    display: none;
 }
 
 #idea #idea_control span.fa {
@@ -224,7 +232,7 @@
                 <p><span class="fa fa-fw fa-bookmark"></span> <span>{{idea.category}}<span></p>
             </div>
             <div id="owner">
-                <p><span class="fa fa-fw fa-user"></span> <a href="{{url_for('user',username=idea.owner)}}">{{owner}}</a> 发布于 {{idea.timestamp}}</p>
+                <p><span class="fa fa-fw fa-user"></span> <a href="{{url_for('user',username=idea.owner)}}">{{idea.nickname}}</a> 发布于 {{idea.timestamp}}</p>
             </div>
             {% if idea.owner == session.get('username') %}
             <span class="btn btn-default" id="edit">编辑</span> {% elif liked %}
@@ -263,18 +271,41 @@
     <div id="idea_control">
         <div id="praise">
             <span class="fa fa-fw fa-thumbs-o-up"></span>
-            <span style="position:relative;left:10px;">{{idea.praise}}</span>
+            <span>{{idea.praise}}</span>
         </div>
         <div id="readCount">
             <span class="fa fa-fw fa-eye"></span>
-            <span style="position:relative;left:10px;">{{idea.readCount}}</span>
+            <span>{{idea.readCount}}</span>
         </div>
         <div id="comment">
             <span class="fa fa-fw fa-comment"></span>
-            <span style="position:relative;left:10px;">{{commentsCount}}</span>
+            <span>{{commentsCount}}</span>
         </div>
         <div id="share">
             <span class="fa fa-fw fa-share-square-o"></span>
+            <div class="bdsharebuttonbox">
+                <a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+                <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+                <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+                <a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
+                <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+                <a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+            </div>
+            <script>
+            window._bd_share_config = {
+                "common": {
+                    "bdSnsKey": {},
+                    "bdText": "",
+                    "bdMini": "2",
+                    "bdMiniList": false,
+                    "bdPic": "",
+                    "bdStyle": "0",
+                    "bdSize": "16"
+                },
+                "share": {}
+            };
+            with(document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];
+            </script>
         </div>
     </div>
     <div id="idea_content">
@@ -335,7 +366,7 @@
                 <div class="input-group">
                     <div class="input-group-addon"><span class="fa fa-fw fa-pencil"></span></div>
                     <input class="form-control" name="comment" type="text" placeholder="写下您的评论" />
-                    <div class="input-group-addon" id="publish_comment"><span>发布</span></div>
+                    <div class="input-group-addon" id="publish_comment"><span>评论</span></div>
                 </div>
             </div>
         </div>
@@ -412,6 +443,9 @@ $(document).ready(function() {
                 $('#idea #idea_control #praise span:first-child').toggleClass('active');
             }
         });
+    });
+    $('#idea #idea_control #share span').click(function(){
+        $('#idea #idea_control #share .bdsharebuttonbox').slideToggle();
     });
 
     $('#idea #idea_comments #publish_comment').click(function() {
