@@ -37,6 +37,13 @@ db.autocommit(True)
 cursor = db.cursor()
 
 '''
+	动态类别说明：
+	1. 其他用户关注了我
+	2. 其他用户喜欢了我的创意
+	3. 其他用户评论了我的创意
+'''
+
+'''
 	api部分
 '''
 
@@ -81,7 +88,8 @@ def api_user_exist_email():
 @app.route('/api/idea/hot', methods=['POST'])
 def api_idea_hot():
 	offset = int(request.form['offset'])
-	cursor.execute('select * from idea order by praise desc, timestamp desc limit ' + str(offset) + ',10')
+	print  offset
+	cursor.execute('select * from idea order by praise desc, timestamp desc limit ' + str(offset*10) + ',10')
 	ideas = cursor.fetchall()
 	return json.dumps({"ok": True, "ideas": ideas})
 
@@ -93,8 +101,10 @@ def api_idea_follow():
 	if validate(data['username'], data['token']):
 		ideaId = data['ideaId']
 		username = data['username']
-		cursor.execute("select followIdeas from user where username = %s", [username])
-		followIdeas = cursor.fetchone()['followIdeas']
+		cursor.execute("select nickname,followIdeas from user where username = %s", [username])
+		nickname = cursor.fetchone()
+		followIdeas = nickname['followIdeas']
+		nickname = nickname['nickname']
 		followIdeas = followIdeas.split(',')
 		if not ideaId in followIdeas:
 			followIdeas.append(ideaId)
@@ -105,6 +115,12 @@ def api_idea_follow():
 			temp = temp + item + ','
 		followIdeas = temp[:-1]
 		cursor.execute("update user set followIdeas = %s where username = %s", [followIdeas, username])
+		# 添加类别2动态，我的创意被别人关注了
+		cursor.execute("select title,owner from idea where id=%s",[ideaId])
+		owner = cursor.fetchone()
+		ideaTitle = owner['title']
+		owner = owner['owner']
+		cursor.execute("insert into activity(me,other,otherNickname,ideaId,ideaTitle,activityType,timestamp) values(%s,%s,%s,%s,%s,%s,%s)",[owner,username,nickname,ideaId,ideaTitle,2,str(int(time.time()))])
 		return json.dumps({"ok": True})
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
@@ -208,6 +224,12 @@ def api_idea_comment():
 		cursor.execute("select commentCount from idea where id=%s",[ideaId])
 		commentCount = int(cursor.fetchone()['commentCount']) + 1
 		cursor.execute("update idea set commentCount=%s where id=%s",[commentCount,ideaId])
+		# 添加类别3动态，我的创意被别人评论了
+		cursor.execute("select title,owner from idea where id=%s",[ideaId])
+		owner = cursor.fetchone()
+		ideaTitle = owner['title']
+		owner = owner['owner']
+		cursor.execute("insert into activity(me,other,otherNickname,ideaId,ideaTitle,comment,activityType,timestamp) values(%s,%s,%s,%s,%s,%s,%s,%s)",[owner,username,nickname,ideaId,ideaTitle,content,3,str(int(time.time()))])
 		return json.dumps({"ok": True})
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
@@ -237,8 +259,10 @@ def api_user_follow():
 	if validate(data['source'], data['token']):
 		source = data['source']
 		target = data['target']
-		cursor.execute("select followUsers from user where username = %s", [source])
-		followUsers = cursor.fetchone()['followUsers']
+		cursor.execute("select nickname,followUsers from user where username = %s", [source])
+		nickname = cursor.fetchone()
+		followUsers = nickname['followUsers']
+		nickname = nickname['nickname']
 		followUsers = followUsers.split(',')
 		if not target in followUsers:
 			followUsers.append(target)
@@ -261,6 +285,8 @@ def api_user_follow():
 			temp = temp + item + ','
 		fans = temp[:-1]
 		cursor.execute("update user set fans = %s where username = %s", [fans, target])
+		# 添加类别1动态，我被别人关注了
+		cursor.execute("insert into activity(me,other,otherNickname,activityType,timestamp) values(%s,%s,%s,%s,%s)",[target,source,nickname,1,str(int(time.time()))])
 		return json.dumps({"ok": True})
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
@@ -297,6 +323,25 @@ def api_user_disfollow():
 			temp = temp + item + ','
 		fans = temp[:-1]
 		cursor.execute("update user set fans = %s where username = %s", [fans, target])
+		return json.dumps({"ok": True})
+	else:
+		return json.dumps({"ok": False, "error": "invalid token"})
+
+# 发送聊天消息
+# 需要进行token验证
+@app.route('/api/chat/send', methods=['POST'])
+def api_chat_send():
+	data = request.form
+	if validate(data['source'], data['token']):
+		source = data['source']
+		target = data['target']
+		content = data['content']
+		timestamp = str(int(time.time()))
+		cursor.execute("select nickname from user where username=%s",[target])
+		targetNickname = cursor.fetchone()['nickname']
+		cursor.execute("select nickname from user where username=%s",[source])
+		sourceNickname = cursor.fetchone()['nickname']
+		cursor.execute("insert into chat(source,sourceNickname,target,targetNickname,content,timestamp) values(%s,%s,%s,%s,%s,%s)",[source,sourceNickname,target,targetNickname,content,timestamp])
 		return json.dumps({"ok": True})
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
@@ -485,7 +530,7 @@ def idea(ideaId):
 		session['ideas'][str(ideaId)] = 0
 	cursor.execute('select * from idea where id=%s', [ideaId])
 	idea = cursor.fetchone()
-	idea['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(idea['timestamp'])))
+	idea['timestamp'] = time.strftime('%m-%d %H:%M', time.localtime(float(idea['timestamp'])))
 	liked = None
 	username = session.get('username')
 	if (not username == None) and (not username == idea['owner']):
@@ -497,11 +542,11 @@ def idea(ideaId):
 	cursor.execute("select * from attachment where ideaId=%s order by timestamp asc",[ideaId])
 	attachments = cursor.fetchall()
 	for item in attachments:
-		item['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(item['timestamp'])))
+		item['timestamp'] = time.strftime('%m-%d %H:%M', time.localtime(float(item['timestamp'])))
 	cursor.execute("select * from comment where ideaId=%s order by praise desc, timestamp desc", [ideaId])
 	comments = cursor.fetchall()
 	for item in comments:
-		item['timestamp'] = time.strftime('%Y-%m-%d %H:%M', time.localtime(float(item['timestamp'])))
+		item['timestamp'] = time.strftime('%m-%d %H:%M', time.localtime(float(item['timestamp'])))
 	commentsCount = len(comments)
 	return render_template('idea.html', idea=idea, liked=liked, attachments=attachments, comments=comments, commentsCount=commentsCount)
 
@@ -588,7 +633,7 @@ def search_keyword():
 	key = keyword
 	print key
 	pageId = request.args.get('pageId')
-	numPerPage = 2
+	numPerPage = 10
 	pageId = int(pageId)
 	keyword = keyword.split(' ')
 	if session.get('username') == None:
@@ -651,7 +696,43 @@ def search_category():
 # 通知提醒
 @app.route('/notice')
 def notice():
-	return 'notice'
+	if session.get('username') == None:
+		return redirect(url_for('login'))
+	else:
+		username = session.get('username')
+		cursor.execute("select * from activity where me=%s and checked=0 order by timestamp desc",[username])
+		activities = cursor.fetchall()
+		activityCount = len(activities)
+		for item in activities:
+			item['timestamp'] = time.strftime('%m-%d %H:%M', time.localtime(float(item['timestamp'])))
+		cursor.execute("update activity set checked=1 where me=%s",[username])
+		cursor.execute("select source,sourceNickname,count(*) as count,timestamp from chat where target=%s and checked=0 group by source order by timestamp desc",[username])
+		chats = cursor.fetchall()
+		for item in chats:
+			item['timestamp'] = time.strftime('%m-%d %H:%M', time.localtime(float(item['timestamp'])))
+		chatsCount = len(chats)
+		return render_template('notice.html',activities=activities,activityCount=activityCount,chats=chats,chatsCount=chatsCount)
+
+# 私信界面
+@app.route('/chat/<username>')
+def chat(username):
+	if session.get('username') == None:
+		return redirect(url_for('login'))
+	else:
+		me = session.get('username')
+		cursor.execute("select * from chat where (source=%s and target=%s) or (source=%s and target=%s) order by timestamp desc limit 100",[username,me,me,username])
+		chats = cursor.fetchall()
+		chats = sorted(chats, key=lambda x:(x['timestamp']))
+		currentTime = 0
+		for item in chats:
+			temp = float(item['timestamp'])
+			if not currentTime == 0 and float(item['timestamp']) - currentTime < 600:
+				item['timestamp'] = ''
+			else:
+				item['timestamp'] = time.strftime('%m-%d %H:%M', time.localtime(float(item['timestamp'])))
+			currentTime = temp
+		cursor.execute('update chat set checked=1 where source=%s and target=%s',[username,me])
+		return render_template('chat.html',target=username,chats=chats)
 
 # 登陆
 @app.route('/login', methods=['GET','POST'])

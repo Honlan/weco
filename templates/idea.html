@@ -170,10 +170,11 @@
     margin-right: 20px;
     text-align: right;
 }
-#idea #idea_control #share .bdsharebuttonbox {
+
+#idea #idea_control #share .jiathis_style {
     position: relative;
-    top: -25px;
-    left: -15px;
+    top: -19px;
+    left: -20px;
     display: none;
 }
 
@@ -186,7 +187,7 @@
 }
 
 #idea #idea_comments #publish_comment {
-    background-color: #A9A9FF;
+    background-color: #6464FF;
     color: white;
     cursor: pointer;
 }
@@ -283,29 +284,19 @@
         </div>
         <div id="share">
             <span class="fa fa-fw fa-share-square-o"></span>
-            <div class="bdsharebuttonbox">
-                <a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
-                <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
-                <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-                <a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
-                <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
-                <a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+            <!-- JiaThis Button BEGIN -->
+            <div class="jiathis_style">
+                <a class="jiathis_button_cqq"></a>
+                <a class="jiathis_button_weixin"></a>
+                <a class="jiathis_button_tsina"></a>
+                <a class="jiathis_button_tqq"></a>
+                <a class="jiathis_button_qzone"></a>
+                <a class="jiathis_button_renren"></a>
+                <!-- <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a> -->
+                <!-- <a class="jiathis_counter_style"></a> -->
             </div>
-            <script>
-            window._bd_share_config = {
-                "common": {
-                    "bdSnsKey": {},
-                    "bdText": "",
-                    "bdMini": "2",
-                    "bdMiniList": false,
-                    "bdPic": "",
-                    "bdStyle": "0",
-                    "bdSize": "16"
-                },
-                "share": {}
-            };
-            with(document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];
-            </script>
+            <script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+            <!-- JiaThis Button END -->
         </div>
     </div>
     <div id="idea_content">
@@ -444,8 +435,8 @@ $(document).ready(function() {
             }
         });
     });
-    $('#idea #idea_control #share span').click(function(){
-        $('#idea #idea_control #share .bdsharebuttonbox').slideToggle();
+    $('#idea #idea_control #share span').click(function() {
+        $('#idea #idea_control #share .jiathis_style').slideToggle();
     });
 
     $('#idea #idea_comments #publish_comment').click(function() {

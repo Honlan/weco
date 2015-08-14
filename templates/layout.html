@@ -46,7 +46,7 @@
             <li><a href="{{url_for('notice')}}"><i class="fa fa-fw fa-envelope"></i></a></li>
         </ul>
     </div>
-    <div id="session_username">{{session.get('username')}}</div>
+    <div id="session_username" style="display:none;">{{session.get('username')}}</div>
     <div id="main">
         <div id="content">
             {% block body %} {% endblock %}

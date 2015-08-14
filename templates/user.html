@@ -24,6 +24,10 @@
     text-align: right;
 }
 
+#user #user-basic-info #user-control #chat {
+    margin-top: 10px;
+}
+
 #user #user-profile {
     margin-top: 10px;
 }
@@ -71,6 +75,7 @@
                     {% else %}
                     <span class="btn btn-default" id="follow">关注Ta</span>
                     {% endif %}
+                    <a href="{{url_for('chat',username=user.username)}}"  class="btn btn-default" id="chat">私信Ta</a>
                 </div>
             </div>
         </div>

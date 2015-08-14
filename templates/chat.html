@@ -1,0 +1,102 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#chat {
+    padding: 20px 30px 70px 20px;
+}
+
+#chat #chatForm {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid #ddd;
+    padding: 10px 5%;
+    z-index: 999;
+    background-color: #f2f2f2;
+}
+#chat #chatRecords .time {
+	font-size: 8px;
+	text-align: center;
+	margin-bottom: 0;
+	
+	color: white;
+}
+#chat #chatRecords .time span {
+	padding: 2px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	background-color: #848484;
+}
+#chat #chatRecords .me {
+    text-align: right;
+}
+
+#chat #chatRecords .mywords {
+    text-align: right;
+    width: 80%;
+    margin-left: 20%;
+}
+
+#chat #chatRecords .mywords span,
+#chat #chatRecords .otherwords span {
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+#chat #chatRecords .other {
+    text-align: left;
+}
+
+#chat #chatRecords .otherwords {
+    text-align: left;
+    width: 80%;
+    margin-right: 20%;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="chat">
+    <div id="chatRecords">
+        {% for item in chats %} 
+        {% if not item.timestamp == '' %}
+        <p class="time"><span>{{item.timestamp}}</span></p>
+        {% endif %}
+        {% if item.source == session.get('username') %}
+        <p class="me"><a href="{{url_for('home')}}">我</a></p>
+        <p class="mywords"><span>{{item.content}}</span></p>
+        {% elif item.target == session.get('username') %}
+        <p class="other"><a href="{{url_for('user',username=item.source)}}">{{item.sourceNickname}}</a></p>
+        <p class="otherwords"><span>{{item.content}}</span></p>
+        {% endif %} {% endfor %}
+    </div>
+    <form id="chatForm">
+        <div class="input-group">
+            <input type="text" name="chat" class="form-control" placeholder="发送消息">
+            <div class="input-group-addon" id="send"><span class="fa fa-fw fa-paper-plane-o"></span></div>
+        </div>
+    </form>
+</div>
+<script>
+$(document).ready(function() {
+    $('#chat #chatForm #send').click(function() {
+        $.ajax({
+            url: '{{url_for("api_chat_send")}}',
+            type: 'POST',
+            data: {
+                source: "{{session.get('username')}}",
+                token: "{{session.get('token')}}",
+                target: "{{target}}",
+                content: $('#chat #chatForm input[name="chat"]').val()
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $obj = '<p class="me"><a href="{{url_for("home")}}">我</a></p><p class="mywords"><span>' + $('#chat #chatForm input[name="chat"]').val() + '</span></p>';
+                $('#chat #chatRecords').append($obj);
+                $('#chat #chatForm input[name="chat"]').val('');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
