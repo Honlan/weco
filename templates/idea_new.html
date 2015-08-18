@@ -3,18 +3,21 @@
 #idea_new {
     padding-top: 40px;
     text-align: center;
-    padding-bottom: 50px;
+    padding-bottom: 40px;
     position: relative;
 }
 
 #idea_new #category {
-    margin-left: 5px;
-    margin-right: 5px;
-    color: red;
-    border: 1px solid #60E860;
-    border-radius: 10%;
-    padding: 5px 15px;
+    color: #009c81;
+    padding: 2px 6px;
+    margin-right: 10px;
     cursor: pointer;
+    border-bottom: 1px dashed rgba(201, 201, 202, 0.8);
+}
+
+#idea_new h5 {
+    font-size: 22px;
+    color: #444;
 }
 
 #idea_new #all_categories {
@@ -41,23 +44,47 @@
 }
 
 #idea_new form {
-    width: 60%;
-    margin: 30px auto;
+    width: 82%;
+    margin: 0px auto;
 }
 
-#idea_new form input {
-    margin-top: 20px;
+#idea_new form button[type="submit"] {
+    border: none;
+    color: #009c81;
+    font-size: 15px;
+    background-color: white;
+    width: 100%;
+    padding: 10px 20px;
 }
-
-#idea_new form button {
-    margin-top: 30px;
-    width: 120px;
+#idea_new #hot-tags {
+    margin-bottom: 20px;
+    text-align: center;
+}
+#idea_new #hot-tags p {
+    color:#e4007e;
+    background-image: url("{{url_for('static',filename='img/icon/line.png')}}");
+}
+#idea_new #hot-tags p span {
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #efefef;
+}
+#idea_new #hot-tags .hot-tag {
+    display: inline-block;
+    color: #009c81;
+    background-color: #fff;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    margin-left: 5px;
+    font-size: 12px;
+    border-radius: 10px;
+    cursor: pointer;
 }
 </style>
 {% endblock %} {% block body %}
 <div id="idea_new">
-    <h1>我想和世界分享</h1>
-    <h2>一个关于<span id="category">艺术</span>的创意</h2>
+    <img class="weco_logo" src="{{url_for('static',filename='img/icon/icon-01.png')}}">
     <div id="all_categories">
         <p>社会</p>
         <p>设计</p>
@@ -77,12 +104,30 @@
         <p>其他</p>
     </div>
     <form method="post" action="{{url_for('idea_new')}}">
-        <div class="form-group">
-            <input type="text" name="title" class="form-control" placeholder="标题">
-            <input type="text" name="tags" class="form-control" placeholder="标签">
+        <div class="weco_form">
+            <h5>我想通过一个</h>
+            <h5 style="margin:10px;"><span id="category">艺术</span>创意</h5>
+            <h5>改变世界！</h5>
+        </div>
+        <div class="weco_form">
+            <input type="text" name="title" placeholder="标题&nbsp;&nbsp;&nbsp;&nbsp;一个简短的概括">
+            <input type="text" name="tags" placeholder="标签&nbsp;&nbsp;&nbsp;&nbsp;空格分割标签">
             <input type="text" name="category" style="display:none;" value="艺术">
         </div>
-        <button type="submit" class="btn btn-default" style="display:none;">发布创意</button>
+        <div id="hot-tags">
+            <p><span>热门标签</span></p>
+            <div class="hot-tag">社会创新</div>
+            <div class="hot-tag">社会创新</div>
+            <div class="hot-tag">社会创新</div>
+            <div class="hot-tag">社会创新</div>
+            <div class="hot-tag">医疗保险</div>
+            <div class="hot-tag">社会创新</div>
+            <div class="hot-tag">社会创新</div>
+            <div class="hot-tag">社会创新</div>
+        </div>
+        <div class="weco_form">
+            <button type="submit" class="btn btn-default disabled">开启我的创意之旅 ></button>
+        </div>
     </form>
 </div>
 <script>
@@ -98,6 +143,22 @@ $(document).ready(function() {
     });
     var title = false,
         tag = false;
+    $('#idea_new #hot-tags .hot-tag').click(function(){
+        var tagText = $(this).text();
+        var tagsText = $('#idea_new input[name="tags"]').val();
+        if (tagsText == '') {
+            tagsText = tagText;
+        } else if (tagsText.indexOf(tagText) == -1) {
+            tagsText = tagsText + ' ' + tagText;
+        }
+        $('#idea_new input[name="tags"]').val(tagsText);
+        tag = true;
+        if (title && tag) {
+            $('#idea_new button').removeClass('disabled');
+        } else {
+            $('#idea_new button').addClass('disabled');
+        }
+    });
     $('#idea_new input[name="title"]').keyup(function() {
         if ($(this).val() != '') {
             title = true;
@@ -105,9 +166,9 @@ $(document).ready(function() {
             title = false;
         }
         if (title && tag) {
-            $('#idea_new button').show();
+            $('#idea_new button').removeClass('disabled');
         } else {
-            $('#idea_new button').hide();
+            $('#idea_new button').addClass('disabled');
         }
     });
     $('#idea_new input[name="tags"]').keyup(function() {
@@ -117,9 +178,9 @@ $(document).ready(function() {
             tag = false;
         }
         if (title && tag) {
-            $('#idea_new button').show();
+            $('#idea_new button').removeClass('disabled');
         } else {
-            $('#idea_new button').hide();
+            $('#idea_new button').addClass('disabled');
         }
     });
 });

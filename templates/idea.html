@@ -113,7 +113,7 @@
     padding-bottom: 30px;
 }
 
-#idea #idea_add_content button {
+#idea #idea_add_content .btn {
     float: right;
     margin-top: 10px;
     padding: 4px 8px;
@@ -242,7 +242,7 @@
         </div>
     </div>
     <div id="edit_idea_info">
-        <form enctype="multipart/form-data" method="post" action="{{url_for('idea_edit',ideaId=idea.id)}}">
+        <form>
             <div class="form-group">
                 <div id="header">
                     <img src="{{url_for('static',filename=idea.thumbnail[8:])}}">
@@ -266,7 +266,7 @@
                     <input type="text" name="category" class="form-control" value="{{idea.category}}">
                 </div>
             </div>
-            <button type="submit" class="btn btn-default" id="save">保存</button>
+            <span class="btn btn-default" id="save">保存</span>
         </form>
     </div>
     <div id="idea_control">
@@ -327,13 +327,13 @@
         </div>
         <div id="add_image">
             <h5>添加图片</h5>
-            <form enctype="multipart/form-data" method="post" action="{{url_for('idea_add_img',ideaId=idea.id)}}">
+            <form>
                 <div class="form-group">
                     <div class="form-control" style="position:relative;cursor:pointer;">
                         <p>上传图片</p>
                         <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content">
                     </div>
-                    <button type="submit" class="btn btn-default disabled"><span class="fa fa-fw fa-plus"></span></button>
+                    <span class="btn btn-default disabled"><span class="fa fa-fw fa-plus"></span></span>
                 </div>
             </form>
         </div>
@@ -385,6 +385,7 @@
 </div>
 <script>
 $(document).ready(function() {
+    var change_thumbnail = false;
     $('#idea #idea_info #edit').click(function() {
         $('#idea #idea_info').hide();
         $('#idea #idea_control').hide();
@@ -392,10 +393,68 @@ $(document).ready(function() {
         $('#idea #idea_add_content').hide();
         $('#idea #idea_comments').hide();
         $('#idea #edit_idea_info').show();
+        change_thumbnail = false;
     });
 
     $('#idea #edit_idea_info #change_thumbnail input').change(function() {
+        change_thumbnail = true;
         $('#idea #edit_idea_info #header img').attr("src", window.URL.createObjectURL($(this)[0].files[0]));
+    });
+    $('#idea #edit_idea_info #save').click(function() {
+        if (change_thumbnail) {
+            var ratio = 64 / ($('#idea #edit_idea_info #change_thumbnail input')[0].files[0].size / 1024);
+            if (ratio > 1) {
+                ratio = 1;
+            }
+            lrz($('#idea #edit_idea_info #change_thumbnail input')[0].files[0], {
+                    quality: ratio
+                })
+                .then(function(rst) {
+                    $.ajax({
+                        url: '{{url_for("api_idea_edit")}}',
+                        type: 'POST',
+                        data: {
+                            username: "{{session.get('username')}}",
+                            token: "{{session.get('token')}}",
+                            ideaId: "{{idea.id}}",
+                            thumbnail: rst.base64,
+                            title: $("#idea #edit_idea_info input[name='title']").val(),
+                            tags: $("#idea #edit_idea_info input[name='tags']").val(),
+                            category: $("#idea #edit_idea_info input[name='category']").val()
+                        },
+                        dataType: 'json',
+                        error: function() {},
+                        success: function(data) {
+                            window.location.reload()
+                        }
+                    });
+                })
+                .catch(function(err) {
+                    // 处理失败会执行
+                })
+                .always(function() {
+                    // 不管是成功失败，都会执行
+                });
+        } else {
+            $.ajax({
+                url: '{{url_for("api_idea_edit")}}',
+                type: 'POST',
+                data: {
+                    username: "{{session.get('username')}}",
+                    token: "{{session.get('token')}}",
+                    ideaId: "{{idea.id}}",
+                    title: $("#idea #edit_idea_info input[name='title']").val(),
+                    tags: $("#idea #edit_idea_info input[name='tags']").val(),
+                    category: $("#idea #edit_idea_info input[name='category']").val()
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    window.location.reload()
+                }
+            });
+        }
+
     });
 
     $('#idea #ideaInfo #follow').click(function() {
@@ -445,7 +504,6 @@ $(document).ready(function() {
             storeCurrentUrl();
         } else {
             if ($('#idea #idea_comments #add_comment input').val() != '') {
-                console.log("ajax");
                 $.ajax({
                     url: '{{url_for("api_idea_comment")}}',
                     type: 'POST',
@@ -490,17 +548,42 @@ $(document).ready(function() {
         }
     });
     $('#idea #idea_add_content #add_image input').change(function() {
-        if ($(this)[0].files[0].size / 1024 / 1024 > 2) {
-            $('#idea #idea_add_content #add_image p').text("图片大小大于1M");
-            $('#idea #idea_add_content #add_image p').css("color", "#F36148");
-            $('#idea #idea_add_content #add_image button').addClass('disabled');
-        } else {
-            var filename = $(this).val();
-            filename = filename.substr(filename.lastIndexOf("\\") + 1);
-            $('#idea #idea_add_content #add_image p').text(filename);
-            $('#idea #idea_add_content #add_image p').css("color", "#333");
-            $('#idea #idea_add_content #add_image button').removeClass('disabled');
+        var filename = $(this).val();
+        filename = filename.substr(filename.lastIndexOf("\\") + 1);
+        $('#idea #idea_add_content #add_image p').text(filename);
+        $('#idea #idea_add_content #add_image span.btn').removeClass('disabled');
+    });
+    $('#idea #idea_add_content #add_image span.btn').click(function() {
+        var ratio = 64 / ($('#idea #idea_add_content #add_image input')[0].files[0].size / 1024);
+        if (ratio > 1) {
+            ratio = 1;
         }
+        lrz($('#idea #idea_add_content #add_image input')[0].files[0], {
+                quality: ratio
+            })
+            .then(function(rst) {
+                $.ajax({
+                    url: '{{url_for("api_idea_addImg")}}',
+                    type: 'POST',
+                    data: {
+                        username: "{{session.get('username')}}",
+                        token: "{{session.get('token')}}",
+                        image: rst.base64,
+                        ideaId: "{{idea.id}}"
+                    },
+                    dataType: 'json',
+                    error: function() {},
+                    success: function(data) {
+                        window.location.reload()
+                    }
+                });
+            })
+            .catch(function(err) {
+                // 处理失败会执行
+            })
+            .always(function() {
+                // 不管是成功失败，都会执行
+            });
     });
     $('#idea #idea_add_content #add_video input').change(function() {
         if ($(this)[0].files[0].size / 1024 / 1024 > 5) {

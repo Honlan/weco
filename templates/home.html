@@ -1,269 +1,793 @@
 {% extends "layout.html" %} {% block style %}
 <style>
+#me {
+    padding: 15px 15px 20px 15px;
+}
+
 #me #user-basic-info {
-	padding: 10px 20px;
+    padding: 10px 20px;
+}
+
+#me #user-basic-info #user-protrait {
+    position: absolute;
+    left: 0;
+    top: 5px;
 }
 
 #me #user-basic-info #user-protrait img {
-    width: 100%;
+    width: 75px;
+    border-radius: 50%;
+}
+
+#me #user-basic-info #user-username {
+    text-align: left;
+    margin-left: 90px;
+    margin-right: 53px;
+    padding-top: 10px;
+    min-height: 90px;
 }
 
 #me #user-basic-info #user-username p.tag {
     display: inline-block;
-}
-
-#me #user-basic-info #user-username .fa-male {
-    color: #6060FF;
-}
-
-#me #user-basic-info #user-username .fa-female {
-    color: #FF6060;
+    color: white;
+    background-color: #009c81;
+    padding: 3px 6px;
+    font-size: 9px;
+    border-radius: 10px;
+    margin-bottom: 5px;
 }
 
 #me #user-basic-info #user-control {
-    text-align: right;
+    position: absolute;
+    right: -5px;
+    top: 10px;
 }
 
-#me #user-basic-info #user-control a {
-    margin-bottom: 8px;
+#me #user-basic-info #user-control span {
+    color: #e4007e;
+    font-size: 12px;
+    background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
+    background-size: 100% 100%;
+    padding: 8px 13px 8px 16px;
+    cursor: pointer;
 }
 
-#me #user-profile {
+#me #user-profile-nav {
     margin-top: 10px;
+    width: 100%;
+    margin-bottom: 5px;
 }
 
-#me #user-profile ul {
-	margin-top: 10px;
-    width: 100%;
+#me #user-profile-nav li {
+    width: 20%;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+#me #user-profile-nav li a {
+    border: none;
+    color: #555;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    padding-top: 0;
+    padding-bottom: 0px;
+}
+
+#me #user-profile-nav li a span {
+    font-size: 8px;
+    position: relative;
+    top: 2px;
+}
+
+#me #user-profile-nav .fa-male {
+    color: #009c81;
+}
+
+#me #user-profile-nav .fa-female {
+    color: #e4007e;
+}
+
+#me #user-profile-content h4.title {
+    font-size: 17px;
+    text-align: center;
+    background-image: url("{{url_for('static',filename='img/icon/line.png')}}");
+}
+
+#me #user-profile-content h4.title span {
     padding-left: 10px;
     padding-right: 10px;
+    background-color: #f9f9f9;
 }
 
-#me #user-profile ul li {
-    width: 20%;
+#me #user-profile-content #user-info h5 {
+    position: absolute;
+    top: 2px;
+    left: 10px;
+    margin: 0;
+    color: #999;
+}
+
+#me #user-profile-content #user-info p {
+    margin-left: 60px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+#me #user-profile-content .summary {
+    text-align: center;
+    color: #009c81;
+    font-size: 12px;
+}
+
+#me #user-profile-content .summary span {
+    color: #e4007e;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#me #user-profile-content #user-idea {
     text-align: center;
 }
 
-#me #user-profile .tab-content {
-    padding: 20px 30px;
+#me #user-profile-content #user-idea .myIdea {
+    width: 44%;
+    margin-left: 2%;
+    margin-right: 2%;
+    display: inline-block;
+    margin-bottom: 5px;
+    border-radius: 5px;
 }
-#me #user-profile a.disfollow_idea, #me #user-profile a.disfollow_user {
-	float: right;
+
+#me #user-profile-content #user-idea .myIdea p {
+    background-color: #efefef;
+    color: #555;
+    font-size: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
+
+#me #user-profile-content #user-like {
+    text-align: center;
+}
+
+#me #user-profile-content #user-like .otherIdea {
+    width: 44%;
+    margin-left: 2%;
+    margin-right: 2%;
+    display: inline-block;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+#me #user-profile-content #user-like .otherIdea p {
+    background-color: #efefef;
+    color: #555;
+    font-size: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#me #user-profile-content #user-follow .myFollow {
+    position: relative;
+    padding: 10px 10px;
+    border-bottom: 1px solid rgba(201, 201, 202, 0.4);
+}
+
+#me #user-profile-content #user-follow .myFollow:last-child {
+    border-bottom: 0;
+}
+
+#me #user-profile-content #user-follow .myFollow img {
+    width: 60px;
+    border-radius: 50%;
+    position: absolute;
+    left: 20px;
+    top: 10px;
+}
+
+#me #user-profile-content #user-follow .myFollow span {
+    cursor: pointer;
+    background-image:url("{{url_for('static',filename='img/icon/green4.png')}}");
+    background-size: 100% 100%;
+    font-size: 13px;
+    color: #888;
+    padding: 6px 10px 8px 10px;
+    position: absolute;
+    right: 25px;
+    top: 15px;
+}
+
+#me #user-profile-content #user-fan .myFan {
+    position: relative;
+    padding: 10px 10px;
+    border-bottom: 1px solid rgba(201, 201, 202, 0.4);
+}
+
+#me #user-profile-content #user-fan .myFan:last-child {
+    border-bottom: 0;
+}
+
+#me #user-profile-content #user-fan .myFan img {
+    width: 60px;
+    border-radius: 50%;
+    position: absolute;
+    left: 20px;
+    top: 10px;
+}
+
+#me #user-profile-content #user-fan .myFan .follow_or_not.unfollowed {
+    cursor: pointer;
+    background-image:url("{{url_for('static',filename='img/icon/green2.png')}}");
+    background-size: 100% 100%;
+    font-size: 13px;
+    color: #e4007e;
+    padding: 8px 12px 8px 15px;
+    position: absolute;
+    right: 25px;
+    top: 15px;
+}
+
+#me #user-profile-content #user-fan .myFan .follow_or_not.followed {
+    cursor: pointer;
+    background-image:url("{{url_for('static',filename='img/icon/green4.png')}}");
+    background-size: 100% 100%;
+    font-size: 13px;
+    color: #888;
+    padding: 6px 10px 8px 10px;
+    position: absolute;
+    right: 25px;
+    top: 15px;
+}
+
 #me #edit_user_info {
-	margin: 20px 30px;
-	margin-bottom: 80px;
-	position: relative;
-	display: none;
+    display: none;
+    text-align: center;
 }
-#me #edit_user_info .input-group {
+
+#me #edit_user_info #portrait {
+    width: 60px;
     margin-bottom: 20px;
+    border-radius: 50%;
 }
 
 #me #edit_user_info #save {
-	position: absolute;
-	right: 0;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #009c81;
 }
+
+#me #edit_user_info #save span {
+    background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
+    background-size: 100% 100%;
+    padding: 12px 27px 10px 30px;
+    cursor: pointer;
+}
+
+#me #edit_user_info .fa-male,
+#me #edit_user_info .fa-female {
+    color: #999;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#me #edit_user_info .fa-male.active {
+    color: #009c81;
+}
+
+#me #edit_user_info .fa-female.active {
+    color: #e4007e;
+}
+
+#me #edit_user_info #hot-tags {
+    margin-bottom: 20px;
+}
+
+#me #edit_user_info #hot-tags p {
+    color: #e4007e;
+    background-image: url("{{url_for('static',filename='img/icon/line.png')}}");
+}
+
+#me #edit_user_info #hot-tags p span {
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #efefef;
+}
+
+#me #edit_user_info #hot-tags .hot-tag {
+    display: inline-block;
+    color: #009c81;
+    background-color: #fff;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    margin-left: 5px;
+    font-size: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#me #edit_user_info .modal-body {
+    padding: 40px 50px 35px 50px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+}
+
+#me #edit_user_info #preview {
+    width: 370px;
+    margin: 0 auto;
+}
+
+#me #edit_user_info input[type="range"] {
+    width: 60%;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 40px;
+    box-shadow: 1px 1px 2px rgba(20, 20, 20, 0.4) inset;
+    border-radius: 15px;
+    background-color: #efefef;
+    -webkit-appearance: none;
+    height: 5px;
+}
+
+#me #edit_user_info input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border-radius: 50%;
+    background-color: #009c81;
+    width: 15px;
+    height: 15px;
+    box-shadow: 2px 2px 3px rgba(20, 20, 20, 0.4);
+}
+
+#me #edit_user_info #preview button {
+    background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
+    background-size: 100% 100%;
+    padding: 12px 20px 10px 20px;
+    background-position: -2px 0px;
+    border: none;
+    background-color: #f9f9f9;
+    color: #009c81;
+    margin-top: 15px;
+}
+
+#me #edit_user_info .cropit-image-preview {
+    background-color: #f8f8f8;
+    background-size: cover;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-top: 7px;
+    width: 250px;
+    height: 250px;
+    cursor: move;
+    border: none;
+}
+
+#me #edit_user_info .cropit-image-background {
+    opacity: .2;
+    cursor: auto;
+}
+
+
+/*#me #changePwd {
+    margin: 20px 30px;
+    position: relative;
+    padding-bottom: 80px;
+}
+#me #changePwd button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}*/
+
 #me #logout_a {
-	text-align: center;
-	border-top: 1px solid #ddd;
-	padding-top: 30px;
-	padding-bottom: 30px;
-	margin-bottom: 0;
+    text-align: center;
+    margin-bottom: 0;
+    padding: 10px;
 }
+
 #me #logout_a a {
-	width: 60%;
+    width: 100%;
+    color: #009c81;
+    font-size: 15px;
 }
 </style>
 {% endblock %} {% block body %}
 <div id='me'>
-    <div id="user-basic-info">
-        <div class='row'>
-            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                <div id="user-protrait">
-                    <img src="{{url_for('static', filename=user.portrait[8:])}}">
-                </div>
+    <div id="user-basic-info" class="weco_form">
+        <div style="text-align:center;position:relative">
+            <div id="user-protrait">
+                <img src="{{url_for('static', filename=user.portrait[8:])}}">
             </div>
-            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                <div id="user-username">
-                    <p>{{user.nickname}} {% if user.gender == 1 %}
-                        <span class="fa fa-fw fa-male"></span> {% else %}
-                        <span class="fa fa-fw fa-female"></span> {% endif %}
-                    </p>
-                    {% for tag in user.tags.split(',') %}
-                    <p class="tag">{{tag}}</p>
-                    {% endfor %}
-                </div>
+            <div id="user-username">
+                <p style="color:#444;">{{user.nickname}}
+                </p>
+                {% for tag in user.tags.split(' ') %} {% if not tag == '' %}
+                <p class="tag">{{tag}}</p>
+                {% endif %} 
+                {% endfor %}
             </div>
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <div id="user-control">
-                    <a href="{{url_for('idea_new')}}" class="btn btn-default">发布创意</a>
-                    <span class="btn btn-default" id="edit_a">编辑资料</span>
+            <div id="user-control">
+                <span id="edit_a">编辑</span>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" role="tablist" id="user-profile-nav">
+            <li style="border-right:2px solid rgba(0, 156, 129, 0.6);" role="presentation"><a href="#user-idea" aria-controls="user-idea" role="tab" data-toggle="tab">创意<br><span style="color:#e4007e;">{{ideasCount}}</span></a></li>
+            <li style="border-right:2px solid rgba(0, 156, 129, 0.6);" role="presentation"><a href="#user-like" aria-controls="user-like" role="tab" data-toggle="tab">喜欢<br><span class="followIdeasCount" style="color:#e4007e;">{{followIdeasCount}}</span></a></li>
+            <li style="border-right:2px solid rgba(0, 156, 129, 0.6);" role="presentation" class="active"><a href="#user-info" aria-controls="user-info" role="tab" data-toggle="tab">资料<br>{% if user.gender == 1 %}<span class="fa fa-fw fa-male"></span>{% else %}<span class="fa fa-fw fa-female"></span>{% endif %}</a></li>
+            <li style="border-right:2px solid rgba(0, 156, 129, 0.6);" role="presentation"><a href="#user-follow" aria-controls="user-follow" role="tab" data-toggle="tab">关注<br><span class="followUsersCount" style="color:#e4007e;">{{followUsersCount}}</span></a></li>
+            <li role="presentation"><a href="#user-fan" aria-controls="user-fan" role="tab" data-toggle="tab">粉丝<br><span style="color:#e4007e;">{{fansCount}}</span></a></li>
+        </ul>
+    </div>
+    <div class="tab-content" id="user-profile-content">
+        <div role="tabpanel" class="tab-pane active" id="user-info">
+            <div class="weco_form">
+                <h4 class="title"><span>基本信息</span></h4>
+                <div style="border-bottom: 1px solid rgba(201, 201, 202, 0.6);position:relative;">
+                    <h5>签名</h5>
+                    <p style="min-height:20px;">{{user.description}}</p>
+                </div>
+                <div style="border-bottom: 1px solid rgba(201, 201, 202, 0.6);position:relative;">
+                    <h5>邮箱</h5>
+                    <p style="min-height:20px;">{{user.email}}</p>
+                </div>
+                <div style="position:relative;">
+                    <h5>微信</h5>
+                    <p style="min-height:20px;">{{user.wechat}}</p>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="user-profile">
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#user-info" aria-controls="user-info" role="tab" data-toggle="tab">资料</a></li>
-            <li role="presentation"><a href="#user-idea" aria-controls="user-idea" role="tab" data-toggle="tab">创意</a></li>
-            <li role="presentation"><a href="#user-like" aria-controls="user-like" role="tab" data-toggle="tab">喜欢</a></li>
-            <li role="presentation"><a href="#user-follow" aria-controls="user-follow" role="tab" data-toggle="tab">关注</a></li>
-            <li role="presentation"><a href="#user-fan" aria-controls="user-fan" role="tab" data-toggle="tab">粉丝</a></li>
-        </ul>
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="user-info">
-                <h5>个性签名</h5>
-                <p>{{user.description}}</p>
-                <h5>邮箱</h5>
-                <p>{{user.email}}</p>
-                <h5>微信</h5>
-                <p>{{user.wechat}}</p>
+        <div role="tabpanel" class="tab-pane" id="user-idea">
+            <div class="weco_form">
+                <h4 class="title"><span>我的创意</span></h4>{% if ideas == None %}
+                <p style="text-align:center;margin-top:30px;color:#e4007e;"><span class="fa fa-fw fa-frown-o"></span>我还没有发布任何创意</p>
+                {% else %}
+                <p class="summary">我发布了<span>{{ideasCount}}</span>个创意</p>
+                {% for item in ideas%}
+                <div class="myIdea">
+                    <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.thumbnail[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
+                        <!-- <span name="{{item.id}}" style="position:absolute;right:0;top:0;">*</span> -->
+                    </div>
+                    <a href="{{url_for('idea',ideaId=item.id)}}">
+                        <p>{{item.title}}</p>
+                    </a>
+                </div>
+                {% endfor %} {% endif %}
             </div>
-            <div role="tabpanel" class="tab-pane" id="user-idea">
-            	{% if ideas == None %}
-            	<p><span class="fa fa-fw fa-frown-o"></span> 你还没有发布任何创意</p>
-            	{% else %}
-            	<p>您一共发布了 {{ideasCount}} 个创意</p>
-            	{% for item in ideas%}
-            	<p><a href="{{url_for('idea',ideaId=item.id)}}">{{item.title}}</a></p>
-            	{% endfor %}
-            	{% endif %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="user-like">
+            <div class="weco_form">
+                <h4 class="title"><span>我的喜欢</span></h4>{% if followIdeas == None %}
+                <p style="text-align:center;margin-top:30px;color:#e4007e;"><span class="fa fa-fw fa-frown-o"></span>我还没有喜欢任何创意</p>
+                {% else %}
+                <p class="summary">我喜欢了<span class="followIdeasCount">{{followIdeasCount}}</span>个创意</p>
+                {% for item in followIdeas%}
+                <div class="otherIdea">
+                    <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.thumbnail[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
+                        <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="disfollow_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:25px;" title="不喜欢了"></span>
+                    </div>
+                    <a href="{{url_for('idea',ideaId=item.id)}}">
+                        <p>{{item.title}}</p>
+                    </a>
+                </div>
+                {% endfor %} {% endif %}
             </div>
-            <div role="tabpanel" class="tab-pane" id="user-like">
-            	{% if followIdeas == None %}
-            	<p><span class="fa fa-fw fa-frown-o"></span> 你还没有喜欢任何创意</p>
-            	{% else %}
-            	<p>您一共喜欢了 <span id="followIdeasCount">{{followIdeasCount}}</span> 个创意</p>
-            	{% for item in followIdeas%}
-            	<p><a href="{{url_for('idea',ideaId=item.id)}}">{{item.title}}</a> <a href="" class="disfollow_idea">不喜欢了</a></p>
-            	{% endfor %}
-            	{% endif %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="user-follow">
+            <div class="weco_form">
+                <h4 class="title"><span>我的关注</span></h4> {% if followUsers == None %}
+                <p style="text-align:center;margin-top:30px;color:#e4007e;"><span class="fa fa-fw fa-frown-o"></span>我还没有关注任何用户</p>
+                {% else %}
+                <p class="summary">我关注了<span class="followUsersCount">{{followUsersCount}}</span>名用户</p>
+                {% for item in followUsers%}
+                <div class="myFollow">
+                    <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    <span name="{{item.username}}" class="disfollow_user">取消关注</span>
+                    <div style="margin-left:84px;margin-right:60px;padding-top:5px;">
+                        <a href="{{url_for('user',username=item.username)}}" style="color:#555;">
+                            <p style="font-size:16px;margin-bottom:5px;">{{item.nickname}}</p>
+                        </a>
+                        <p style="font-size:12px;color:#009c81;">Ta的粉丝：{{item.fans}}人</p>
+                    </div>
+                </div>
+                {% endfor %} {% endif %}
             </div>
-            <div role="tabpanel" class="tab-pane" id="user-follow">
-            	{% if followUsers == None %}
-            	<p><span class="fa fa-fw fa-frown-o"></span> 你还没有关注任何用户</p>
-            	{% else %}
-            	<p>您一共关注了 <span id="followUsersCount">{{followUsersCount}}</span> 名用户</p>
-            	{% for item in followUsers%}
-            	<p><a href="{{url_for('user',username=item.username)}}">{{item.nickname}}</a> <a href="" class="disfollow_user">不关注了</a></p>
-            	{% endfor %}
-            	{% endif %}
-            </div>
-            <div role="tabpanel" class="tab-pane" id="user-fan">
-            	{% if fans == None %}
-            	<p><span class="fa fa-fw fa-frown-o"></span> 还没有任何用户关注您</p>
-            	{% else %}
-            	<p>一共有 {{fansCount}} 名用户关注您</p>
-            	{% for item in fans%}
-            	<p><a href="{{url_for('user',username=item.username)}}">{{item.nickname}}</a></p>
-            	{% endfor %}
-            	{% endif %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="user-fan">
+            <div class="weco_form">
+                <h4 class="title"><span>我的粉丝</span></h4> {% if fans == None %}
+                <p style="text-align:center;margin-top:30px;color:#e4007e;"><span class="fa fa-fw fa-frown-o"></span>还没有任何用户关注我</p>
+                {% else %}
+                <p class="summary">有<span class="fansCount">{{fansCount}}</span>名用户关注了我</p>
+                {% for item in fans%}
+                <div class="myFan">
+                    <img src="{{url_for('static',filename=item.portrait[8:])}}"> {% if followUserStr.find(item.username) >= 0 %}
+                    <span name="{{item.username}}" class="follow_or_not followed">取消关注</span> {% else %}
+                    <span name="{{item.username}}" class="follow_or_not unfollowed">关注</span> {% endif %}
+                    <div style="margin-left:84px;margin-right:60px;padding-top:5px;">
+                        <a href="{{url_for('user',username=item.username)}}" style="color:#555;">
+                            <p style="font-size:16px;margin-bottom:5px;">{{item.nickname}}</p>
+                        </a>
+                        <p style="font-size:12px;color:#009c81;">Ta的粉丝：{{item.fans}}人</p>
+                    </div>
+                </div>
+                {% endfor %} {% endif %}
             </div>
         </div>
     </div>
     <div id="edit_user_info">
-    	<div class="form-group">
-            <div class="input-group">
-                <div class="input-group-addon">昵称</div>
-                <input type="text" name="nickname" class="form-control" value="{{user.nickname}}">
+        <div class="weco_form" style="position:relative;">
+            <div class="image-editor">
+                <div style="position:relative;cursor:pointer;padding-right:90px;vertical-align:middle;height:75px;border-bottom:1px solid rgba(201,201,202,0.4);">
+                    <p style="text-align:left;position:relative;top:30px;left:20px;color:#999;">头像</p>
+                    <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="portrait" class="cropit-image-input">
+                </div>
+                <div class="modal fade bs-example-modal-lg" id="preview" data-backdrop="static">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="cropit-image-preview-container">
+                                    <div class="cropit-image-preview"></div>
+                                </div>
+                                <input type="range" class="cropit-image-zoom-input" style="position: relative;z-index: 10;display: block;">
+                                <button type="button" data-dismiss="modal">使用</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="input-group">
-                <div class="input-group-addon">性别</div>
-                <input type="text" name="gender" class="form-control" value="{{user.gender}}">
+            <div id="portrait_container" style="position:absolute;right:25px;top:15px;">
+                <img id="portrait" src="{{url_for('static',filename=user.portrait[8:])}}">
             </div>
-            <div class="input-group">
-                <div class="input-group-addon">标签</div>
-                <input type="text" name="tags" class="form-control" value="{{user.tags}}">
+            <div class="weco_input">
+                <p>昵称</p>
+                <input type="text" name="nickname" value="{{user.nickname}}" placeholder="中文或英文昵称">
             </div>
-            <div class="input-group">
-                <div class="input-group-addon">签名</div>
-                <input type="text" name="description" class="form-control" value="{{user.description}}">
-            </div>
-            <div class="input-group">
-                <div class="input-group-addon">邮箱</div>
-                <input type="text" name="email" class="form-control" value="{{user.email}}">
-            </div>
-            <div class="input-group">
-                <div class="input-group-addon">微信</div>
-                <input type="text" name="wechat" class="form-control" value="{{user.wechat}}">
+            <div class="weco_input" style="border:none;">
+                <p>性别</p>
+                <input type="text" name="gender" value="{{user.gender}}" style="display:none;">
+                <div style="text-align:left;padding:15px 20px 15px 70px;">
+                    {% if user.gender == 1 %}
+                    <span class="fa fa-fw fa-male active"></span>
+                    <span class="fa fa-fw fa-female"></span> {% elif user.gender == 0 %}
+                    <span class="fa fa-fw fa-male"></span>
+                    <span class="fa fa-fw fa-female active"></span> {% endif %}
+                </div>
             </div>
         </div>
-        <span class="btn btn-default" id="save">保存</span>
+        <div class="weco_form">
+            <div class="weco_input">
+                <p>签名</p>
+                <textarea rows="3" name="description" placeholder="彰显个性和特色">{{user.description}}</textarea>
+            </div>
+            <div class="weco_input" style="border:none;">
+                <p>标签</p>
+                <input type="text" name="tags" value="{{user.tags}}" placeholder="空格分割标签">
+            </div class="weco_input">
+        </div>
+        <div id="hot-tags">
+            <p><span>热门标签</span></p>
+            {% for key,value in hotTags.items() %}
+            {% for item in value %}
+            <div class="hot-tag {{key}}">{{item.tag}}</div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="weco_form">
+            <div class="weco_input">
+                <p>邮箱</p>
+                <input type="text" name="email" value="{{user.email}}" placeholder="让我们保持联系吧">
+            </div>
+            <div class="weco_input" style="border:none;">
+                <p>微信</p>
+                <input type="text" name="wechat" value="{{user.wechat}}" placeholder="加个微信加个朋友">
+            </div>
+        </div>
+        <p id="save"><span>保存</span></p>
     </div>
-    <p id="logout_a"><a href="{{url_for('logout')}}" class="btn btn-default">退出登录</a></p>
+    <!-- <div id="changePwd">
+        <form>
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="password" class="form-control" name="oldpwd" placeholder="原始密码">
+                    <input type="password" class="form-control" name="newpwd" placeholder="新密码">
+                    <input type="password" class="form-control" name="repeatpwd" placeholder="重复密码">
+                    <button tpye="submit" class="form-control">更改密码</button>
+                </div>
+            </div>
+        </form>
+    </div> -->
+    <div class="weco_form" id="user_logout">
+        <p id="logout_a"><a href="{{url_for('logout')}}">退出登录</a></p>
+    </div>
 </div>
 <script>
-$(document).ready(function(){
-	$('#me #user-profile a.disfollow_idea').click(function(){
-		event.preventDefault();
-		var $p = $(this).parent('p');
-		var ideaId = $(this).prev('a').attr('href');
-		$.ajax({
-			url: "{{url_for('api_idea_disfollow')}}",
-			type: 'POST',
-			data: {
-				ideaId: ideaId.substr(ideaId.lastIndexOf('/')+1),
-				username: "{{session.get('username')}}",
-				token: "{{session.get('token')}}"
-			},
-			dataType: 'json',
-			error: function() {},
-			success: function(data) {
-				$p.remove();
-				$('#me #user-profile #followIdeasCount').text(parseInt($('#me #user-profile #followIdeasCount').text()) - 1); 
-			}
-		});
-	});
+$(document).ready(function() {
+    var change_portrait = false;
+    $('#me #edit_user_info .image-editor').cropit({
+        // exportZoom: 1.9,
+        imageBackground: true,
+        imageBackgroundBorderWidth: 20,
+        // imageState: {
+        //     src: 'http://lorempixel.com/500/400/',
+        // },
+    });
 
-	$('#me #user-profile a.disfollow_user').click(function(){
-		event.preventDefault();
-		var $p = $(this).parent('p');
-		var username = $(this).prev('a').attr('href');
-		$.ajax({
-			url: '{{url_for("api_user_disfollow")}}',
-			type: 'POST',
-			data: {
-				target: username.substr(username.lastIndexOf('/')+1),
-				source: "{{session.get('username')}}",
-				token: "{{session.get('token')}}"
-			},
-			dataType: 'json',
-			error: function() {},
-			success: function(data) {
-				$p.remove();
-				$('#me #user-profile #followUsersCount').text(parseInt($('#me #user-profile #followUsersCount').text()) - 1); 
-			}
-		});
-	});
+    $('#me #edit_user_info #preview button').click(function() {
+        var imageData = $('.image-editor').cropit('export');
+        $('#me #edit_user_info #portrait').attr('src', imageData);
+    });
 
-	$('#me #edit_a').click(function(){
-		$('#me #user-basic-info').hide();
-		$('#me #user-profile').hide();
-		$('#me #edit_user_info').show();
-	});
-
-	$('#me #save').click(function(){
-		$.ajax({
-            url: '{{url_for("api_user_edit")}}',
+    $('#me #user-profile-content .disfollow_idea').click(function() {
+        var $p = $(this).parent().parent('.otherIdea');
+        console.log($p);
+        var ideaId = $(this).attr('name');
+        $.ajax({
+            url: "{{url_for('api_idea_disfollow')}}",
             type: 'POST',
             data: {
+                ideaId: ideaId,
                 username: "{{session.get('username')}}",
-                token: "{{session.get('token')}}",
-                nickname: $('#me #edit_user_info input[name="nickname"]').val(),
-                gender: $('#me #edit_user_info input[name="gender"]').val(),
-                tags: $('#me #edit_user_info input[name="tags"]').val(),
-                description: $('#me #edit_user_info input[name="description"]').val(),
-                email: $('#me #edit_user_info input[name="email"]').val(),
-                wechat: $('#me #edit_user_info input[name="wechat"]').val()
+                token: "{{session.get('token')}}"
             },
             dataType: 'json',
             error: function() {},
             success: function(data) {
-                window.location.reload()
+                $p.remove();
+                $('#me #user-profile-content .followIdeasCount').text(parseInt($('#me #user-profile-content .followIdeasCount').text()) - 1);
+                $('#me #user-profile-nav .followIdeasCount').text(parseInt($('#me #user-profile-nav .followIdeasCount').text()) - 1);
             }
         });
-	});
+    });
+
+    $('#me #user-profile-content .disfollow_user').click(function() {
+        var $p = $(this).parent('.myFollow');
+        var username = $(this).attr('name');
+        $.ajax({
+            url: '{{url_for("api_user_disfollow")}}',
+            type: 'POST',
+            data: {
+                target: username,
+                source: "{{session.get('username')}}",
+                token: "{{session.get('token')}}"
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $p.remove();
+                $('#me #user-profile-nav .followUsersCount').text(parseInt($('#me #user-profile-nav .followUsersCount').text()) - 1);
+                $('#me #user-profile-content .followUsersCount').text(parseInt($('#me #user-profile-content .followUsersCount').text()) - 1);
+            }
+        });
+    });
+    $('#me #user-profile-content .follow_or_not').click(function() {
+        var username = $(this).attr('name');
+        if ($(this).text() == '关注') {
+            $(this).text('取消关注').removeClass("unfollowed").addClass("followed");
+            $.ajax({
+                url: '{{url_for("api_user_follow")}}',
+                type: 'POST',
+                data: {
+                    target: username,
+                    source: "{{session.get('username')}}",
+                    token: "{{session.get('token')}}"
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {}
+            });
+        } else if ($(this).text() == '取消关注') {
+            $(this).text('关注').removeClass("followed").addClass("unfollowed");
+            $.ajax({
+                url: '{{url_for("api_user_disfollow")}}',
+                type: 'POST',
+                data: {
+                    target: username,
+                    source: "{{session.get('username')}}",
+                    token: "{{session.get('token')}}"
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {}
+            });
+        }
+    });
+
+    $('#me #edit_a').click(function() {
+        $('#me #user-basic-info').hide();
+        $('#me #user-profile-content').hide();
+        $('#me #user_logout').hide();
+        $('#me #edit_user_info').show();
+        change_portrait = false;
+    });
+
+    $('#me #edit_user_info input[name="portrait"]').change(function() {
+        var filename = $(this).val();
+        filename = filename.substr(filename.lastIndexOf("\\") + 1);
+        $('#me #edit_user_info .input-group:first-child p').text(filename);
+        $('#me #edit_user_info #preview').modal();
+        change_portrait = true;
+    });
+
+    if ("{{user.gender}}" == 0) {
+        $("#me #edit_user_info .hot-tag.male").hide();
+    } else {
+        $("#me #edit_user_info .hot-tag.female").hide();
+    }
+
+    $('#me #edit_user_info .fa-female').click(function() {
+        $(this).addClass('active');
+        $('#me #edit_user_info .fa-male').removeClass('active');
+        $('#me #edit_user_info input[name="gender"]').val(0);
+        $("#me #edit_user_info .hot-tag.male").hide();
+        $("#me #edit_user_info .hot-tag.female").show();
+    })
+    $('#me #edit_user_info .fa-male').click(function() {
+        $(this).addClass('active');
+        $('#me #edit_user_info .fa-female').removeClass('active');
+        $('#me #edit_user_info input[name="gender"]').val(1);
+        $("#me #edit_user_info .hot-tag.male").show();
+        $("#me #edit_user_info .hot-tag.female").hide();
+    })
+
+    $('#me #edit_user_info #hot-tags .hot-tag').click(function() {
+        var tagText = $(this).text();
+        var tagsText = $('#me #edit_user_info input[name="tags"]').val();
+        if (tagsText == '') {
+            tagsText = tagText;
+        } else if (tagsText.indexOf(tagText) == -1) {
+            tagsText = tagsText + ' ' + tagText;
+        }
+        $('#me #edit_user_info input[name="tags"]').val(tagsText);
+    });
+
+    $('#me #save').click(function() {
+        if (change_portrait) {
+            $.ajax({
+                url: '{{url_for("api_user_edit")}}',
+                type: 'POST',
+                data: {
+                    username: "{{session.get('username')}}",
+                    token: "{{session.get('token')}}",
+                    nickname: $('#me #edit_user_info input[name="nickname"]').val(),
+                    portrait: $('#me #edit_user_info #portrait').attr('src'),
+                    gender: $('#me #edit_user_info input[name="gender"]').val(),
+                    tags: $('#me #edit_user_info input[name="tags"]').val(),
+                    description: $('#me #edit_user_info textarea').val(),
+                    email: $('#me #edit_user_info input[name="email"]').val(),
+                    wechat: $('#me #edit_user_info input[name="wechat"]').val()
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    window.location.reload();
+                }
+            });
+        } else {
+            $.ajax({
+                url: '{{url_for("api_user_edit")}}',
+                type: 'POST',
+                data: {
+                    username: "{{session.get('username')}}",
+                    token: "{{session.get('token')}}",
+                    nickname: $('#me #edit_user_info input[name="nickname"]').val(),
+                    gender: $('#me #edit_user_info input[name="gender"]').val(),
+                    tags: $('#me #edit_user_info input[name="tags"]').val(),
+                    description: $('#me #edit_user_info textarea').val(),
+                    email: $('#me #edit_user_info input[name="email"]').val(),
+                    wechat: $('#me #edit_user_info input[name="wechat"]').val()
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    window.location.reload();
+                }
+            });
+        }
+    });
 });
 </script>
 {% endblock %}

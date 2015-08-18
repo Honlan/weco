@@ -1,5 +1,9 @@
 {% extends "layout.html" %} {% block style %}
 <style>
+#nav {
+    display: none;
+}
+
 #register {
     text-align: center;
     width: 100%;
@@ -7,60 +11,58 @@
     padding-bottom: 50px;
 }
 
-#register h1 {
-    margin-top: 0;
-}
-
 #register form {
-    width: 60%;
+    width: 82%;
     margin: 0 auto;
 }
 
-#register form .input-group {
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-#register form button {
-    color: #666;
-    width: 100%;
+#register button[type="submit"] {
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    z-index: 999;
+    background: transparent;
+    background-image: url("{{url_for('static',filename='img/icon/icon-24.png')}}");
+    background-size: 100% 100%;
+    padding: 10px 20px;
 }
 
 #register #register_error {
-    opacity: 0;
     font-size: 12px;
     color: #F75E5E;
-    margin: 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
     height: 17px;
+    display: none;
+}
+
+#register #login_a a {
+    color: #009c81;
+    font-size: 15px;
+}
+
+#register #login_a a:hover {
+    color: #009c81;
 }
 </style>
 {% endblock %} {% block body %}
 <div id="register">
-    <h1>一个<span style="color:blue;">We</span><span style="color:red;">co</span>账号</h1>
-    <h2 style="margin-bottom:40px;">领略万千炫酷创意</h2>
+    <!-- <img class="weco_logo" src="{{url_for('static',filename='img/icon/icon-01.png')}}"> -->
     <form class="form-inline" method="post" action="{{ url_for('register') }}">
-        <div class="form-group">
-            <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-fw fa-user"></span></div>
-                <input type="text" class="form-control" name="username" placeholder="用户名">
-            </div>
-            <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-fw fa-envelope"></span></div>
-                <input type="text" class="form-control" name="email" placeholder="邮箱">
-            </div>
-            <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-fw fa-lock"></span></div>
-                <input type="password" class="form-control" name="password" placeholder="密码">
-            </div>
-            <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-fw fa-repeat"></span></div>
-                <input type="password" class="form-control" name="password1" placeholder="确认密码">
-            </div>
-            <p id="register_error"></p>
+        <div class="weco_form">
+            <input style="border-bottom:1px solid rgba(201, 201, 202, 0.4);" type="text" name="username" placeholder="账号&nbsp;&nbsp;&nbsp;&nbsp;英文字母、数字和下划线">
+            <input style="border-bottom:1px solid rgba(201, 201, 202, 0.4);" type="email" name="email" placeholder="邮箱&nbsp;&nbsp;&nbsp;&nbsp;输入您的常用邮箱">
+            <input style="border-bottom:1px solid rgba(201, 201, 202, 0.4);" type="password" name="password" placeholder="密码">
+            <input type="password" name="password1" placeholder="确认密码">
         </div>
-        <button type="submit" class="btn btn-default disabled">注册</button>
-        <div class="input-group" style="margin-top:30px;">
-            <p>已有账号？<a href="{{url_for('login')}}">立即登陆</a></p>
+        <p style="color:#9f9fa0;">点击“立即加入”。即表示您同意WECO的
+            <br><b style="color:#888">用户协议、隐私政策和Cookie政策</b></p>
+        <p id="register_error"></p>
+        <div style="position:relative;">
+            <button type="submit" class="btn btn-default disabled">立即加入</button>
+            <p id="login_a"><a href="{{url_for('login')}}">已经有账号？登陆</a></p>
         </div>
     </form>
 </div>
@@ -82,18 +84,18 @@ $(document).ready(function() {
                 error: function() {},
                 success: function(data) {
                     if (data['exist']) {
-                        $('#register #register_error').css('opacity', '1').text('用户名已存在');
+                        $('#register #register_error').fadeIn().text('用户名已存在');
                         $('#register button[type="submit"]').addClass('disabled');
                         $('#register input[name="username"]').focus();
                         ok1 = false;
                     } else {
                         ok1 = true;
                         if ($('#register #register_error').text() == '用户名已存在') {
-                            $('#register #register_error').text('');
+                            $('#register #register_error').fadeOut();
                         }
                     }
                     if (ok1 && ok2 && ok3) {
-                        $('#register #register_error').css('opacity', '0');
+                        $('#register #register_error').fadeOut();
                         $('#register button[type="submit"]').removeClass('disabled');
                     }
                 }
@@ -114,18 +116,18 @@ $(document).ready(function() {
                 error: function() {},
                 success: function(data) {
                     if (data['exist']) {
-                        $('#register #register_error').css('opacity', '1').text('邮箱已注册');
+                        $('#register #register_error').fadeIn().text('邮箱已注册');
                         $('#register button[type="submit"]').addClass('disabled');
                         $('#register input[name="email"]').focus();
                         ok2 = false;
                     } else {
                         ok2 = true;
                         if ($('#register #register_error').text() == '邮箱已注册') {
-                            $('#register #register_error').text('');
+                            $('#register #register_error').fadeOut();
                         }
                     }
                     if (ok1 && ok2 && ok3) {
-                        $('#register #register_error').css('opacity', '0');
+                        $('#register #register_error').fadeOut();
                         $('#register button[type="submit"]').removeClass('disabled');
                     }
                 }
@@ -140,15 +142,15 @@ $(document).ready(function() {
             if (pwd == pwd1) {
                 ok3 = true;
                 if ($('#register #register_error').text() == '两次密码不一致') {
-                    $('#register #register_error').text('');
+                    $('#register #register_error').fadeOut();
                 }
             } else {
                 ok3 = false;
-                $('#register #register_error').css('opacity', '1').text('两次密码不一致');
+                $('#register #register_error').fadeIn().text('两次密码不一致');
                 $('#register button[type="submit"]').addClass('disabled');
             }
             if (ok1 && ok2 && ok3) {
-                $('#register #register_error').css('opacity', '0');
+                $('#register #register_error').fadeOut();
                 $('#register button[type="submit"]').removeClass('disabled');
             }
         }
@@ -161,15 +163,15 @@ $(document).ready(function() {
             if (pwd == pwd1) {
                 ok3 = true;
                 if ($('#register #register_error').text() == '两次密码不一致') {
-                    $('#register #register_error').text('');
+                    $('#register #register_error').fadeOut();
                 }
             } else {
                 ok3 = false;
-                $('#register #register_error').css('opacity', '1').text('两次密码不一致');
+                $('#register #register_error').fadeIn().text('两次密码不一致');
                 $('#register button[type="submit"]').addClass('disabled');
             }
             if (ok1 && ok2 && ok3) {
-                $('#register #register_error').css('opacity', '0');
+                $('#register #register_error').fadeOut();
                 $('#register button[type="submit"]').removeClass('disabled');
             }
         }

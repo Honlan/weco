@@ -1,5 +1,8 @@
 {% extends "layout.html" %} {% block style %}
 <style>
+#nav {
+    display: none;
+}
 #chat {
     padding: 20px 30px 70px 20px;
 }
@@ -70,10 +73,8 @@
         {% endif %} {% endfor %}
     </div>
     <form id="chatForm">
-        <div class="input-group">
-            <input type="text" name="chat" class="form-control" placeholder="发送消息">
-            <div class="input-group-addon" id="send"><span class="fa fa-fw fa-paper-plane-o"></span></div>
-        </div>
+            <input type="text" name="chat" placeholder="发送消息">
+            <span class="fa fa-fw fa-paper-plane-o" style="color:#009c81;position:absolute;right:0;"></span>
     </form>
 </div>
 <script>

@@ -1,16 +1,59 @@
 {% extends "layout.html" %} {% block style %}
 <style>
 #index {
-    padding: 10px 15px;
-    padding-top: 0;
+    padding: 20px 15px;
+    padding-bottom: 30px;
+}
+
+#index>div:first-child {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+#index #activeHot {
+    background-image: url("{{url_for('static',filename='img/icon/title1.png')}}");
+    background-size: 100% 100%;
+    color: white;
+    font-size: 12px;
+    padding: 12px 30px 15px 10px;
+    position: relative;
+    left: -4px;
+}
+
+#index #inactiveLatest {
+    background-image: url("{{url_for('static',filename='img/icon/title3.png')}}");
+    background-size: 100% 100%;
+    color: #555;
+    font-size: 12px;
+    padding: 12px 10px 14px 30px;
+    position: relative;
+    left: 1px;
+}
+
+#index #inactiveHot {
+    background-image: url("{{url_for('static',filename='img/icon/title4.png')}}");
+    background-size: 100% 100%;
+    color: #555;
+    font-size: 12px;
+    padding: 12px 30px 14px 10px;
+    position: relative;
+    left: -1px;
+}
+
+#index #activeLatest {
+    background-image: url("{{url_for('static',filename='img/icon/title2.png')}}");
+    background-size: 100% 100%;
+    color: white;
+    font-size: 12px;
+    padding: 12px 10px 15px 30px;
+    position: relative;
+    left: 4px;
 }
 
 #index .idea {
-    border: 1px solid #E3E3E3;
     background: #fff;
     margin-top: 20px;
     margin-bottom: 20px;
-    box-shadow: 1px 1px 2px rgba(20, 20, 20, 0.4);
 }
 
 #index .idea .idea_header {
@@ -40,14 +83,41 @@
 #index .idea .idea_content {
     padding: 5px 10px;
 }
+
+#index #ideas .idea .idea_content>a {
+    color: #009c81;
+    font-size: 14px;
+}
+
+#index #ideas .idea .idea_content>a p {
+    margin-bottom: 3px;
+}
+
+#index #ideas .idea .idea_content img {
+    width: 40px;
+    border-radius: 50%;
+    float: left;
+    margin-right: 6px;
+}
+
+#index #ideas .idea .idea_content h5 {
+    font-size: 13px;
+    color: #333;
+}
 </style>
 {% endblock %} {% block body %}
 <script>
 var nextContent = '',
-noMore = false;
+    noMore = false;
 $(document).ready(function() {
+    var url = '';
+    if ("{{hot}}" == "True") {
+        url = '{{url_for("api_idea_hot")}}';
+    } else {
+        url = '{{url_for("api_idea_latest")}}';
+    }
     $.ajax({
-        url: '{{url_for("api_idea_hot")}}',
+        url: url,
         type: 'POST',
         data: {
             offset: 1
@@ -61,7 +131,7 @@ $(document).ready(function() {
             } else {
                 nextContent = '';
                 for (var i = 0; i < ideas.length; i++) {
-                    nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><img src="' + window.location.href + ideas[i]['thumbnail'].substr(1) + '"><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + window.location.href + 'idea/' + ideas[i]['id'] + '"><p style="margin-bottom:0;">' + ideas[i]['title'] + '</p></a></div></div>';
+                    nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><img src="' + "{{url_for('static',filename='')}}" + ideas[i]['thumbnail'].substr(8) + '"><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><p style="margin-bottom:0;">' + ideas[i]['title'] + '</p></a></div></div>';
                 }
             }
         }
@@ -136,7 +206,7 @@ $(document).ready(function() {
                 if (setting.insert_type == 1) {
                     insert($(elements).eq(i), setting.fadein && fadein); //插入元素
                 } else if (setting.insert_type == 2) {
-                    insert2($(elements).eq(i), i, setting.fadein && fadein); //插入元素	 
+                    insert2($(elements).eq(i), i, setting.fadein && fadein); //插入元素  
                 }
                 return true; //continue
             }
@@ -148,7 +218,7 @@ $(document).ready(function() {
                     if (setting.insert_type == 1) {
                         insert($(elements).eq(i), setting.fadein && fadein); //插入元素
                     } else if (setting.insert_type == 2) {
-                        insert2($(elements).eq(i), i, setting.fadein && fadein); //插入元素	 
+                        insert2($(elements).eq(i), i, setting.fadein && fadein); //插入元素  
                     }
                     image = null;
                 }
@@ -158,7 +228,7 @@ $(document).ready(function() {
                         if (setting.insert_type == 1) {
                             insert($(elements).eq(i), setting.fadein && fadein); //插入元素
                         } else if (setting.insert_type == 2) {
-                            insert2($(elements).eq(i), i, setting.fadein && fadein); //插入元素	 
+                            insert2($(elements).eq(i), i, setting.fadein && fadein); //插入元素  
                         }
                         image = null;
                     }
@@ -168,7 +238,7 @@ $(document).ready(function() {
                 if (setting.insert_type == 1) {
                     insert($(elements).eq(i), setting.fadein && fadein); //插入元素
                 } else if (setting.insert_type == 2) {
-                    insert2($(elements).eq(i), i, setting.fadein && fadein); //插入元素	 
+                    insert2($(elements).eq(i), i, setting.fadein && fadein); //插入元素  
                 }
             }
         });
@@ -209,11 +279,17 @@ $(document).ready(function() {
     function getElements() { //获取资源
         $.waterfall.load_index++;
         if (nextContent == '' && !noMore) {
-        	noMore = true;
-        	$('#index').append('<p style="text-align:center;margin-top:10px;"><span class="fa fa-fw fa-frown-o"></span>没有更多新鲜创意啦</p>')
+            noMore = true;
+            $('#ideas').append('<p style="text-align:center;margin-top:10px;"><span class="fa fa-fw fa-frown-o"></span>没有更多创意啦</p>')
+        }
+        var url = '';
+        if ("{{hot}}" == "True") {
+            url = '{{url_for("api_idea_hot")}}';
+        } else {
+            url = '{{url_for("api_idea_latest")}}';
         }
         $.ajax({
-            url: '{{url_for("api_idea_hot")}}',
+            url: url,
             type: 'POST',
             data: {
                 offset: $.waterfall.load_index + 1
@@ -225,9 +301,9 @@ $(document).ready(function() {
                 if (ideas.length == 0) {
                     nextContent = ''
                 } else {
-                	nextContent = '';
+                    nextContent = '';
                     for (var i = 0; i < ideas.length; i++) {
-                        nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><img src="' + window.location.href + ideas[i]['thumbnail'].substr(1) + '"><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + window.location.href + 'idea/' + ideas[i]['id'] + '"><p style="margin-bottom:0;">' + ideas[i]['title'] + '</p></a></div></div>';
+                        nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><img src="' + "{{url_for('static',filename='')}}" + ideas[i]['thumbnail'].substr(8) + '"><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><p style="margin-bottom:0;">' + ideas[i]['title'] + '</p></a></div></div>';
                     }
                 }
             }
@@ -258,32 +334,52 @@ $(document).ready(function() {
 })(jQuery);
 </script>
 <div id="index">
-    {% for item in ideas %}
-    <div class="idea" name="{{item.id}}">
-        <div class="idea_header">
-            <img src="{{url_for('static',filename=item.thumbnail[8:])}}">
-            <div class="idea_info">
-                <div>
-                    <span class="fa fa-fw fa-thumbs-o-up"></span>
-                    <span>{{item.praise}}</span>
+    <div>
+        {% if hot %}
+        <a href="{{url_for('index_latest',mode='latest')}}" id="inactiveLatest">最新创意</a>
+        <a href="{{url_for('index')}}" id="activeHot">最热创意</a> {% else %}
+        <a href="{{url_for('index_latest',mode='latest')}}" id="activeLatest">最新创意</a>
+        <a href="{{url_for('index')}}" id="inactiveHot">最热创意</a> {% endif %}
+    </div>
+    <div id="ideas">
+        {% for item in ideas %}
+        <div class="idea" name="{{item.id}}">
+            <div class="idea_header">
+                <img src="{{url_for('static',filename=item.thumbnail[8:])}}">
+                <div class="idea_info">
+                    <div>
+                        <span class="fa fa-fw fa-thumbs-o-up"></span>
+                        <span>{{item.praise}}</span>
+                    </div>
+                    <div>
+                        <span class="fa fa-fw fa-eye"></span>
+                        <span>{{item.readCount}}</span>
+                    </div>
+                    <div>
+                        <span class="fa fa-fw fa-comment-o"></span>
+                        <span>{{item.commentCount}}</span>
+                    </div>
                 </div>
-                <div>
-                    <span class="fa fa-fw fa-eye"></span>
-                    <span>{{item.readCount}}</span>
-                </div>
-                <div>
-                    <span class="fa fa-fw fa-comment-o"></span>
-                    <span>{{item.commentCount}}</span>
+            </div>
+            <div class="idea_content">
+                <a href="{{url_for('idea',ideaId=item.id)}}">
+                    <p>{{item.title}}</p>
+                </a>
+                <div style="border-top: 1px solid rgba(201, 201, 202, 0.4);padding-top:10px;padding-bottom:10px;">
+                    <div style="padding-right:5px;">
+                        <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    </div>
+                    <div style="padding-left:5px;">
+                        <div>
+                            <a href="{{url_for('user',username=item.owner)}}"><h5 style="margin-top:3px;margin-bottom:5px;">{{item.nickname}}</h5></a>
+                            <p style="margin-bottom:0;font-size:10px;color:#999;">发布于{{item.timestamp}}前</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="idea_content">
-            <a href="{{url_for('idea',ideaId=item.id)}}">
-                <p style="margin-bottom:0;">{{item.title}}</p>
-            </a>
-        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 <script>
 var opt = {
@@ -294,6 +390,6 @@ var opt = {
     auto_imgHeight: true,
     insert_type: 1
 }
-$('#index').waterfall(opt);
+$('#ideas').waterfall(opt);
 </script>
 {% endblock %}

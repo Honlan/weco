@@ -10,6 +10,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
 import os
+import base64
 from flask import *
 from configure_weco import *
 import MySQLdb
@@ -88,9 +89,38 @@ def api_user_exist_email():
 @app.route('/api/idea/hot', methods=['POST'])
 def api_idea_hot():
 	offset = int(request.form['offset'])
-	print  offset
 	cursor.execute('select * from idea order by praise desc, timestamp desc limit ' + str(offset*10) + ',10')
 	ideas = cursor.fetchall()
+	for item in ideas:
+		temp = int(time.time()) - int(item['timestamp'])
+		if temp < 60:
+			temp = str(temp) + 's'
+		elif temp < 3600:
+			temp = str(temp/60) + 'm'
+		elif temp < 3600 * 24:
+			temp = str(temp/3600) + 'h'
+		else:
+			temp = str(temp/(3600*24)) + 'd'
+		item['timestamp'] = temp
+	return json.dumps({"ok": True, "ideas": ideas})
+
+# 根据offset获取最新创意
+@app.route('/api/idea/latest', methods=['POST'])
+def api_idea_latest():
+	offset = int(request.form['offset'])
+	cursor.execute('select * from idea order by timestamp desc, praise desc limit ' + str(offset*10) + ',10')
+	ideas = cursor.fetchall()
+	for item in ideas:
+		temp = int(time.time()) - int(item['timestamp'])
+		if temp < 60:
+			temp = str(temp) + 's'
+		elif temp < 3600:
+			temp = str(temp/60) + 'm'
+		elif temp < 3600 * 24:
+			temp = str(temp/3600) + 'h'
+		else:
+			temp = str(temp/(3600*24)) + 'd'
+		item['timestamp'] = temp
 	return json.dumps({"ok": True, "ideas": ideas})
 
 # 用户关注创意
@@ -189,6 +219,33 @@ def api_comment_praise():
 		cursor.execute('update comment set praise=%s where id=%s', [praise,commentId])
 		return json.dumps({"ok": True, "praise": praise})
 
+# 为创意添加图片内容
+# 需要进行token验证
+@app.route('/api/idea/addImg', methods=['POST'])
+def api_idea_addImg():
+	data = request.form
+	if validate(data['username'], data['token']):
+		ideaId = data['ideaId']
+		cursor.execute("select owner from idea where id=%s",[ideaId])
+		if cursor.fetchone()['owner'] == data['username']:
+			imgBase = data['image']
+			imgBase = imgBase[imgBase.find('base64')+7:]
+			imageData = base64.b64decode(imgBase)
+			today = time.strftime('%Y%m%d%H', time.localtime(time.time()))
+			filename = today + '_' + genKey()[:10] + '.jpg'
+			UPLOAD_FOLDER = '/static/uploads/img'
+			filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+			relapath = os.path.join(UPLOAD_FOLDER, filename)
+			imageFile = open(filepath,'wb')
+			imageFile.write(imageData)
+			imageFile.close()
+			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,relapath,str(int(time.time())), data['username']])
+			return json.dumps({"ok": True})
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
+	else:
+		return json.dumps({"ok": False, "error": "invalid token"})
+
 # 删除创意附件
 # 需要进行token验证
 @app.route('/api/attachment/remove',methods=['POST'])
@@ -202,6 +259,51 @@ def api_attachment_remove():
 			if (not attachment['fileType'] == 0) and (os.path.exists(WECOROOT + attachment['url'])):
 				os.remove(WECOROOT + attachment['url'])
 			cursor.execute('delete from attachment where id=%s', [attachmentId])
+			return json.dumps({"ok": True})
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
+	else:
+		return json.dumps({"ok": False, "error": "invalid token"})
+
+# 编辑创意
+# 需要进行token验证
+@app.route('/api/idea/edit', methods=['POST'])
+def api_idea_edit():
+	data = request.form
+	if validate(data['username'], data['token']):
+		ideaId = data['ideaId']
+		cursor.execute("select owner from idea where id=%s",[ideaId])
+		if cursor.fetchone()['owner'] == data['username']:
+			cursor.execute("update idea set title=%s,tags=%s,category=%s where id=%s",[data['title'],data['tags'],data['category'],ideaId])
+			# 统计创意tag次数
+			for tag in data['tags'].split(' '):
+				if tag == '':
+					continue
+				cursor.execute("select count from ideaTagStat where tag=%s and category=%s",[tag,data['category']])
+				record = cursor.fetchone()
+				if record == None:
+					cursor.execute("insert into ideaTagStat(tag,category,count) values(%s,%s,1)",[tag,data['category']])
+				else:
+					count = int(record['count']) + 1
+					cursor.execute("update ideaTagStat set count=%s where tag=%s and category=%s",[count,tag,data['category']])
+			# 处理创意缩略图
+			if data.has_key('thumbnail'):
+				imgBase = data['thumbnail']
+				imgBase = imgBase[imgBase.find('base64')+7:]
+				imageData = base64.b64decode(imgBase)
+				today = time.strftime('%Y%m%d%H', time.localtime(time.time()))
+				filename = today + '_' + genKey()[:10] + '.jpg'
+				UPLOAD_FOLDER = '/static/uploads/img'
+				filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+				relapath = os.path.join(UPLOAD_FOLDER, filename)
+				imageFile = open(filepath,'wb')
+				imageFile.write(imageData)
+				imageFile.close()
+				cursor.execute('select thumbnail from idea  where id=%s',[ideaId])
+				oldthumb = cursor.fetchone()['thumbnail']
+				if (not oldthumb == '/static/img/idea.jpg') and (os.path.exists(WECOROOT + oldthumb)):
+					os.remove(WECOROOT + oldthumb)
+				cursor.execute("update idea set thumbnail=%s where id=%s",[relapath,ideaId])
 			return json.dumps({"ok": True})
 		else:
 			return json.dumps({"ok": False, "error": "invalid token"})
@@ -246,7 +348,42 @@ def api_user_edit():
 		description = data['description']
 		email = data['email']
 		wechat = data['wechat']
+
+		# 统计用户tag次数
+		for tag in tags.split(' '):
+			if tag == '':
+				continue
+			cursor.execute("select count from userTagStat where tag=%s and gender=%s",[tag,gender])
+			record = cursor.fetchone()
+			if record == None:
+				cursor.execute("insert into userTagStat(tag,gender,count) values(%s,%s,1)",[tag,gender])
+			else:
+				count = int(record['count']) + 1
+				cursor.execute("update userTagStat set count=%s where tag=%s and gender=%s",[count,tag,gender])
+		
 		cursor.execute("update user set nickname=%s, gender=%s,tags=%s,description=%s,email=%s,wechat=%s where username=%s", [nickname,gender,tags,description,email,wechat,data['username']])
+		# 处理用户头像
+		if data.has_key('portrait'):
+			portrait = data['portrait']
+			portrait = portrait[portrait.find('base64')+7:]
+			imageData = base64.b64decode(portrait)
+			today = time.strftime('%Y%m%d%H', time.localtime(time.time()))
+			filename = today + '_' + genKey()[:10] + '.jpg'
+			UPLOAD_FOLDER = '/static/uploads/img'
+			filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+			relapath = os.path.join(UPLOAD_FOLDER, filename)
+			imageFile = open(filepath,'wb')
+			imageFile.write(imageData)
+			imageFile.close()
+			cursor.execute('select portrait from user where username=%s',[data['username']])
+			oldportrait = cursor.fetchone()['portrait']
+			if (not oldportrait == '/static/img/user.png') and (os.path.exists(WECOROOT + oldportrait)):
+				os.remove(WECOROOT + oldportrait)
+			cursor.execute("update user set portrait=%s where username=%s",[relapath,data['username']])
+			cursor.execute("select ideas from user where username=%s",[data['username']])
+			myIdeas = cursor.fetchone()['ideas'].split(',')
+			for item in myIdeas:
+				cursor.execute("update idea set portrait=%s where id=%s",[relapath,item])
 		return json.dumps({"ok": True})
 	else:
 		return json.dumps({"ok": False, "error": "invalid token"})
@@ -360,12 +497,43 @@ def storeCurrentUrl():
 	session['url'] = request.form['url']
 	return json.dumps({"ok": True})
 
-# 主页，展示最新热门创意
+# 主页，展示热门创意
 @app.route('/')
 def index():
 	cursor.execute('select * from idea order by praise desc, timestamp desc limit 10')
 	ideas = cursor.fetchall()
-	return render_template('index.html', ideas=ideas)
+	for item in ideas:
+		temp = int(time.time()) - int(item['timestamp'])
+		if temp < 60:
+			temp = str(temp) + 's'
+		elif temp < 3600:
+			temp = str(temp/60) + 'm'
+		elif temp < 3600 * 24:
+			temp = str(temp/3600) + 'h'
+		else:
+			temp = str(temp/(3600*24)) + 'd'
+		item['timestamp'] = temp
+	return render_template('index.html', ideas=ideas, hot=True)
+		
+
+# 主页，展示最新创意
+@app.route('/<mode>')
+def index_latest(mode):
+	if mode == 'latest':
+		cursor.execute('select * from idea order by timestamp desc, praise desc limit 10')
+		ideas = cursor.fetchall()
+		for item in ideas:
+			temp = int(time.time()) - int(item['timestamp'])
+			if temp < 60:
+				temp = str(temp) + 's'
+			elif temp < 3600:
+				temp = str(temp/60) + 'm'
+			elif temp < 3600 * 24:
+				temp = str(temp/3600) + 'h'
+			else:
+				temp = str(temp/(3600*24)) + 'd'
+			item['timestamp'] = temp
+		return render_template('index.html', ideas=ideas, hot=False)
 
 # 我的主页
 @app.route('/user')
@@ -374,10 +542,18 @@ def home():
 		cursor.execute('select * from user where username=%s', [session.get('username')])
 		user = cursor.fetchone()
 
+		followUserStr = user['followUsers']
+
+		hotTags = {}
+		cursor.execute("select tag from userTagStat where gender=1 order by count desc limit 10")
+		hotTags['male'] = cursor.fetchall()
+		cursor.execute("select tag from userTagStat where gender=0 order by count desc limit 10")
+		hotTags['female'] = cursor.fetchall()
+
 		ideas = user['ideas']
 		ideasCount = 0
 		if not ideas == '':
-			cursor.execute('select id,title from idea where id in (%s)' % (ideas))
+			cursor.execute('select id,title,thumbnail from idea where id in (%s)' % (ideas))
 			ideas = cursor.fetchall()
 			ideasCount = len(ideas)
 		else:
@@ -386,7 +562,7 @@ def home():
 		followIdeas = user['followIdeas']
 		followIdeasCount = 0
 		if not followIdeas == '':
-			cursor.execute('select id,title from idea where id in (%s)' % (followIdeas))
+			cursor.execute('select id,title,thumbnail from idea where id in (%s)' % (followIdeas))
 			followIdeas = cursor.fetchall()
 			followIdeasCount = len(followIdeas)
 		else:
@@ -400,8 +576,15 @@ def home():
 			for item in followUsers:
 				temp = temp + '"' + item + '",'
 			followUsers = temp[:-1]
-			cursor.execute('select username,nickname from user where username in (%s)' % (followUsers))
+			cursor.execute('select username,nickname,portrait,fans from user where username in (%s)' % (followUsers))
 			followUsers = cursor.fetchall()
+			for item in followUsers:
+				temp = item['fans']
+				if temp == '':
+					temp = 0
+				else:
+					temp = len(temp.split(','))
+				item['fans'] = temp
 			followUsersCount = len(followUsers)
 		else:
 			followUsers = None
@@ -414,13 +597,20 @@ def home():
 			for item in fans:
 				temp = temp + '"' + item + '",'
 			fans = temp[:-1]
-			cursor.execute('select username,nickname from user where username in (%s)' % (fans))
+			cursor.execute('select username,nickname,portrait,fans from user where username in (%s)' % (fans))
 			fans = cursor.fetchall()
+			for item in fans:
+				temp = item['fans']
+				if temp == '':
+					temp = 0
+				else:
+					temp = len(temp.split(','))
+				item['fans'] = temp
 			fansCount = len(fans)
 		else:
 			fans = None
 
-		return render_template('home.html', user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount)
+		return render_template('home.html', user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount, followUserStr=followUserStr, hotTags=hotTags)
 	else:
 		return redirect(url_for('login'))
 
@@ -436,7 +626,7 @@ def user(username):
 		ideas = user['ideas']
 		ideasCount = 0
 		if not ideas == '':
-			cursor.execute('select id,title from idea where id in (%s)' % (str(ideas)))
+			cursor.execute('select id,title,thumbnail from idea where id in (%s)' % (str(ideas)))
 			ideas = cursor.fetchall()
 			ideasCount = len(ideas)
 		else:
@@ -445,7 +635,7 @@ def user(username):
 		followIdeas = user['followIdeas']
 		followIdeasCount = 0
 		if not followIdeas == '':
-			cursor.execute('select id,title from idea where id in (%s)' % (str(followIdeas)))
+			cursor.execute('select id,title,thumbnail from idea where id in (%s)' % (str(followIdeas)))
 			followIdeas = cursor.fetchall()
 			followIdeasCount = len(followIdeas)
 		else:
@@ -459,8 +649,15 @@ def user(username):
 			for item in followUsers:
 				temp = temp + '"' + item + '",'
 			followUsers = temp[:-1]
-			cursor.execute('select username,nickname from user where username in (%s)' % (followUsers))
+			cursor.execute('select username,nickname,portrait,fans from user where username in (%s)' % (followUsers))
 			followUsers = cursor.fetchall()
+			for item in followUsers:
+				temp = item['fans']
+				if temp == '':
+					temp = 0
+				else:
+					temp = len(temp.split(','))
+				item['fans'] = temp
 			followUsersCount = len(followUsers)
 		else:
 			followUsers = None
@@ -473,21 +670,25 @@ def user(username):
 			for item in fans:
 				temp = temp + '"' + item + '",'
 			fans = temp[:-1]
-			cursor.execute('select username,nickname from user where username in (%s)' % (fans))
+			cursor.execute('select username,nickname,portrait,fans from user where username in (%s)' % (fans))
 			fans = cursor.fetchall()
+			for item in fans:
+				temp = item['fans']
+				if temp == '':
+					temp = 0
+				else:
+					temp = len(temp.split(','))
+				item['fans'] = temp
 			fansCount = len(fans)
 		else:
 			fans = None
 
-		followed = None
+		followUserStr = ''
 		me = session.get('username')
 		if not me == None:
 			cursor.execute('select followUsers from user where username=%s',[me])
-			if username in cursor.fetchone()['followUsers'].split(','):
-				followed = True
-			else:
-				followed = False
-		return render_template('user.html',user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount, followed=followed)
+			followUserStr = cursor.fetchone()['followUsers']
+		return render_template('user.html',user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount, followUserStr=followUserStr)
 
 # 发布创意
 @app.route('/idea/new',methods=['GET','POST'])
@@ -514,6 +715,18 @@ def idea_new():
 			ideas = ideas + ',' + str(ideaId)
 			ideas = ideas.lstrip(',')
 			cursor.execute('update user set ideas=%s where username=%s',[ideas,username])
+
+			# 统计创意tag次数
+			for tag in tags.split(' '):
+				if tag == '':
+					continue
+				cursor.execute("select count from ideaTagStat where tag=%s and category=%s",[tag,category])
+				record = cursor.fetchone()
+				if record == None:
+					cursor.execute("insert into ideaTagStat(tag,category,count) values(%s,%s,1)",[tag,category])
+				else:
+					count = int(record['count']) + 1
+					cursor.execute("update ideaTagStat set count=%s where tag=%s and category=%s",[count,tag,category])
 			return redirect(url_for('idea',ideaId=ideaId))
 		else:
 			return redirect(url_for('login'))
@@ -549,43 +762,6 @@ def idea(ideaId):
 		item['timestamp'] = time.strftime('%m-%d %H:%M', time.localtime(float(item['timestamp'])))
 	commentsCount = len(comments)
 	return render_template('idea.html', idea=idea, liked=liked, attachments=attachments, comments=comments, commentsCount=commentsCount)
-
-# 编辑创意
-@app.route('/idea/edit/<ideaId>', methods=['POST'])
-def idea_edit(ideaId):
-	if not session.get('username') == None:
-		data = request.form
-		image = request.files['thumbnail']
-		today = time.strftime('%Y%m%d', time.localtime(time.time()))
-		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
-		UPLOAD_FOLDER = '/static/uploads/img'
-		filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
-		relapath = os.path.join(UPLOAD_FOLDER, filename)
-		image.save(filepath)
-		cursor.execute("select thumbnail from idea where id=%s",[ideaId])
-		prevThumb = cursor.fetchone()['thumbnail']
-		if (not prevThumb == "/static/img/idea.jpg") and (os.path.exists(WECOROOT + prevThumb)):
-			os.remove(WECOROOT + prevThumb)
-		cursor.execute("update idea set title=%s,category=%s,tags=%s,lastUpdate=%s,thumbnail=%s where id=%s and owner=%s",[data['title'],data['category'],data['tags'],str(int(time.time())),relapath,ideaId,session.get('username')])
-		return redirect(url_for('idea', ideaId=ideaId))
-	else:
-		return redirect(url_for('login'))
-
-# 为创意添加图片内容
-@app.route('/idea/addImg/<ideaId>', methods=['POST'])
-def idea_add_img(ideaId):
-	if not session.get('username') == None:
-		image = request.files['content']
-		today = time.strftime('%Y%m%d', time.localtime(time.time()))
-		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
-		UPLOAD_FOLDER = '/static/uploads/img'
-		filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
-		relapath = os.path.join(UPLOAD_FOLDER, filename)
-		image.save(filepath)
-		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,relapath,str(int(time.time())), session.get('username')])
-		return redirect(url_for('idea', ideaId=ideaId))
-	else:
-		return redirect(url_for('login'))
 
 # 为创意添加文本内容
 @app.route('/idea/addText/<ideaId>',methods=['POST'])
@@ -631,7 +807,6 @@ def search_keyword():
 	target = request.args.get('target')
 	keyword = request.args.get('keyword')
 	key = keyword
-	print key
 	pageId = request.args.get('pageId')
 	numPerPage = 10
 	pageId = int(pageId)
@@ -747,10 +922,10 @@ def login():
 		username = request.form['username']
 		password = request.form['password']
 		if cursor.execute("select id from user where username=%s or email=%s", [username,username]) == 0:
-			error = u"用户名或邮箱不存在"
+			error = u"账号或邮箱不存在"
 			return render_template('login.html', error=error)
 		elif cursor.execute("select id from user where username=%s and password=%s", [username,unicode(md5(password).hexdigest().upper())]) + cursor.execute("select id from user where email=%s and password=%s", [username,unicode(md5(password).hexdigest().upper())]) == 0:
-			error = u"用户密码错误"
+			error = u"账号或密码错误"
 			return render_template('login.html', error=error)
 		else:
 			cursor.execute("update user set lastActive=%s, token=%s, TTL=100 where username=%s or email=%s",[str(int(time.time())),genKey(),username,username])
