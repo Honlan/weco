@@ -28,10 +28,17 @@ db.autocommit(True)
 cursor = db.cursor()
 
 # 加载其他模块代码
-import weco.api.user
-import weco.api.idea
-import weco.view.auth
-import weco.view.idea
-import weco.view.user
-import weco.view.search
-import weco.view.notice
+# import weco.api.user
+# import weco.api.idea
+# import weco.view.auth
+# import weco.view.idea
+# import weco.view.user
+# import weco.view.search
+# import weco.view.notice
+import api.user
+import api.idea
+import view.auth
+import view.idea
+import view.user
+import view.search
+import view.notice
