@@ -35,10 +35,5 @@ cursor = db.cursor()
 # import weco.view.user
 # import weco.view.search
 # import weco.view.notice
-from main.api import user
-from main.api import idea
-from main.view import auth
-from main.view import idea
-from main.view import user
-from main.view import search
-from main.view import notice
+from api import *
+from view import *
