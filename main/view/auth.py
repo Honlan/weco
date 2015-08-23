@@ -1,8 +1,8 @@
 # coding:utf-8
 
 from flask import *
-from weco import app
-from weco import cursor
+from main import app
+from main import cursor
 import random
 from hashlib import md5
 import time

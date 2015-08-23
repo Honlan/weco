@@ -7,6 +7,6 @@
 	@ last updated 2015-08-23 
 '''
 
-from weco import app
+from main import app
 
 app.run(debug=True)

@@ -1,14 +1,14 @@
 # coding:utf-8
 
 from flask import *
-from weco import app
-from weco import cursor
+from main import app
+from main import cursor
 import time
 import base64
 import random
 from hashlib import md5
 import os
-from weco.conf.configure import WECOROOT
+from main.conf.configure import WECOROOT
 
 '''
 	动态类别说明：
