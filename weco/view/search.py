@@ -53,7 +53,7 @@ def search_keyword():
 		# 搜索的是创意
 		for item in keyword:
 			cursor.execute("insert into search(username,target,keyword,timestamp) values(%s,%s,%s,%s)",[username,target,item,str(int(time.time()))])
-			cursor.execute("select * from idea where locked=0 and title like '%%%s%%' or tags like '%%%s%%' or category like '%%%s%%'" % (item,item,item))
+			cursor.execute("select * from idea where locked=0 and (title like '%%%s%%' or tags like '%%%s%%' or category like '%%%s%%')" % (item,item,item))
 			ideas = cursor.fetchall()
 			for i in ideas:
 				temp = int(time.time()) - int(i['timestamp'])
@@ -72,7 +72,7 @@ def search_keyword():
 		# 搜索的是用户
 		for item in keyword:
 			cursor.execute("insert into search(username,target,keyword,timestamp) values(%s,%s,%s,%s)",[username,target,item,str(int(time.time()))])
-			cursor.execute("select username,nickname,portrait,tags,description,fans,lastActive from user where nickname like '%%%s%%' or tags like '%%%s%%' or description like '%%%s%%'" % (item,item,item))
+			cursor.execute("select username,nickname,portrait,tags,description,fans,lastActive from user where username!='None' and (nickname like '%%%s%%' or tags like '%%%s%%' or description like '%%%s%%')" % (item,item,item))
 			users = cursor.fetchall()
 			for i in users:
 				if i['fans'] == '':
