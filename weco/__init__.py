@@ -28,7 +28,7 @@ db.autocommit(True)
 cursor = db.cursor()
 
 # 加载其他模块代码
-import weco.api.user
+from weco.api import user
 import weco.api.idea
 import weco.view.auth
 import weco.view.idea
