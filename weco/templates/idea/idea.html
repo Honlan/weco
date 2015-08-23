@@ -1,0 +1,847 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#idea {
+    padding: 20px;
+}
+
+#idea #thumbnail {
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#idea .like_or_not {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    display: block;
+}
+
+#idea .like_or_not.liked {
+    background-image: url("{{url_for('static',filename='img/icon/icon-12.png')}}");
+    background-size: 100% 100%;
+    cursor: pointer;
+}
+
+#idea .like_or_not.unliked {
+    background-image: url("{{url_for('static',filename='img/icon/icon-11.png')}}");
+    background-size: 100% 100%;
+    cursor: pointer;
+}
+
+#idea h2 {
+    margin: 0;
+    color: #444;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    padding: 12px 15px;
+    font-size: 20px;
+    background-color: rgba(240, 240, 240, 0.6);
+    border-top-right-radius: 10px;
+}
+
+#idea #ideaInfo {
+    margin: 10px;
+    position: relative;
+}
+
+#idea #ideaInfo #tags {
+    margin-left: 70px;
+    min-height: 35px;
+}
+
+#idea #ideaInfo .tag {
+    padding: 3px 5px;
+    color: #009c81;
+    display: inline-block;
+}
+
+#idea #ideaInfo .category {
+    position: absolute;
+    left: -5px;
+    top: -3px;
+    background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
+    background-size: 100% 100%;
+    padding: 12px 20px 10px 20px;
+    background-position: -2px 0px;
+    color: #666;
+}
+
+#idea #owner {
+    position: relative;
+}
+
+#idea #owner img {
+    position: absolute;
+    left: 10px;
+    top: 5px;
+    width: 70px;
+    border-radius: 50%;
+}
+
+#idea #owner #edit {
+    color: #e4007e;
+    font-size: 12px;
+    background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
+    background-size: 100% 100%;
+    padding: 8px 13px 8px 16px;
+    cursor: pointer;
+}
+
+#idea #owner #idea_control {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    text-align: center;
+}
+
+#idea #owner #idea_control .number {
+    color: #e4007e;
+    font-size: 8px;
+}
+
+#idea #owner #idea_control .fa {
+    color: #009c81;
+}
+
+#idea #owner #idea_control #praise,
+#idea #owner #idea_control #readCount,
+#idea #owner #idea_control #comment {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 0;
+}
+
+#idea #owner #idea_control #praise span.active,
+#idea #idea_comments .single_comment .comment_praise span.fa.active {
+    color: #e4007e;
+}
+
+
+/*#idea #idea_control #share {
+    float: right;
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 20px;
+    text-align: right;
+}
+
+#idea #idea_control #share .jiathis_style {
+    position: relative;
+    top: -19px;
+    left: -20px;
+    display: none;
+}*/
+
+#idea #edit_idea_info {
+    display: none;
+    padding-bottom: 30px;
+}
+
+#idea #edit_idea_info #thumb {
+    position: relative;
+}
+
+#idea #edit_idea_info #thumb img {
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#idea #edit_idea_info #thumb #change_thumbnail {
+    position: absolute;
+    width: auto;
+    right: 0;
+    bottom: 0;
+}
+
+#idea #edit_idea_info #thumb #change_thumbnail p {
+    color: #555;
+    background-color: rgba(240, 240, 240, 0.6);
+    margin-bottom: 0;
+    font-size: 15px;
+    padding: 8px 12px;
+    border-top-left-radius: 5px;
+}
+
+#idea #edit_idea_info #all_categories {
+    display: none;
+    position: absolute;
+    width: 64%;
+    left: 50%;
+    margin-left: -32%;
+    background-color: #009c81;
+    padding: 10px 12px;
+    z-index: 999;
+    margin-top: -60px;
+}
+
+#idea #edit_idea_info #all_categories p {
+    display: inline-block;
+    margin: 5px;
+    color: #009c81;
+    background-color: #fff;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#idea #edit_idea_info #hot-tags {
+    margin-bottom: 20px;
+    text-align: center;
+    min-height: 30px;
+}
+
+#idea #edit_idea_info #hot-tags p {
+    color: #e4007e;
+    background-image: url("{{url_for('static',filename='img/icon/line.png')}}");
+}
+
+#idea #edit_idea_info #hot-tags p span {
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #efefef;
+}
+
+#idea #edit_idea_info #hot-tags .hot-tag {
+    display: inline-block;
+    color: #009c81;
+    background-color: #fff;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    margin-left: 5px;
+    font-size: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#idea #edit_idea_info #save {
+    text-align: center;
+    cursor: pointer;
+}
+
+#idea #edit_idea_info #save span {
+    background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
+    background-size: 100% 100%;
+    padding: 12px 30px 10px 30px;
+    background-position: -2px 0px;
+    color: #009c81;
+}
+
+#idea #idea_content .content_cell {
+    margin: 10px 20px;
+    position: relative;
+    color: #666;
+    font-size: 13px;
+}
+
+#idea #idea_content .content_cell span.fa {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    margin-top: -7px;
+}
+
+#idea #idea_content .content_cell span.fa:hover {
+    cursor: pointer;
+}
+
+#idea #idea_content img,
+#idea #idea_content video {
+    height: 150px;
+    width: auto;
+    overflow-x: hidden;
+    margin: 5px auto;
+}
+
+#idea #idea_add_content #add_text textarea {
+    padding: 15px 27px 25px 15px;
+}
+
+#idea #idea_add_content #add_text button {
+    position: absolute;
+    right: 0;
+    bottom: 5px;
+    padding: 0;
+    border: 0;
+    display: none;
+    background-color: #f9f9f9;
+}
+
+#idea #idea_add_content #add_text button:hover {
+    background-color: #f9f9f9;
+}
+
+#idea #idea_add_content #add_text button img {
+    width: 25px;
+}
+
+#idea #idea_add_content #add_image span {
+    position: absolute;
+    right: 0;
+    bottom: 5px;
+    padding: 0;
+    border: 0;
+    display: none;
+    cursor: pointer;
+}
+
+#idea #idea_add_content #add_image span img {
+    width: 25px;
+}
+
+#idea #idea_add_content #add_video button {
+    position: absolute;
+    right: 0;
+    bottom: 5px;
+    padding: 0;
+    border: 0;
+    display: none;
+    background-color: #f9f9f9;
+}
+
+#idea #idea_add_content #add_video button:hover {
+    background-color: #f9f9f9;
+}
+
+#idea #idea_add_content #add_video button img {
+    width: 25px;
+}
+
+#idea #idea_comments #add_comment {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+#idea #idea_comments #publish_comment {
+    position: absolute;
+    right: 3px;
+    top: 12px;
+    background-color: #f9f9f9;
+    color: #009c81;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+#idea #idea_comments .single_comment {
+    font-size: 13px;
+    position: relative;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    min-height: 95px;
+    border-bottom: 1px solid rgba(201, 201, 202, 0.4);
+}
+
+#idea #idea_comments .single_comment:last-child {
+    border-bottom: none;
+}
+
+#idea #idea_comments .single_comment img {
+    width: 60px;
+    border-radius: 50%;
+}
+
+#idea #idea_comments .single_comment .comment_praise {
+    text-align: right;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+#idea #idea_comments .single_comment .comment_praise .fa {
+    margin-right: 5px;
+    margin-top: 10px;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="idea">
+    <div id="idea_info">
+        <div style="position:relative;">
+            <img id="thumbnail" src="{{url_for('static',filename=idea.thumbnail[8:])}}">
+            <h2>{{idea.title}}</h2> {% if liked %}
+            <span class="like_or_not liked"></span> {% else %}
+            <span class="like_or_not unliked"></span> {% endif %}
+        </div>
+        <div class="weco_form" style="border-top-left-radius:0;border-top-right-radius:0;">
+            <div id="ideaInfo">
+                <span class="category">{{idea.category}}</span>
+                <div id="tags">
+                    {% for tag in idea.tags.split(' ') %}
+                    <span class="tag">{{tag}}</span> {% endfor %}
+                </div>
+            </div>
+            <div id="owner">
+                <img src="{{url_for('static',filename=idea.portrait[8:])}}">
+                <div style="margin-left:92px;margin-right:90px;padding-top:5px;">
+                    <a href="{{url_for('user',username=idea.owner)}}" style="color:#555;">
+                        <p style="font-size:16px;margin-bottom:3px;margin-top:3px;">{{idea.nickname}}</p>
+                        <p style="font-size:10px;color:#999;margin-bottom:5px;">发布于 {{idea.timestamp}}</p>
+                    </a>
+                    <p style="font-size:12px;color:#009c81;">Ta的粉丝：{{fans}}人</p>
+                </div>
+                <div id="idea_control">
+                    <div id="praise">
+                        <span class="fa fa-fw fa-thumbs-o-up"></span>
+                        <br>
+                        <span class="number">{{idea.praise}}</span>
+                    </div>
+                    <div id="readCount">
+                        <span class="fa fa-fw fa-eye"></span>
+                        <br>
+                        <span class="number">{{idea.readCount}}</span>
+                    </div>
+                    <div id="comment">
+                        <span class="fa fa-fw fa-comment"></span>
+                        <br>
+                        <span class="number">{{commentsCount}}</span>
+                    </div>
+                    <div id="share" style="display:none;">
+                        <span class="fa fa-fw fa-share-square-o"></span>
+                        <!-- JiaThis Button BEGIN -->
+                        <div class="jiathis_style">
+                            <a class="jiathis_button_cqq"></a>
+                            <a class="jiathis_button_weixin"></a>
+                            <a class="jiathis_button_tsina"></a>
+                            <a class="jiathis_button_tqq"></a>
+                            <a class="jiathis_button_qzone"></a>
+                            <a class="jiathis_button_renren"></a>
+                            <!-- <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a> -->
+                            <!-- <a class="jiathis_counter_style"></a> -->
+                        </div>
+                        <!--script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script-->
+                        <!-- JiaThis Button END -->
+                    </div>
+                </div>
+                <div style="position:absolute;top:50px;right:10px;width:100px;text-align:center;">
+                    {% if idea.owner == session.get('username') %}
+                    <span id="edit">编辑</span> {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="edit_idea_info">
+        <form>
+            <div id="thumb">
+                <img src="{{url_for('static',filename=idea.thumbnail[8:])}}">
+                <div id="change_thumbnail">
+                    <div style="position:relative;cursor:pointer;">
+                        <p>更换创意封面</p>
+                        <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="thumbnail">
+                    </div>
+                </div>
+            </div>
+            <div class="weco_form" style="border-top-left-radius:0;border-top-right-radius:0;">
+                <div class="weco_input">
+                    <p>标题</p>
+                    <input type="text" name="title" value="{{idea.title}}">
+                </div>
+                <div class="weco_input">
+                    <p>分类</p>
+                    <input type="text" name="category" value="{{idea.category}}" readonly="readonly">
+                </div>
+                <div id="all_categories" class="weco_form">
+                    <p>社会</p>
+                    <p>设计</p>
+                    <p>生活</p>
+                    <p>城市</p>
+                    <p>娱乐</p>
+                    <p>健康</p>
+                    <p>旅行</p>
+                    <p>教育</p>
+                    <p>运动</p>
+                    <p>产品</p>
+                    <p>艺术</p>
+                    <p>科技</p>
+                    <p>工程</p>
+                    <p>广告</p>
+                    <p>其他</p>
+                </div>
+                <div class="weco_input" style="border-bottom:none;">
+                    <p>标签</p>
+                    <input type="text" name="tags" value="{{idea.tags}}">
+                </div>
+            </div>
+            <div id="hot-tags">
+                <p><span>热门标签</span></p>
+                {% for key,value in hotTags.items() %} {% for item in value %}
+                <div class="hot-tag" name="{{key}}" style="display:none;">{{item['tag']}}</div>
+                {% endfor %} {% endfor %}
+            </div>
+            <div id="save"><span>保存</span></div>
+        </form>
+    </div>
+    <div id="idea_content" class="weco_form">
+        {% for item in attachments %}
+        <div class="content_cell">
+            {% if idea.owner == session.get('username') %}
+            <span class="fa fa-fw fa-times" name="{{item.id}}"></span> {% endif %} {% if item.fileType == 0 %}
+            <p style="word-wrap:break-word;word-break:break-all;">{{item.url}}</p>
+            {% elif item.fileType == 1 %}
+            <img src="{{url_for('static',filename=item.url[8:])}}"> {% elif item.fileType == 2 %}
+            <video src="{{url_for('static',filename=item.url[8:])}}" controls="controls" loop="loop" muted>
+            </video> {% endif %}
+        </div>
+        {% else %}
+        <p style="text-align:center;margin-top:10px;color:#666;font-size:13px;">该创意暂无详细内容</p>
+        {% endfor %}
+    </div>
+    {% if idea.owner == session.get('username') %}
+    <div id="idea_add_content" class="weco_form">
+        <div id="add_text">
+            <form method="post" action="{{url_for('idea_add_text',ideaId=idea.id)}}" class="weco_input">
+                <textarea rows="3" name="content" placeholder="給创意添加一些文字吧"></textarea>
+                <button type="submit"><img src="{{url_for('static',filename='img/icon/icon-20.png')}}"></button>
+            </form>
+        </div>
+        <div id="add_image">
+            <form style="position:relative;">
+                <div style="position:relative;">
+                    <p style="height:51px;padding:15px;color:#aaa;border-bottom:1px solid rgba(201,201,202,0.4);margin-bottom:0;">給创意添加一张图片吧</p>
+                    <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content">
+                </div>
+                <span><img src="{{url_for('static',filename='img/icon/icon-20.png')}}"></span>
+            </form>
+        </div>
+        <div id="add_video">
+            <form enctype="multipart/form-data" method="post" action="{{url_for('idea_add_video',ideaId=idea.id)}}" style="position:relative;">
+                <div style="position:relative;">
+                    <p style="height:51px;padding:15px;color:#aaa;margin-bottom:0;">給创意添加一段视频吧</p>
+                    <input type="file" accept="video/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content">
+                </div>
+                <button type="submit"><img src="{{url_for('static',filename='img/icon/icon-20.png')}}"></button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    <div id="idea_comments" class="weco_form">
+        <div id="add_comment">
+            <input name="comment" type="text" placeholder="写下您的评论" style="padding-right:30px;" />
+            <div id="publish_comment"><span class="fa fa-fw fa-pencil"></span></div>
+        </div>
+        {% for item in comments %}
+        <div class="single_comment">
+            <div style="width:70px;text-align:center;position:absolute;left:10px;top:0;">
+                <img src="{{url_for('static', filename=item.portrait[8:])}}">
+                <p style="margin-top:5px;margin-bottom:5px;"><a href="{{url_for('user',username=item.username)}}">{{item.nickname}}</a></p>
+            </div>
+            <div style="padding-left:90px;">
+                <div style="color:#555;">{{item.content}}</div>
+                <p class="comment_praise"><span name="{{item.id}}" class="fa fa-fw fa-thumbs-o-up"></span><span>{{item.praise}}</span></p>
+            </div>
+            <p style="text-align:right;color:#999;font-size:8px;"><span>{{item.timestamp}}</span></p>
+        </div>
+        {% else %}
+        <p style="text-align:center;margin-top:30px;color:#009c81;">沙发空缺，快快来抢</p>
+        {% endfor%}
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    // 更改页面标题
+    $('#header p#page_title').text("创意详情");
+
+    // 编辑创意
+    var change_thumbnail = false;
+    $('#idea #idea_info #edit').click(function() {
+        // 隐藏其他内容
+        $('#idea #idea_info').hide();
+        $('#idea #idea_control').hide();
+        $('#idea #idea_content').hide();
+        $('#idea #idea_add_content').hide();
+        $('#idea #idea_comments').hide();
+        // 显示编辑页面
+        $('#idea #edit_idea_info').show();
+        change_thumbnail = false;
+    });
+
+    // 更改缩略图
+    $('#idea #edit_idea_info #change_thumbnail input').change(function() {
+        change_thumbnail = true;
+        // 缩略图预览
+        $('#idea #edit_idea_info #thumb img').attr("src", window.URL.createObjectURL($(this)[0].files[0]));
+    });
+
+    // 保存更改
+    $('#idea #edit_idea_info #save').click(function() {
+        // 修改了缩略图，需要一并提交
+        if (change_thumbnail) {
+            // 确定压缩比
+            var ratio = 64 / ($('#idea #edit_idea_info #change_thumbnail input')[0].files[0].size / 1024);
+            if (ratio > 1) {
+                ratio = 1;
+            }
+            // 压缩并上传
+            lrz($('#idea #edit_idea_info #change_thumbnail input')[0].files[0], {
+                    quality: ratio
+                })
+                .then(function(rst) {
+                    $.ajax({
+                        url: '{{url_for("api_idea_edit")}}',
+                        type: 'POST',
+                        data: {
+                            username: "{{session.get('username')}}",
+                            token: "{{session.get('token')}}",
+                            ideaId: "{{idea.id}}",
+                            thumbnail: rst.base64,
+                            title: $("#idea #edit_idea_info input[name='title']").val(),
+                            tags: $("#idea #edit_idea_info input[name='tags']").val(),
+                            category: $("#idea #edit_idea_info input[name='category']").val()
+                        },
+                        dataType: 'json',
+                        error: function() {},
+                        success: function(data) {
+                            window.location.reload()
+                        }
+                    });
+                })
+                .catch(function(err) {
+                    // 处理失败会执行
+                })
+                .always(function() {
+                    // 不管是成功失败，都会执行
+                });
+        } else {
+            // 仅修改了文本，无需提交缩略图
+            $.ajax({
+                url: '{{url_for("api_idea_edit")}}',
+                type: 'POST',
+                data: {
+                    username: "{{session.get('username')}}",
+                    token: "{{session.get('token')}}",
+                    ideaId: "{{idea.id}}",
+                    title: $("#idea #edit_idea_info input[name='title']").val(),
+                    tags: $("#idea #edit_idea_info input[name='tags']").val(),
+                    category: $("#idea #edit_idea_info input[name='category']").val()
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    window.location.reload()
+                }
+            });
+        }
+    });
+
+    // 喜欢或不喜欢该创意
+    $('#idea .like_or_not').click(function() {
+        var username = $('#session_username').text();
+        if (username == 'None') {
+            // 用户尚未登录
+            storeCurrentUrl();
+        } else {
+            // 判断执行的操作是喜欢还是不喜欢
+            if ($(this).hasClass('liked')) {
+                $(this).removeClass('liked').addClass('unliked');
+                $.ajax({
+                    url: '{{url_for("api_idea_disfollow")}}',
+                    type: 'POST',
+                    data: {
+                        ideaId: "{{idea.id}}",
+                        username: "{{session.get('username')}}",
+                        token: "{{session.get('token')}}"
+                    },
+                    dataType: 'json',
+                    error: function() {},
+                    success: function(data) {}
+                });
+            } else {
+                $(this).removeClass('unliked').addClass('liked');
+                $.ajax({
+                    url: '{{url_for("api_idea_follow")}}',
+                    type: 'POST',
+                    data: {
+                        ideaId: "{{idea.id}}",
+                        username: "{{session.get('username')}}",
+                        token: "{{session.get('token')}}"
+                    },
+                    dataType: 'json',
+                    error: function() {},
+                    success: function(data) {}
+                });
+            }
+        }
+    });
+
+    // 点赞创意
+    $('#idea #idea_control #praise span:first-child').click(function() {
+        $.ajax({
+            url: '{{url_for("api_idea_praise")}}',
+            type: 'POST',
+            data: {
+                ideaId: "{{idea.id}}"
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $('#idea #idea_control #praise span:last-child').text(data['praise']);
+                if (data['action'] == "increase") {
+                    $('#idea #idea_control #praise span:first-child').addClass('active');
+                } else if (data['action'] == "decrease") {
+                    $('#idea #idea_control #praise span:first-child').removeClass('active');
+                }
+            }
+        });
+    });
+
+    // 分享创意
+    $('#idea #idea_control #share span').click(function() {
+        $('#idea #idea_control #share .jiathis_style').slideToggle();
+    });
+
+    // 评论创意
+    $('#idea #idea_comments #publish_comment').click(function() {
+        var username = $('#session_username').text();
+        if (username == 'None') {
+            // 用户尚未登录
+            storeCurrentUrl();
+        } else {
+            if ($('#idea #idea_comments #add_comment input').val() != '') {
+                $.ajax({
+                    url: '{{url_for("api_idea_comment")}}',
+                    type: 'POST',
+                    data: {
+                        ideaId: "{{idea.id}}",
+                        username: "{{session.get('username')}}",
+                        token: "{{session.get('token')}}",
+                        content: $('#idea #idea_comments #add_comment input').val()
+                    },
+                    dataType: 'json',
+                    error: function() {},
+                    success: function(data) {
+                        window.location.reload();
+                    }
+                });
+            }
+        }
+    });
+
+    // 点赞评论
+    $('#idea #idea_comments .single_comment .comment_praise span.fa').click(function() {
+        var commentId = $(this).attr('name');
+        $.ajax({
+            url: '{{url_for("api_comment_praise")}}',
+            type: 'POST',
+            data: {
+                commentId: commentId
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $('#idea #idea_comments .single_comment .comment_praise span.fa[name="' + commentId + '"]').next().text(data['praise']);
+                if (data['action'] == "increase") {
+                    $('#idea #idea_comments .single_comment .comment_praise span.fa[name="' + commentId + '"]').addClass('active');
+                } else if (data['action'] == "decrease") {
+                    $('#idea #idea_comments .single_comment .comment_praise span.fa[name="' + commentId + '"]').removeClass('active');
+                }
+            }
+        });
+    });
+
+    // 用户添加了文本内容
+    $('#idea #idea_add_content #add_text textarea').keyup(function() {
+        if ($(this).val() != '') {
+            $('#idea #idea_add_content #add_text button').fadeIn();
+        } else {
+            $('#idea #idea_add_content #add_text button').fadeOut();
+        }
+    });
+
+    // 用户添加了图片内容
+    $('#idea #idea_add_content #add_image input').change(function() {
+        var filename = $(this).val();
+        filename = filename.substr(filename.lastIndexOf("\\") + 1);
+        $('#idea #idea_add_content #add_image p').text(filename);
+        $('#idea #idea_add_content #add_image span').fadeIn();
+    });
+
+    // 用户上传了图片内容
+    $('#idea #idea_add_content #add_image span').click(function() {
+        var ratio = 64 / ($('#idea #idea_add_content #add_image input')[0].files[0].size / 1024);
+        if (ratio > 1) {
+            ratio = 1;
+        }
+        lrz($('#idea #idea_add_content #add_image input')[0].files[0], {
+                quality: ratio
+            })
+            .then(function(rst) {
+                $.ajax({
+                    url: '{{url_for("api_idea_addImg")}}',
+                    type: 'POST',
+                    data: {
+                        username: "{{session.get('username')}}",
+                        token: "{{session.get('token')}}",
+                        image: rst.base64,
+                        ideaId: "{{idea.id}}"
+                    },
+                    dataType: 'json',
+                    error: function() {},
+                    success: function(data) {
+                        window.location.reload()
+                    }
+                });
+            })
+            .catch(function(err) {
+                // 处理失败会执行
+            })
+            .always(function() {
+                // 不管是成功失败，都会执行
+            });
+    });
+
+    // 用户添加了视频内容
+    $('#idea #idea_add_content #add_video input').change(function() {
+        if ($(this)[0].files[0].size / 1024 / 1024 > 3) {
+            $('#idea #idea_add_content #add_video p').text("视频大小大于3M");
+            $('#idea #idea_add_content #add_video p').css("color", "#F36148");
+            $('#idea #idea_add_content #add_video button').fadeOut();
+        } else {
+            var filename = $(this).val();
+            filename = filename.substr(filename.lastIndexOf("\\") + 1);
+            $('#idea #idea_add_content #add_video p').text(filename);
+            $('#idea #idea_add_content #add_video p').css("color", "#333");
+            $('#idea #idea_add_content #add_video button').fadeIn();
+        }
+    });
+
+    // 用户移除了创意附件
+    $('#idea #idea_content .content_cell span.fa').click(function() {
+        var attachmentId = $(this).attr('name');
+        $.ajax({
+            url: '{{url_for("api_attachment_remove")}}',
+            type: 'POST',
+            data: {
+                attachmentId: attachmentId,
+                username: "{{session.get('username')}}",
+                token: "{{session.get('token')}}"
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                window.location.reload()
+            }
+        });
+    });
+
+    // 默认仅显示创意所属类别的热门标签
+    $('#idea #edit_idea_info .hot-tag[name="{{idea.category}}"]').show();
+
+    // 用户选择更换创意类别
+    $('#idea #edit_idea_info input[name="category"]').focus(function() {
+        $('#idea #edit_idea_info #all_categories').fadeIn();
+    });
+
+    // 更换了创意类别
+    $('#idea #edit_idea_info #all_categories p').click(function() {
+        var category = $(this).text();
+        $(this).parent().fadeOut(300);
+        $('#idea #edit_idea_info input[name="category"]').val(category);
+        $('#idea #edit_idea_info .hot-tag').hide();
+        $('#idea #edit_idea_info .hot-tag[name="' + category + '"]').show();
+    });
+});
+</script>
+{% endblock %}

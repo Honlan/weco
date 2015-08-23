@@ -1,0 +1,170 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#notice {
+    padding: 20px 30px 40px 30px;
+}
+
+#notice ul.nav li {
+    width: 33%;
+    text-align: center;
+}
+
+#notice ul.nav li.active a {
+    color: #009c81;
+}
+
+#notice ul.nav li a {
+    border: none;
+    background-color: #f9f9f9;
+    color: #999;
+}
+
+#notice .tab-content .nonew {
+    text-align: center;
+    font-size: 20px;
+    color: #009c81;
+    margin-top: 30px;
+}
+
+#notice .badge {
+    margin-left: 10px;
+    background-color: #f9f9f9;
+    color: #e4007e;
+}
+
+#notice #activities .activity {
+    position: relative;
+    margin-bottom: 25px;
+    padding: 18px 12px;
+}
+
+#notice #activities .activity .noticeTime {
+    position: absolute;
+    left: -80px;
+    top: 50%;
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 0;
+    margin-top: -20px;
+    text-align: center;
+}
+
+#notice #activities .activity img {
+    width: 14px;
+    position: absolute;
+    top: 50%;
+    left: -33px;
+    padding: 1px;
+    background-color: #efefef;
+    margin-top: -10px;
+}
+
+#notice #activities .activity .commentContent {
+    font-size: 10px;
+    color: #999;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+#notice #chats .chat {
+    position: relative;
+    border-bottom: 1px solid rgba(201, 201, 202, 0.4);
+    padding: 10px;
+    padding-left: 90px;
+    min-height: 80px;
+}
+
+#notice #chats .chat:last-child {
+    border-bottom: none;
+}
+
+#notice #chats .chat img {
+    width: 60px;
+    position: absolute;
+    left: 15px;
+    top: 10px;
+    border-radius: 50%;
+}
+
+#notice #chats .chat a {
+    text-decoration: none;
+}
+
+#notice #chats .chat p {
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+#notice #chats .chatContent {
+    color: #888;
+}
+
+#notice #chats p.noticeTime {
+    position: absolute;
+    bottom: 5px;
+    right: 15px;
+    color: #888;
+    font-size: 10px;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="notice">
+    <div>
+        <div class="weco_form">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#activities" aria-controls="activities" role="tab" data-toggle="tab">动态<span class="badge">{{activityCount}}</span></a></li>
+                <li role="presentation"><a href="#chats" aria-controls="chats" role="tab" data-toggle="tab">私信<span class="badge">{{chatsCount}}</span></a></li>
+                <li role="presentation"><a href="#notifications" aria-controls="notifications" role="tab" data-toggle="tab">通知<span class="badge">0</span></a></li>
+            </ul>
+        </div>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active haveContent" id="activities">
+                {% if activities %}
+                <div style="border-left: 2px solid rgba(0, 156, 129, 0.6);margin-left: 65px;padding-left: 25px;margin-right: 20px;padding-top: 20px;padding-bottom: 20px;">
+                    {% for item in activities %}
+                    <div class="weco_form activity">
+                        <img src="{{url_for('static',filename='img/icon/icon-10.png')}}"> {% if item.activityType == 1 %}
+                        <a href="{{url_for('user',username=item.other)}}"><span style="color:#009c81;">{{item.otherNickname}}</span></a> 关注了你 {% elif item.activityType == 2 %}
+                        <a href="{{url_for('user',username=item.other)}}"><span style="color:#009c81;">{{item.otherNickname}}</span></a> 喜欢了你的创意 <a href="{{url_for('idea',ideaId=item.ideaId)}}"><span style="color:#009c81;">{{item.ideaTitle}}</span></a> {% elif item.activityType == 3 %}
+                        <a href="{{url_for('user',username=item.other)}}"><span style="color:#009c81;">{{item.otherNickname}}</span></a> 评论了你的创意 <a href="{{url_for('idea',ideaId=item.ideaId)}}"><span style="color:#009c81;">{{item.ideaTitle}}</span></a>
+                        <p class="commentContent">{{item.comment}}</p> {% endif %}
+                        <p class="noticeTime">{{item.timestamp}}
+                            <br>{{item.weekday}}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="nonew">暂时没有新的动态</p>
+                {% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane" id="chats">
+                {% for item in chats %}
+                <div class="chat">
+                    <a href="{{url_for('user',username=item.source)}}"><img src="{{url_for('static',filename=item.portrait[8:])}}"></a>
+                    <div>
+                        <a href="{{url_for('chat',username=item.source)}}">
+                            <p style="color:#555;margin-bottom:5px;"><span style="color:#333;font-size:16px;">{{item.sourceNickname}}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#e4007e;">{{item.count}}</span>&nbsp;条消息</p>
+                            <p class="chatContent">{{item.content}}</p>
+                            <p class="noticeTime">{{item.timestamp}}</p>
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <p class="nonew">暂时没有新的私信</p>
+                {% endfor %}
+            </div>
+            <div role="tabpanel" class="tab-pane" id="notifications">
+                <p class="nonew">暂时没有新的活动</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    // 更改页面标题
+    $('#header p#page_title').text("通知");
+});
+</script>
+{% endblock %}

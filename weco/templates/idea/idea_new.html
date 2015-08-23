@@ -1,0 +1,201 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#idea_new {
+    padding-top: 40px;
+    text-align: center;
+    padding-bottom: 40px;
+    position: relative;
+}
+
+#idea_new #category {
+    color: #009c81;
+    padding: 2px 6px;
+    margin-right: 10px;
+    cursor: pointer;
+    border-bottom: 1px dashed rgba(201, 201, 202, 0.8);
+}
+
+#idea_new h5 {
+    font-size: 22px;
+    color: #444;
+}
+
+#idea_new #all_categories {
+    display: none;
+    position: absolute;
+    width: 64%;
+    left: 50%;
+    margin-left: -32%;
+    top: 185px;
+    background-color: #009c81;
+    padding: 10px 12px;
+}
+
+#idea_new #all_categories p {
+    display: inline-block;
+    margin: 5px;
+    color: #009c81;
+    background-color: #fff;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#idea_new form {
+    width: 82%;
+    margin: 0px auto;
+}
+
+#idea_new form button[type="submit"] {
+    border: none;
+    color: #009c81;
+    font-size: 15px;
+    background-color: white;
+    width: 100%;
+    padding: 10px 20px;
+}
+
+#idea_new #hot-tags {
+    margin-bottom: 20px;
+    text-align: center;
+    min-height: 30px;
+}
+
+#idea_new #hot-tags p {
+    color: #e4007e;
+    background-image: url("{{url_for('static',filename='img/icon/line.png')}}");
+}
+
+#idea_new #hot-tags p span {
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #efefef;
+}
+
+#idea_new #hot-tags .hot-tag {
+    color: #009c81;
+    background-color: #fff;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    margin-left: 5px;
+    font-size: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-block;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="idea_new">
+    <img class="weco_logo" src="{{url_for('static',filename='img/icon/icon-01.png')}}">
+    <div id="all_categories" class="weco_form">
+        <p>社会</p>
+        <p>设计</p>
+        <p>生活</p>
+        <p>城市</p>
+        <p>娱乐</p>
+        <p>健康</p>
+        <p>旅行</p>
+        <p>教育</p>
+        <p>运动</p>
+        <p>产品</p>
+        <p>艺术</p>
+        <p>科技</p>
+        <p>工程</p>
+        <p>广告</p>
+        <p>其他</p>
+    </div>
+    <form method="post" action="{{url_for('idea_new')}}">
+        <div class="weco_form">
+            <h5>我想通过一个</h>
+            <h5 style="margin:10px;"><span id="category">社会</span>创意</h5>
+            <h5>改变世界！</h5>
+        </div>
+        <div class="weco_form">
+            <input type="text" name="title" placeholder="标题&nbsp;&nbsp;&nbsp;&nbsp;一个简短的概括" style="border-bottom:1px solid rgba(201,201,202,0.4);">
+            <input type="text" name="tags" placeholder="标签&nbsp;&nbsp;&nbsp;&nbsp;空格分割标签">
+            <input type="text" name="category" style="display:none;" value="艺术">
+        </div>
+        <div id="hot-tags">
+            <p><span>热门标签</span></p>
+            {% for key,value in hotTags.items() %} {% for item in value %}
+            <div class="hot-tag" name="{{key}}" style="display:none;">{{item['tag']}}</div>
+            {% endfor %} {% endfor %}
+        </div>
+        <div class="weco_form">
+            <button type="submit" class="btn btn-default disabled">开启我的创意之旅 ></button>
+        </div>
+    </form>
+</div>
+<script>
+$(document).ready(function() {
+    // 更改页面标题
+    $('#header p#page_title').text("发布创意");
+
+    // 默认仅显示“社会”类别创意的热门标签
+    $('#idea_new .hot-tag[name="社会"]').show();
+
+    // 选择创意类别
+    $('#idea_new #category').click(function() {
+        $('#idea_new #all_categories').fadeIn(300);
+    });
+
+    // 更换了创意类别
+    $('#idea_new #all_categories p').click(function() {
+        var category = $(this).text();
+        $(this).parent().fadeOut(300);
+        $('#idea_new #category').text(category);
+        $('#idea_new input[name="category"]').val(category);
+        $('#idea_new .hot-tag').hide();
+        $('#idea_new .hot-tag[name="' + category + '"]').show();
+    });
+
+    // 点击热门标签并添加
+    var title = false,
+        tag = false;
+    $('#idea_new #hot-tags .hot-tag').click(function() {
+        var tagText = $(this).text();
+        var tagsText = $('#idea_new input[name="tags"]').val();
+        if (tagsText == '') {
+            tagsText = tagText;
+        } else if (tagsText.indexOf(tagText) == -1) {
+            tagsText = tagsText + ' ' + tagText;
+        }
+        $('#idea_new input[name="tags"]').val(tagsText);
+        tag = true;
+        if (title && tag) {
+            $('#idea_new button').removeClass('disabled');
+        } else {
+            $('#idea_new button').addClass('disabled');
+        }
+    });
+
+    // 检查标题和标签是否输入
+    $('#idea_new input[name="title"]').keyup(function() {
+        if ($(this).val() != '') {
+            title = true;
+        } else {
+            title = false;
+        }
+        if (title && tag) {
+            $('#idea_new button').removeClass('disabled');
+        } else {
+            $('#idea_new button').addClass('disabled');
+        }
+    });
+    $('#idea_new input[name="tags"]').keyup(function() {
+        if ($(this).val() != '') {
+            tag = true;
+        } else {
+            tag = false;
+        }
+        if (title && tag) {
+            $('#idea_new button').removeClass('disabled');
+        } else {
+            $('#idea_new button').addClass('disabled');
+        }
+    });
+});
+</script>
+{% endblock %}

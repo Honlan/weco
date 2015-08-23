@@ -1,0 +1,174 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#search_result {
+    padding: 12px 15px;
+}
+
+#search_result h4 {
+    margin: 0;
+    margin-bottom: 20px;
+    font-size: 15px;
+    color: #666;
+}
+
+#search_result .category {
+    color: #009c81;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#search_result .idea {
+    display: inline-block;
+    width: 45%;
+    margin-left: 2%;
+    margin-right: 2%;
+    background: #fff;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+#search_result .idea .idea_header {
+    position: relative;
+}
+
+#search_result .idea .idea_header .idea_info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(20, 20, 20, 0.4);
+    color: #eee;
+    width: 100%;
+    text-align: right;
+    font-size: 8px;
+    padding: 2px 10px;
+}
+
+#search_result .idea .idea_header .idea_info div {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+#search_result .idea .idea_header .img {
+    width: 100%;
+    height: 120px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#search_result .idea .idea_content {
+    padding: 5px 10px;
+    text-align: left;
+}
+
+#search_result #ideas {
+	margin-bottom: 20px;
+}
+
+#search_result #ideas .idea .idea_content>a {
+    color: #009c81;
+    font-size: 14px;
+}
+
+#search_result #ideas .idea .idea_content>a p {
+    margin-bottom: 3px;
+}
+
+#search_result #ideas .idea .idea_content img {
+    width: 40px;
+    border-radius: 50%;
+    float: left;
+    margin-right: 6px;
+}
+
+#search_result #ideas .idea .idea_content h5 {
+    font-size: 13px;
+    color: #333;
+}
+
+#search_result #page_nav .nav_item {
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 5px;
+    background-color: white;
+    color: #009c81;
+}
+
+#search_result #page_nav .nav_item.active {
+    margin-left: 5px;
+    margin-right: 5px;
+    background-color: #009c81;
+}
+
+#search_result #page_nav .nav_item a {
+    color: #009c81;
+}
+
+#search_result #page_nav .nav_item.active a {
+    color: white;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="search_result">
+    {% if count > 0 %}
+    <h4 class="weco_form" style="margin-bottom:10px;"><span class="category">{{category}}</span>创意共<span style="color:#e4007e;margin-left:5px;margin-right:5px;">{{count}}</span>个</h4>
+    <div id="ideas" style="text-align:left;">
+        {% for item in ideas %}
+        <div class="idea" name="{{item.id}}">
+            <div class="idea_header">
+                <div class="img" style="background-image:url({{url_for('static',filename=item.thumbnail[8:])}});background-size:cover;background-position:center;"></div>
+                <div class="idea_info">
+                    <div>
+                        <span class="fa fa-fw fa-thumbs-o-up"></span>
+                        <span>{{item.praise}}</span>
+                    </div>
+                    <div>
+                        <span class="fa fa-fw fa-eye"></span>
+                        <span>{{item.readCount}}</span>
+                    </div>
+                    <div>
+                        <span class="fa fa-fw fa-comment-o"></span>
+                        <span>{{item.commentCount}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="idea_content">
+                <a href="{{url_for('idea',ideaId=item.id)}}">
+                    <p>{{item.title}}</p>
+                </a>
+                <div style="border-top: 1px solid rgba(201, 201, 202, 0.4);padding-top:10px;padding-bottom:10px;">
+                    <div style="padding-right:5px;">
+                        <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    </div>
+                    <div style="padding-left:5px;">
+                        <div>
+                            <a href="{{url_for('user',username=item.owner)}}"><h5 style="margin-top:3px;margin-bottom:5px;">{{item.nickname}}</h5></a>
+                            <p style="margin-bottom:0;font-size:10px;color:#999;">发布于{{item.timestamp}}前</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div id="page_nav" class="weco_form">
+        {% if not current == 0 %}
+        <div class="nav_item"><a href="{{url_for('search_category',category=category,pageId=current-1)}}">上一页</a></div>
+        {% endif %} {% for i in pages %} {% if i == current %}
+        <div class="nav_item active"><a href="{{url_for('search_category',category=category,pageId=i)}}">{{i+1}}</a></div>
+        {% else %}
+        <div class="nav_item"><a href="{{url_for('search_category',category=category,pageId=i)}}">{{i+1}}</a></div>
+        {% endif %} {% endfor %} {% if not current == total %}
+        <div class="nav_item"><a href="{{url_for('search_category',category=category,pageId=current+1)}}">下一页</a></div>
+        {% endif %}
+    </div>
+    {% else %}
+    <h4 style="text-align:center;margin-top:15px;"><span class="fa fa-fw fa-frown-o"></span><span class="category">{{category}}</span>创意还是无人区</h4> {% endif %}
+</div>
+<script>
+$(document).ready(function() {
+	// 更换页面标题
+    $('#header p#page_title').text("分类搜索");
+});
+</script>
+{% endblock %}

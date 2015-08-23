@@ -1,0 +1,152 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#nav {
+    display: none;
+}
+
+#chat {
+    padding: 20px 30px 20px 20px;
+}
+
+#chat #chatForm {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 5%;
+    z-index: 999;
+    background-color: #efefef;
+}
+
+#chat #chatRecords .time {
+    font-size: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #888;
+    font-weight: lighter;
+}
+
+#chat #chatRecords .me {
+    text-align: right;
+    position: relative;
+    margin-bottom: 20px;
+    min-height: 60px;
+}
+
+#chat #chatRecords .me img {
+    width: 60px;
+    border-radius: 50%;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#chat #chatRecords .mywords {
+    text-align: right;
+    margin-left: 20%;
+    margin-right: 75px;
+    padding-top: 5px;
+}
+
+#chat #chatRecords .mywords span {
+    text-align: left;
+    display: inline-block;
+    color: white;
+    border-radius: 8px;
+    background-color: #009c81;
+    font-size: 12px;
+    padding: 10px 12px;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+#chat #chatRecords .other {
+    text-align: left;
+    position: relative;
+    margin-bottom: 20px;
+    min-height: 60px;
+}
+
+#chat #chatRecords .other img {
+    width: 60px;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#chat #chatRecords .otherwords {
+    text-align: left;
+    margin-right: 20%;
+    margin-left: 75px;
+    padding-top: 5px;
+}
+
+#chat #chatRecords .otherwords span {
+    text-align: left;
+    display: inline-block;
+    color: #666;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 12px;
+    padding: 10px 12px;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="chat">
+    <div id="chatRecords">
+        {% for item in chats %} {% if not item.timestamp == '' %}
+        <p class="time"><span>{{item.timestamp}}</span></p>
+        {% endif %} {% if item.source == session.get('username') %}
+        <div class="me">
+            <a href="{{url_for('home')}}"><img src="{{url_for('static',filename=myPortrait[8:])}}"></a>
+            <div class="mywords"><span>{{item.content}}</span></div>
+        </div>
+        {% elif item.target == session.get('username') %}
+        <div class="other">
+            <a href="{{url_for('user',username=item.source)}}"><img src="{{url_for('static',filename=portrait[8:])}}"></a>
+            <div class="otherwords"><span>{{item.content}}</span></div>
+        </div>
+        {% endif %} {% endfor %}
+    </div>
+    <form id="chatForm">
+        <input type="text" name="chat" placeholder="发送消息" style="border-radius:5px;padding-top:10px;padding-bottom:10px;margin-bottom:5px;padding-right:40px;">
+        <span id="send" class="fa fa-fw fa-paper-plane-o" style="color:#009c81;position:absolute;right:30px;top:20px;font-size:20px;cursor:pointer;"></span>
+    </form>
+</div>
+<script>
+$(document).ready(function() {
+    // 更改页面标题
+    $('#header p#page_title').text("{{targetNickname}}");
+
+    $('body,html').animate({
+        scrollTop: $('#chat #chatRecords .me:last-child').offset().top
+    }, 0);
+
+    // 发送了聊天信息
+    $('#chat #chatForm #send').click(function() {
+        $.ajax({
+            url: '{{url_for("api_chat_send")}}',
+            type: 'POST',
+            data: {
+                source: "{{session.get('username')}}",
+                token: "{{session.get('token')}}",
+                target: "{{target}}",
+                content: $('#chat #chatForm input[name="chat"]').val()
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                // 添加该条聊天记录
+                $obj = '<div class="me"><a href="{{url_for("home")}}"><img src="' + "{{url_for('static',filename=myPortrait[8:])}}" + '"></a><div class="mywords"><span>' + $('#chat #chatForm input[name="chat"]').val() + '</span></div>';
+                $('#chat #chatRecords').append($obj);
+                $('#chat #chatForm input[name="chat"]').val('');
+                $('body,html').animate({
+                    scrollTop: $('#chat #chatRecords .me:last-child').offset().top
+                }, 300);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
