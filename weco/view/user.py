@@ -1,8 +1,8 @@
 # coding:utf-8
 
 from flask import *
-from main import app
-from main import cursor
+from weco import app
+from weco import cursor
 
 # 我的主页
 @app.route('/user')

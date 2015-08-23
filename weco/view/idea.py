@@ -1,14 +1,14 @@
 # coding:utf-8
 
 from flask import *
-from main import app
-from main import cursor
+from weco import app
+from weco import cursor
 import time
 import random
 from hashlib import md5
 from werkzeug import secure_filename
 import os
-from main.conf.configure import WECOROOT
+from weco.conf.configure import WECOROOT
 
 # 随机码生成器
 def genKey():
