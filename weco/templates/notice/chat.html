@@ -120,7 +120,7 @@ $(document).ready(function() {
     $('#header p#page_title').text("{{targetNickname}}");
 
     $('body,html').animate({
-        scrollTop: $('#chat #chatRecords .me:last-child').offset().top
+        scrollTop: $('#chat #chatRecords>div:last-child').offset().top
     }, 0);
 
     // 发送了聊天信息
@@ -142,7 +142,7 @@ $(document).ready(function() {
                 $('#chat #chatRecords').append($obj);
                 $('#chat #chatForm input[name="chat"]').val('');
                 $('body,html').animate({
-                    scrollTop: $('#chat #chatRecords .me:last-child').offset().top
+                    scrollTop: $('#chat #chatRecords>div:last-child').offset().top
                 }, 300);
             }
         });

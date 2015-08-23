@@ -363,7 +363,7 @@
         <div style="position:relative;">
             <img id="thumbnail" src="{{url_for('static',filename=idea.thumbnail[8:])}}">
             <h2>{{idea.title}}</h2> {% if liked %}
-            <span class="like_or_not liked"></span> {% else %}
+            <span class="like_or_not liked"></span> {% elif not session.get('username') == idea.owner %}
             <span class="like_or_not unliked"></span> {% endif %}
         </div>
         <div class="weco_form" style="border-top-left-radius:0;border-top-right-radius:0;">

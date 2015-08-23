@@ -144,8 +144,8 @@ $(document).ready(function() {
         }
     });
 
-    // 密码完成输入
-    $('#register input[name="password"]').blur(function() {
+    // 密码正在输入
+    $('#register input[name="password"]').keyup(function() {
         var pwd = $(this).val();
         // 密码不为空的话则判断两次密码是否相同
         if (pwd != '') {
@@ -165,7 +165,7 @@ $(document).ready(function() {
                 $('#register button[type="submit"]').removeClass('disabled');
             }
         }
-    });
+    });    
 
     // 重复密码正在输入
     $('#register input[name="password1"]').keyup(function() {
