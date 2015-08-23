@@ -42,6 +42,7 @@ a:hover {
 	margin-bottom: 0;
 	padding-left: 0;
 	text-align: center;
+	position: relative;
 }
 #nav ul li {
 	width: 17%;
@@ -55,6 +56,7 @@ a:hover {
 	position: absolute;
 	bottom: 10px;
 	width: 60px;
+	left: 50%;
 	margin-left: -30px;
 }
 

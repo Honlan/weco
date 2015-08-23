@@ -35,8 +35,8 @@
             }
         });
     }
-    $(document).ready(function(){
-        $('#header #back').click(function(){
+    $(document).ready(function() {
+        $('#header #back').click(function() {
             history.back();
         });
     });
@@ -53,11 +53,21 @@
     </div>
     <div id="nav">
         <ul>
-            <li><a href="{{url_for('index')}}"><img src="{{url_for('static',filename='img/icon/icon-05.png')}}"></a></li>
-            <li><a href="{{url_for('search')}}"><img src="{{url_for('static',filename='img/icon/icon-06.png')}}"></a></li>
-            <li style="width:22%;"><a href="{{url_for('idea_new')}}"><img src="{{url_for('static',filename='img/icon/icon-13.png')}}" id="nav_add"></a></li>
-            <li><a href="{{url_for('notice')}}"><img src="{{url_for('static',filename='img/icon/icon-08.png')}}"></a></li>
-            <li><a href="{{url_for('home')}}"><img src="{{url_for('static',filename='img/icon/icon-07.png')}}"></a></li>
+            <li>
+                <a href="{{url_for('index')}}"><img src="{{url_for('static',filename='img/icon/icon-05.png')}}"></a>
+            </li>
+            <li>
+                <a href="{{url_for('search')}}"><img src="{{url_for('static',filename='img/icon/icon-06.png')}}"></a>
+            </li>
+            <li style="width:22%;">
+                <a href="{{url_for('idea_new')}}"><img src="{{url_for('static',filename='img/icon/icon-13.png')}}" id="nav_add"></a>
+            </li>
+            <li>
+                <a href="{{url_for('notice')}}"><img src="{{url_for('static',filename='img/icon/icon-08.png')}}"></a>
+            </li>
+            <li>
+                <a href="{{url_for('home')}}"><img src="{{url_for('static',filename='img/icon/icon-07.png')}}"></a>
+            </li>
         </ul>
     </div>
     <div id="session_username" style="display:none;">{{session.get('username')}}</div>
