@@ -1,4 +1,4 @@
 .DS_Store
-main/conf/configure.py
+weco/conf/configure.py
 *.pyc
 venv/
