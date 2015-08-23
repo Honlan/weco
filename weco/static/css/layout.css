@@ -53,11 +53,11 @@ a:hover {
 	width: 40px;
 }
 #nav #nav_add {
-	position: absolute;
+	/*position: absolute;
 	bottom: 10px;
 	width: 60px;
 	left: 50%;
-	margin-left: -30px;
+	margin-left: -30px;*/
 }
 
 .weco_logo {
