@@ -1,4 +1,5 @@
 .DS_Store
 weco/conf/configure.py
+weco/static/uploads/
 *.pyc
 venv/
