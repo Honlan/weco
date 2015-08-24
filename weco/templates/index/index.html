@@ -345,18 +345,6 @@ $(document).ready(function() {
     }
 })(jQuery);
 </script>
-<script>
-// 设定参数并初始化瀑布流
-var opt = {
-    getResource: function(render) {
-        html = nextContent;
-        return $(html);
-    },
-    auto_imgHeight: true,
-    insert_type: 1
-}
-$('#ideas').waterfall(opt);
-</script>
 <div id="index">
     <div>
         {% if hot %}
@@ -405,5 +393,16 @@ $('#ideas').waterfall(opt);
         {% endfor %}
     </div>
 </div>
-
+<script>
+// 设定参数并初始化瀑布流
+var opt = {
+    getResource: function(render) {
+        html = nextContent;
+        return $(html);
+    },
+    auto_imgHeight: true,
+    insert_type: 1
+}
+$('#ideas').waterfall(opt);
+</script>
 {% endblock %}
