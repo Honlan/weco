@@ -571,14 +571,15 @@ $(document).ready(function() {
         // 修改了缩略图，需要一并提交
         if (change_thumbnail) {
             // 确定压缩比
-            var ratio = 128 / ($('#idea #edit_idea_info #change_thumbnail input')[0].files[0].size / 1024);
-            if (ratio > 1) {
-                ratio = 1;
-            }
+            // var ratio = 256 / ($('#idea #edit_idea_info #change_thumbnail input')[0].files[0].size / 1024);
+            // if (ratio > 1) {
+            //     ratio = 1;
+            // }
+            var ratio = 0.9;
             // 压缩并上传
             lrz($('#idea #edit_idea_info #change_thumbnail input')[0].files[0], {
-                    width: 960,
-                    height: 960,
+                    width: 1280,
+                    height: 1280,
                     quality: ratio
                 })
                 .then(function(rst) {
@@ -763,13 +764,14 @@ $(document).ready(function() {
 
     // 用户上传了图片内容
     $('#idea #idea_add_content #add_image span').click(function() {
-        var ratio = 128 / ($('#idea #idea_add_content #add_image input')[0].files[0].size / 1024);
-        if (ratio > 1) {
-            ratio = 1;
-        }
+        // var ratio = 256 / ($('#idea #idea_add_content #add_image input')[0].files[0].size / 1024);
+        // if (ratio > 1) {
+        //     ratio = 1;
+        // }
+        var ratio = 0.9;
         lrz($('#idea #idea_add_content #add_image input')[0].files[0], {
-                width: 960,
-                height: 960,
+                width: 1280,
+                height: 1280,
                 quality: ratio
             })
             .then(function(rst) {
