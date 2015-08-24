@@ -485,7 +485,7 @@
                                 })
                                 .then(function(rst) {
                             		temp.image.src = temp.imageSrc = rst.base64;	
-                            		console.log(rst.base64);
+                            		alert(rst.base64);
                                 })
                                 .catch(function(err) {
                                     // 处理失败会执行
