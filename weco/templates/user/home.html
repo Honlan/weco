@@ -406,8 +406,7 @@
                 </p>
                 {% for tag in user.tags.split(' ') %} {% if not tag == '' %}
                 <p class="tag">{{tag}}</p>
-                {% endif %} 
-                {% endfor %}
+                {% endif %} {% endfor %}
             </div>
             <div id="user-control">
                 <span id="edit_a">编辑</span>
@@ -522,7 +521,7 @@
             <div class="image-editor">
                 <div style="position:relative;cursor:pointer;padding-right:90px;vertical-align:middle;height:75px;border-bottom:1px solid rgba(201,201,202,0.4);">
                     <p style="text-align:left;position:relative;top:30px;left:20px;color:#999;">头像</p>
-                    <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="portrait" class="cropit-image-input" capture="camera">
+                    <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" class="cropit-image-input" name="portrait" capture="camera">
                 </div>
                 <div class="modal fade bs-example-modal-lg" id="preview" data-backdrop="static">
                     <div class="modal-dialog">
@@ -569,11 +568,9 @@
         </div>
         <div id="hot-tags">
             <p><span>热门标签</span></p>
-            {% for key,value in hotTags.items() %}
-            {% for item in value %}
+            {% for key,value in hotTags.items() %} {% for item in value %}
             <div class="hot-tag {{key}}">{{item.tag}}</div>
-            {% endfor %}
-            {% endfor %}
+            {% endfor %} {% endfor %}
         </div>
         <div class="weco_form">
             <div class="weco_input">
@@ -623,7 +620,9 @@ $(document).ready(function() {
 
     // 图像裁剪完毕并预览
     $('#me #edit_user_info #preview button').click(function() {
-        var imageData = $('.image-editor').cropit('export');
+        var imageData = $('.image-editor').cropit('export', {
+            quality: .5
+        });
         $('#me #edit_user_info #portrait').attr('src', imageData);
     });
 
@@ -716,9 +715,7 @@ $(document).ready(function() {
 
     // 用户改变了头像
     $('#me #edit_user_info input[name="portrait"]').change(function() {
-        var filename = $(this).val();
-        filename = filename.substr(filename.lastIndexOf("\\") + 1);
-        $('#me #edit_user_info .input-group:first-child p').text(filename);
+        // 处理图片的代码在cropit中
         $('#me #edit_user_info #preview').modal();
         change_portrait = true;
     });
