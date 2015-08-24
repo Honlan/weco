@@ -31,6 +31,7 @@ def validate(username, token):
 	if count == 0:
 		return False
 	else:
+		return True
 		user = cursor.fetchone()
 		lastActive = user['lastActive']
 		TTL = user['TTL']

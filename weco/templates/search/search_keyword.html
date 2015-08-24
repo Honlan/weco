@@ -178,7 +178,7 @@
         {% for item in result %}
         <div class="idea" name="{{item.id}}">
             <div class="idea_header">
-                <div class="img" style="background-image:url({{url_for('static',filename=item.thumbnail[8:])}});background-size:cover;background-position:center;"></div>
+                <div class="img" style="background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;"></div>
                 <div class="idea_info">
                     <div>
                         <span class="fa fa-fw fa-thumbs-o-up"></span>
@@ -244,7 +244,7 @@
     <h4 style="text-align:center;font-size:14px;color:#888;">看看其他内容？</h4>
     <div id="hot">
         <p><span>实时热搜</span></p> {% for item in hot %}
-        <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}"><span>{{item.keyword}} {{item.count}}</span></a> {% endfor %}
+        <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}"><span>{{item.keyword}}</span></a> {% endfor %}
     </div>
     {% endif %}
 </div>

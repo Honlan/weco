@@ -92,6 +92,7 @@
     width: 100%;
     margin-top: -10px;
     text-align: center;
+    display: none;
 }
 
 #search #categories p span {
@@ -126,7 +127,7 @@
         {% endif %}
         <div id="hot">
             <p><span>实时热搜</span></p> {% for item in hot %}
-            <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}"><span>{{item.keyword}} {{item.count}}</span></a> {% endfor %}
+            <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}"><span>{{item.keyword}}</span></a> {% endfor %}
         </div>
     </div>
     <div id="categories">

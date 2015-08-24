@@ -446,7 +446,7 @@
                 <p class="summary">我发布了<span>{{ideasCount}}</span>个创意</p>
                 {% for item in ideas%}
                 <div class="myIdea">
-                    <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.thumbnail[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
+                    <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
                         <!-- <span name="{{item.id}}" style="position:absolute;right:0;top:0;">*</span> -->
                     </div>
                     <a href="{{url_for('idea',ideaId=item.id)}}">
@@ -464,7 +464,7 @@
                 <p class="summary">我喜欢了<span class="followIdeasCount">{{followIdeasCount}}</span>个创意</p>
                 {% for item in followIdeas%}
                 <div class="otherIdea">
-                    <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.thumbnail[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
+                    <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
                         <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="disfollow_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:25px;" title="不喜欢了"></span>
                     </div>
                     <a href="{{url_for('idea',ideaId=item.id)}}">
@@ -519,9 +519,9 @@
     <div id="edit_user_info">
         <div class="weco_form" style="position:relative;">
             <div class="image-editor">
-                <div style="position:relative;cursor:pointer;padding-right:90px;vertical-align:middle;height:75px;border-bottom:1px solid rgba(201,201,202,0.4);">
+                <div style="position:relative;cursor:pointer;vertical-align:middle;height:75px;border-bottom:1px solid rgba(201,201,202,0.4);">
                     <p style="text-align:left;position:relative;top:30px;left:20px;color:#999;">头像</p>
-                    <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" class="cropit-image-input" name="portrait" capture="camera">
+                    <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;z-index:999;" class="cropit-image-input" name="portrait" capture="camera">
                 </div>
                 <div class="modal fade bs-example-modal-lg" id="preview" data-backdrop="static">
                     <div class="modal-dialog">

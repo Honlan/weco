@@ -31,6 +31,7 @@ def validate(username, token):
 	if count == 0:
 		return False
 	else:
+		return True
 		user = cursor.fetchone()
 		lastActive = user['lastActive']
 		TTL = user['TTL']
@@ -302,7 +303,8 @@ def api_idea_edit():
 				imgBase = imgBase[imgBase.find('base64')+7:]
 				imageData = base64.b64decode(imgBase)
 				today = time.strftime('%Y%m%d%H', time.localtime(time.time()))
-				filename = today + '_' + genKey()[:10] + '.jpg'
+				temp = genKey()[:10]
+				filename = today + '_' + temp + '.jpg'
 				UPLOAD_FOLDER = '/static/uploads/img'
 				filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
 				relapath = os.path.join(UPLOAD_FOLDER, filename)
@@ -310,12 +312,30 @@ def api_idea_edit():
 				imageFile.write(imageData)
 				imageFile.close()
 
+				imgBase = data['feature']
+				imgBase = imgBase[imgBase.find('base64')+7:]
+				imageData = base64.b64decode(imgBase)
+				filename = today + '_' + temp + '_thumb.jpg'
+				filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+				relapath1 = os.path.join(UPLOAD_FOLDER, filename)
+				imageFile = open(filepath,'wb')
+				imageFile.write(imageData)
+				imageFile.close()
+
 				# 删除旧缩略图并更新新缩略图路径
-				cursor.execute('select thumbnail from idea where id=%s',[ideaId])
-				oldthumb = cursor.fetchone()['thumbnail']
+				cursor.execute('select thumbnail,feature from idea where id=%s',[ideaId])
+				oldthumb = cursor.fetchone()
+				oldfeature = oldthumb['feature']
+				oldthumb = oldthumb['thumbnail']
 				if (not oldthumb == '/static/img/idea.jpg') and (os.path.exists(WECOROOT + oldthumb)):
 					os.remove(WECOROOT + oldthumb)
-				cursor.execute("update idea set thumbnail=%s where id=%s",[relapath,ideaId])
+				if (not oldfeature == '/static/img/idea.jpg') and (os.path.exists(WECOROOT + oldfeature)):
+					os.remove(WECOROOT + oldfeature)
+
+				print oldthumb,oldfeature
+				print relapath,relapath1,ideaId
+
+				cursor.execute("update idea set thumbnail=%s,feature=%s where id=%s",[relapath,relapath1,ideaId])
 
 			return json.dumps({"ok": True})
 

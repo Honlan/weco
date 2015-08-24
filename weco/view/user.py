@@ -26,7 +26,7 @@ def home():
 		ideas = user['ideas']
 		ideasCount = 0
 		if not ideas == '':
-			cursor.execute('select id,title,thumbnail from idea where id in (%s) and locked=0' % (ideas))
+			cursor.execute('select id,title,feature from idea where id in (%s) and locked=0' % (ideas))
 			ideas = cursor.fetchall()
 			ideasCount = len(ideas)
 		else:
@@ -36,7 +36,7 @@ def home():
 		followIdeas = user['followIdeas']
 		followIdeasCount = 0
 		if not followIdeas == '':
-			cursor.execute('select id,title,thumbnail from idea where id in (%s) and locked=0' % (followIdeas))
+			cursor.execute('select id,title,feature from idea where id in (%s) and locked=0' % (followIdeas))
 			followIdeas = cursor.fetchall()
 			followIdeasCount = len(followIdeas)
 		else:
@@ -108,7 +108,7 @@ def user(username):
 		ideas = user['ideas']
 		ideasCount = 0
 		if not ideas == '':
-			cursor.execute('select id,title,thumbnail from idea where id in (%s) and locked=0' % (str(ideas)))
+			cursor.execute('select id,title,feature from idea where id in (%s) and locked=0' % (str(ideas)))
 			ideas = cursor.fetchall()
 			ideasCount = len(ideas)
 		else:
@@ -118,7 +118,7 @@ def user(username):
 		followIdeas = user['followIdeas']
 		followIdeasCount = 0
 		if not followIdeas == '':
-			cursor.execute('select id,title,thumbnail from idea where id in (%s) and locked=0' % (str(followIdeas)))
+			cursor.execute('select id,title,feature from idea where id in (%s) and locked=0' % (str(followIdeas)))
 			followIdeas = cursor.fetchall()
 			followIdeasCount = len(followIdeas)
 		else:

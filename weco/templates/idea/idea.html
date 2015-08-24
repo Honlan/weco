@@ -579,29 +579,44 @@ $(document).ready(function() {
             //     ratio = 1;
             // }
             lrz($('#idea #edit_idea_info #change_thumbnail input')[0].files[0], {
-                    width: 720,
-                    height: 720,
-                    quality: 0.4
+                    width: 960,
+                    height: 960,
+                    quality: 0.8
                 })
                 .then(function(rst) {
-                    $.ajax({
-                        url: '{{url_for("api_idea_edit")}}',
-                        type: 'POST',
-                        data: {
-                            username: "{{session.get('username')}}",
-                            token: "{{session.get('token')}}",
-                            ideaId: "{{idea.id}}",
-                            thumbnail: rst.base64,
-                            title: $("#idea #edit_idea_info input[name='title']").val(),
-                            tags: $("#idea #edit_idea_info input[name='tags']").val(),
-                            category: $("#idea #edit_idea_info input[name='category']").val()
-                        },
-                        dataType: 'json',
-                        error: function() {},
-                        success: function(data) {
-                            window.location.reload()
-                        }
-                    });
+                    var temp = rst;
+                    lrz($('#idea #edit_idea_info #change_thumbnail input')[0].files[0], {
+                            width: 320,
+                            height: 320,
+                            quality: 0.8
+                        })
+                        .then(function(rst) {
+                            $.ajax({
+                                url: '{{url_for("api_idea_edit")}}',
+                                type: 'POST',
+                                data: {
+                                    username: "{{session.get('username')}}",
+                                    token: "{{session.get('token')}}",
+                                    ideaId: "{{idea.id}}",
+                                    thumbnail: temp.base64,
+                                    feature: rst.base64,
+                                    title: $("#idea #edit_idea_info input[name='title']").val(),
+                                    tags: $("#idea #edit_idea_info input[name='tags']").val(),
+                                    category: $("#idea #edit_idea_info input[name='category']").val()
+                                },
+                                dataType: 'json',
+                                error: function() {},
+                                success: function(data) {
+                                    window.location.reload()
+                                }
+                            });
+                        })
+                        .catch(function(err) {
+                            // 处理失败会执行
+                        })
+                        .always(function() {
+                            // 不管是成功失败，都会执行
+                        });
                 })
                 .catch(function(err) {
                     // 处理失败会执行
@@ -773,9 +788,9 @@ $(document).ready(function() {
         //     ratio = 1;
         // }
         lrz($('#idea #idea_add_content #add_image input')[0].files[0], {
-                width: 720,
-                height: 720,
-                quality: 0.4
+                width: 960,
+                height: 960,
+                quality: 0.8
             })
             .then(function(rst) {
                 $.ajax({
