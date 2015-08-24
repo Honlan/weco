@@ -57,6 +57,7 @@ def login():
 def logout():
 	if not session.get('username') == None:
 		session.pop('username', None)
+		session.pop('token', None)
 		return redirect(url_for('login'))
 	else:
 		return redirect(url_for('login')) 
