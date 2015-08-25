@@ -4,13 +4,14 @@ from flask import *
 from weco import app
 from weco import cursor
 import time
+from weco.conf.configure import WECOPREFIX
 
 # 通知提醒
 @app.route('/notice')
 def notice():
 	if session.get('username') == None:
 		# 用户尚未登录
-		session['url'] = request.path
+		session['url'] = WECOPREFIX + request.path
 		return redirect(url_for('login'))
 	else:
 		# 获取和当前用户有关的动态
@@ -53,7 +54,7 @@ def notice():
 def chat(username):
 	if session.get('username') == None:
 		# 用户尚未登录
-		session['url'] = request.path
+		session['url'] = WECOPREFIX + request.path
 		return redirect(url_for('login'))
 	else:
 		# 用户已经登陆，获取所有聊天记录

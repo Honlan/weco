@@ -3,6 +3,7 @@
 from flask import *
 from weco import app
 from weco import cursor
+from weco.conf.configure import WECOPREFIX
 
 # 我的主页
 @app.route('/user')
@@ -98,7 +99,7 @@ def home():
 	
 	else:
 		# 访问个人主页前需登录
-		session['url'] = request.path
+		session['url'] = WECOPREFIX + request.path
 		return redirect(url_for('login'))
 
 # 其他用户主页

@@ -9,7 +9,7 @@ import random
 from hashlib import md5
 from werkzeug import secure_filename
 import os
-from weco.conf.configure import WECOROOT
+from weco.conf.configure import WECOROOT, WECOPREFIX
 
 # 随机码生成器
 def genKey():
@@ -79,7 +79,7 @@ def idea_new():
 
 		# 用户尚未登录
 		else:
-			session['url'] = request.path
+			session['url'] = WECOPREFIX + request.path
 			return redirect(url_for('login'))
 
 	elif request.method == 'POST':
@@ -153,7 +153,7 @@ def idea_new():
 
 		# 用户尚未登录
 		else:
-			session['url'] = request.path
+			session['url'] = WECOPREFIX + request.path
 			return redirect(url_for('login'))
 
 # 创意主页
@@ -225,7 +225,7 @@ def idea_add_text(ideaId):
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,text,str(int(time.time())), session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
-		session['url'] = request.path
+		session['url'] = WECOPREFIX + request.path
 		return redirect(url_for('login'))
 
 # 为创意添加视频内容
@@ -242,6 +242,6 @@ def idea_add_video(ideaId):
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,2,relapath,str(int(time.time())), session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
-		session['url'] = request.path
+		session['url'] = WECOPREFIX + request.path
 		return redirect(url_for('login'))
 
