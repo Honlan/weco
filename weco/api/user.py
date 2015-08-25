@@ -96,6 +96,7 @@ def api_user_edit():
 		
 		# 处理用户头像
 		if data.has_key('portrait'):
+			# 生成新的头像图片
 			portrait = data['portrait']
 			portrait = portrait[portrait.find('base64')+7:]
 			imageData = base64.b64decode(portrait)
@@ -107,15 +108,25 @@ def api_user_edit():
 			imageFile = open(filepath,'wb')
 			imageFile.write(imageData)
 			imageFile.close()
+
+			# 删除旧的头像图片
 			cursor.execute('select portrait from user where username=%s',[data['username']])
 			oldportrait = cursor.fetchone()['portrait']
 			if (not oldportrait == '/static/img/user.png') and (os.path.exists(WECOROOT + oldportrait)):
 				os.remove(WECOROOT + oldportrait)
 			cursor.execute("update user set portrait=%s where username=%s",[relapath,data['username']])
+
+			# 更新该用户所有创意的头像路径
 			cursor.execute("select ideas from user where username=%s",[data['username']])
 			myIdeas = cursor.fetchone()['ideas'].split(',')
 			for item in myIdeas:
+				if item == '':
+					continue
 				cursor.execute("update idea set portrait=%s where id=%s",[relapath,item])
+
+			# 更新该用户所有评论的头像路径
+			cursor.execute("update comment set portrait=%s where username=%s",[relapath,data['username']])
+
 		return json.dumps({"ok": True})
 
 	else:
