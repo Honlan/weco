@@ -255,6 +255,8 @@ $(document).ready(function() {
     var thumbnail = '',
         feature = '';
     $('#idea_draft input[name="thumbnail"]').change(function() {
+        var $p = "<span class='fa fa-fw fa-spin fa-spinner' style='position:absolute;right:0;top:13px;color:#009c81;'></span>";
+        $(this).parent().append($p);
         lrz($(this)[0].files[0], {
                 width: 960,
                 height: 960,
@@ -269,7 +271,7 @@ $(document).ready(function() {
                     })
                     .then(function(rst) {
                         feature = rst.base64;
-
+                        $('#idea_draft #thumbnail_input span.fa').remove();
                         $('#idea_draft #thumbnail_input').css('height', '130px');
                         $('#idea_draft #thumbnail').attr('src', thumbnail).css('display', 'inline-block');
 
