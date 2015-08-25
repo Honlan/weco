@@ -1,8 +1,5 @@
 {% extends "layout.html" %} {% block style %}
 <style>
-#setting {
-    display: inline-block;
-}
 #me {
     padding: 15px 15px 20px 15px;
 }
@@ -390,18 +387,6 @@
     right: 0;
     bottom: 0;
 }*/
-
-#me #logout_a {
-    text-align: center;
-    margin-bottom: 0;
-    padding: 10px;
-}
-
-#me #logout_a a {
-    width: 100%;
-    color: #009c81;
-    font-size: 15px;
-}
 </style>
 {% endblock %} {% block body %}
 <div id='me'>
@@ -641,14 +626,21 @@
             </div>
         </form>
     </div> -->
-    <div class="weco_form" id="user_logout">
-        <p id="logout_a"><a href="{{url_for('logout')}}">退出登录</a></p>
-    </div>
 </div>
 <script>
 $(document).ready(function() {
     // 更改页面标题
     $('#header p#page_title').text("个人主页");
+    $('#header #setting').show();
+
+    $('#header #setting').click(function(){
+        event.stopPropagation();
+        $('#header #setting-menu').fadeIn(200);
+    });
+
+    $('body').click(function(){
+        $('#header #setting-menu').fadeOut(200);
+    })
 
     // 用户是否改变了头像
     var change_portrait = false;

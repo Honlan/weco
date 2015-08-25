@@ -162,8 +162,6 @@ def idea(ideaId):
 	# 如果创意已被锁定，则给出错误提示
 	# TO DO
 
-	print ideaId
-
 	# 缓存该创意的阅读、点赞等用户行为
 	if session.get('ideas') == None:
 		session['ideas'] = {}

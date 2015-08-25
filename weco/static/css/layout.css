@@ -30,6 +30,29 @@ a:hover {
 	font-size: 25px;
 	color: #555;
 	display: none;
+	cursor: pointer;
+}
+#header #setting-menu {
+	position: absolute;
+	right: 10px;
+	top: 40px;
+	background-color: #efefef;
+	border: 1px solid #c9caca;
+	box-shadow: 0px -1px 1px rgba(20,20,20,0.3);
+	z-index: 999;
+	border-radius: 5px;
+	display: none;
+}
+#header #setting-menu p {
+	display: inline-block;
+	margin-bottom: 0;
+	padding: 10px 20px;
+	border-bottom: 1px solid #333;
+	color: #009c81;
+	font-size: 13px;
+}
+#header #setting-menu p:last-child {
+	border-bottom: none;
 }
 #header p#page_title {
 	text-align: center;
