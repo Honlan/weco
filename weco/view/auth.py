@@ -75,4 +75,16 @@ def register():
 		password = request.form['password']
 		email = request.form['email']
 		cursor.execute("insert into user(username,nickname,password,email) values(%s,%s,%s,%s)", [username,username,unicode(md5(password).hexdigest().upper()),email])
-		return redirect(url_for('login'))
+
+		# 注册完毕，直接登录
+		cursor.execute("update user set lastActive=%s, token=%s, TTL=100 where username=%s and email=%s",[str(int(time.time())),genKey(),username,email])
+		cursor.execute("select username, token from user where username=%s and email=%s", [username,email])
+		user = cursor.fetchone()
+		session['username'] = user['username']
+		session['token'] =  user['token']
+		if not session.get('url') == None:
+			url = session.get('url')
+			session.pop('url', None)
+			return redirect(url)
+		else:
+			return redirect(url_for('home'))
