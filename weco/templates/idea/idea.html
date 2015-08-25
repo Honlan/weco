@@ -484,7 +484,7 @@
         <div class="content_cell">
             {% if idea.owner == session.get('username') %}
             <span class="fa fa-fw fa-times" name="{{item.id}}"></span> {% endif %} {% if item.fileType == 0 %}
-            <p style="word-wrap:break-word;word-break:break-all;">{{item.url}}</p>
+            <p style="word-wrap:break-word;word-break:break-all;" name="{{item.id}}">{{item.url}}</p>
             {% elif item.fileType == 1 %}
             <img src="{{url_for('static',filename=item.url[8:])}}"> {% elif item.fileType == 2 %}
             <video src="{{url_for('static',filename=item.url[8:])}}" controls="controls" loop="loop" muted>
@@ -919,6 +919,10 @@ $(document).ready(function() {
         $('#idea #edit_idea_info input[name="category"]').val(category);
         $('#idea #edit_idea_info .hot-tag').hide();
         $('#idea #edit_idea_info .hot-tag[name="' + category + '"]').show();
+    });
+
+    $('#idea #idea_content .content_cell p').click(function(){
+        console.log($(this).attr('name'));
     });
 });
 </script>
