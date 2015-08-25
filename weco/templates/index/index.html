@@ -146,7 +146,7 @@ $(document).ready(function() {
             } else {
                 nextContent = '';
                 for (var i = 0; i < ideas.length; i++) {
-                    nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><img src="' + "{{url_for('static',filename='')}}" + ideas[i]['feature'].substr(8) + '"></a><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><p>' + ideas[i]['title'] + '</p></a><div style="border-top: 1px solid rgba(201, 201, 202, 0.4);padding-top:10px;padding-bottom:10px;"><div style="padding-right:5px;"><img src="' + "{{url_for('static',filename='')}}" + ideas[i]['portrait'].substr(8) + '"></div><div style="padding-left:5px;"><div><a href="' + "{{url_for('user',username='')}}" + ideas[i]['owner'] + '"><h5 style="margin-top:3px;margin-bottom:5px;">'+ ideas[i]['nickname'] + '</h5></a><p style="margin-bottom:0;font-size:10px;color:#999;">发布于' + ideas[i]['timestamp'] + '</p></div></div></div></div></div>';
+                    nextContent += '<div class="idea" name="' + ideas[i]['id'] + '"><div class="idea_header"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><img src="' + "{{url_for('static',filename='')}}" + ideas[i]['feature'].substr(8) + '"></a><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><p>' + ideas[i]['title'] + '</p></a><div style="border-top: 1px solid rgba(201, 201, 202, 0.4);padding-top:10px;padding-bottom:10px;"><div style="padding-right:5px;"><img src="' + "{{url_for('static',filename='')}}" + ideas[i]['portrait'].substr(8) + '"></div><div style="padding-left:5px;"><div><a href="' + "{{url_for('user',username='')}}" + ideas[i]['owner'] + '"><h5 style="margin-top:3px;margin-bottom:5px;">' + ideas[i]['nickname'] + '</h5></a><p style="margin-bottom:0;font-size:10px;color:#999;">发布于' + ideas[i]['timestamp'] + '</p></div></div></div></div></div>';
                 }
             }
         }
@@ -319,7 +319,7 @@ $(document).ready(function() {
                 } else {
                     nextContent = '';
                     for (var i = 0; i < ideas.length; i++) {
-                        nextContent += '<div class="idea" name="' + idea[i]['id'] + '"><div class="idea_header"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><img src="' + "{{url_for('static',filename='')}}" + idea[i]['feature'].substr(8) + '"></a><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><p>' + ideas[i]['title'] + '</p></a><div style="border-top: 1px solid rgba(201, 201, 202, 0.4);padding-top:10px;padding-bottom:10px;"><div style="padding-right:5px;"><img src="' + "{{url_for('static',filename='')}}" + ideas[i]['portrait'].substr(8) + '"></div><div style="padding-left:5px;"><div><a href="' + "{{url_for('user',username='')}}" + ideas[i]['owner'] + '"><h5 style="margin-top:3px;margin-bottom:5px;">'+ ideas[i]['nickname'] + '</h5></a><p style="margin-bottom:0;font-size:10px;color:#999;">发布于' + ideas[i]['timestamp'] + '</p></div></div></div></div></div>';
+                        nextContent += '<div class="idea" name="' + idea[i]['id'] + '"><div class="idea_header"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><img src="' + "{{url_for('static',filename='')}}" + idea[i]['feature'].substr(8) + '"></a><div class="idea_info"><div><span class="fa fa-fw fa-thumbs-o-up"></span><span>' + ideas[i]['praise'] + '</span></div><div><span class="fa fa-fw fa-eye"></span><span>' + ideas[i]['readCount'] + '</span></div><div><span class="fa fa-fw fa-comment-o"></span><span>' + ideas[i]['commentCount'] + '</span></div></div></div><div class="idea_content"><a href="' + "{{url_for('idea',ideaId='')}}" + ideas[i]['id'] + '"><p>' + ideas[i]['title'] + '</p></a><div style="border-top: 1px solid rgba(201, 201, 202, 0.4);padding-top:10px;padding-bottom:10px;"><div style="padding-right:5px;"><img src="' + "{{url_for('static',filename='')}}" + ideas[i]['portrait'].substr(8) + '"></div><div style="padding-left:5px;"><div><a href="' + "{{url_for('user',username='')}}" + ideas[i]['owner'] + '"><h5 style="margin-top:3px;margin-bottom:5px;">' + ideas[i]['nickname'] + '</h5></a><p style="margin-bottom:0;font-size:10px;color:#999;">发布于' + ideas[i]['timestamp'] + '</p></div></div></div></div></div>';
                     }
                 }
             }
@@ -359,7 +359,7 @@ $(document).ready(function() {
     </div>
     <div id="ideas">
         {% for item in ideas %}
-        <div class="idea" name="{{item.id}}">
+        <div class="idea" name="{{item.id}}" style="opacity:0;">
             <div class="idea_header">
                 <a href="{{url_for('idea',ideaId=item.id)}}"><img src="{{url_for('static',filename=item.feature[8:])}}"></a>
                 <div class="idea_info">
@@ -398,15 +398,20 @@ $(document).ready(function() {
     </div>
 </div>
 <script>
-// 设定参数并初始化瀑布流
-var opt = {
-    getResource: function(render) {
-        html = nextContent;
-        return $(html);
-    },
-    auto_imgHeight: true,
-    insert_type: 1
-}
-$('#ideas').waterfall(opt);
+$(document).ready(function() {
+    // 设定参数并初始化瀑布流
+    var opt = {
+        getResource: function(render) {
+            html = nextContent;
+            return $(html);
+        },
+        auto_imgHeight: true,
+        insert_type: 1
+    }
+    setTimeout(function() {
+        $('#ideas .idea').animate({opacity:1});
+    }, 300);
+    $('#ideas').waterfall(opt);
+});
 </script>
 {% endblock %}
