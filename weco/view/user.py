@@ -32,6 +32,14 @@ def home():
 		else:
 			ideas = None
 
+		# 获取用户待删除的创意
+		trashs = user['ideas']
+		if not trashs == '':
+			cursor.execute('select id,title,feature from idea where id in (%s) and locked=1' % (trashs))
+			trashs = cursor.fetchall()
+		else:
+			trashs = None
+
 		# 获取用户喜欢的创意
 		followIdeas = user['followIdeas']
 		followIdeasCount = 0
@@ -86,7 +94,7 @@ def home():
 		else:
 			fans = None
 
-		return render_template('user/home.html', user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount, followUserStr=followUserStr, hotTags=hotTags)
+		return render_template('user/home.html', user=user, ideas=ideas, ideasCount=ideasCount, trashs=trashs, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount, followUserStr=followUserStr, hotTags=hotTags)
 	
 	else:
 		# 访问个人主页前需登录

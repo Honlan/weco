@@ -151,7 +151,99 @@ def api_idea_disfollow():
 			temp = temp + item + ','
 		followIdeas = temp[:-1]
 		cursor.execute("update user set followIdeas = %s where username = %s", [followIdeas, username])
+
 		return json.dumps({"ok": True})
+
+	else:
+		# 验证失败
+		return json.dumps({"ok": False, "error": "invalid token"})
+
+# 用户待删除创意
+# 需要进行token验证
+@app.route('/api/idea/trash', methods=['POST'])
+def api_idea_trash():
+	data = request.form
+
+	if validate(data['username'], data['token']):
+		# 验证通过
+		ideaId = data['ideaId']
+		username = data['username']
+
+		cursor.execute("select owner from idea where id=%s",[ideaId])
+		owner = cursor.fetchone()['owner']
+
+		# 创意确实属于用户
+		if owner == username:
+			cursor.execute("update idea set locked=1 where id=%s",[ideaId])
+			return json.dumps({"ok": True})
+
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
+
+	else:
+		# 验证失败
+		return json.dumps({"ok": False, "error": "invalid token"})
+
+# 用户恢复创意
+# 需要进行token验证
+@app.route('/api/idea/recover', methods=['POST'])
+def api_idea_recover():
+	data = request.form
+
+	if validate(data['username'], data['token']):
+		# 验证通过
+		ideaId = data['ideaId']
+		username = data['username']
+
+		cursor.execute("select owner from idea where id=%s",[ideaId])
+		owner = cursor.fetchone()['owner']
+
+		# 创意确实属于用户
+		if owner == username:
+			cursor.execute("update idea set locked=0 where id=%s",[ideaId])
+			return json.dumps({"ok": True})
+
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
+
+	else:
+		# 验证失败
+		return json.dumps({"ok": False, "error": "invalid token"})
+
+# 用户永久删除创意
+# 需要进行token验证
+@app.route('/api/idea/delete', methods=['POST'])
+def api_idea_delete():
+	data = request.form
+
+	if validate(data['username'], data['token']):
+		# 验证通过
+		ideaId = data['ideaId']
+		username = data['username']
+
+		cursor.execute("select owner from idea where id=%s",[ideaId])
+		owner = cursor.fetchone()['owner']
+
+		# 创意确实属于用户
+		if owner == username:
+			cursor.execute("delete from idea where id=%s",[ideaId])
+			cursor.execute("select ideas from user where username=%s",[username])
+			ideas = cursor.fetchone()['ideas'].split(',')
+
+			if ideaId in ideas:
+				ideas.remove(ideaId)
+			temp = ''
+			for item in ideas:
+				if item == '':
+					continue
+				temp = temp + item + ','
+			ideas = temp[:-1]
+			cursor.execute("update user set ideas = %s where username = %s", [ideas, username])
+
+			return json.dumps({"ok": True})
+
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
 
 	else:
 		# 验证失败

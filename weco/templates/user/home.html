@@ -133,7 +133,8 @@
     text-align: center;
 }
 
-#me #user-profile-content #user-idea .myIdea {
+#me #user-profile-content #user-idea .myIdea,
+#me #user-profile-content #user-idea .myTrash {
     width: 44%;
     margin-left: 2%;
     margin-right: 2%;
@@ -142,7 +143,8 @@
     border-radius: 5px;
 }
 
-#me #user-profile-content #user-idea .myIdea p {
+#me #user-profile-content #user-idea .myIdea p,
+#me #user-profile-content #user-idea .myTrash p {
     background-color: #efefef;
     color: #555;
     font-size: 12px;
@@ -417,7 +419,7 @@
             </div>
         </div>
         <ul class="nav nav-tabs" role="tablist" id="user-profile-nav">
-            <li style="border-right:2px solid rgba(0, 156, 129, 0.6);" role="presentation"><a href="#user-idea" aria-controls="user-idea" role="tab" data-toggle="tab">创意<br><span style="color:#e4007e;">{{ideasCount}}</span></a></li>
+            <li style="border-right:2px solid rgba(0, 156, 129, 0.6);" role="presentation"><a href="#user-idea" aria-controls="user-idea" role="tab" data-toggle="tab">创意<br><span class="ideasCount" style="color:#e4007e;">{{ideasCount}}</span></a></li>
             <li style="border-right:2px solid rgba(0, 156, 129, 0.6);" role="presentation"><a href="#user-like" aria-controls="user-like" role="tab" data-toggle="tab">喜欢<br><span class="followIdeasCount" style="color:#e4007e;">{{followIdeasCount}}</span></a></li>
             <li style="border-right:2px solid rgba(0, 156, 129, 0.6);" role="presentation" class="active"><a href="#user-info" aria-controls="user-info" role="tab" data-toggle="tab">资料<br>{% if user.gender == 1 %}<span class="fa fa-fw fa-male"></span>{% else %}<span class="fa fa-fw fa-female"></span>{% endif %}</a></li>
             <li style="border-right:2px solid rgba(0, 156, 129, 0.6);" role="presentation"><a href="#user-follow" aria-controls="user-follow" role="tab" data-toggle="tab">关注<br><span class="followUsersCount" style="color:#e4007e;">{{followUsersCount}}</span></a></li>
@@ -455,17 +457,37 @@
                 <h4 class="title"><span>我的创意</span></h4>{% if ideas == None %}
                 <p style="text-align:center;margin-top:30px;color:#e4007e;"><span class="fa fa-fw fa-frown-o"></span>我还没有发布任何创意</p>
                 {% else %}
-                <p class="summary">我发布了<span>{{ideasCount}}</span>个创意</p>
-                {% for item in ideas%}
-                <div class="myIdea">
-                    <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
-                        <!-- <span name="{{item.id}}" style="position:absolute;right:0;top:0;">*</span> -->
+                <p class="summary">我发布了<span class="ideasCount">{{ideasCount}}</span>个创意</p>
+                <div id="myIdeas">
+                    {% for item in ideas%}
+                    <div class="myIdea">
+                        <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
+                            <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="trash_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:25px;" title="删除创意"></span>
+                        </div>
+                        <a href="{{url_for('idea',ideaId=item.id)}}">
+                            <p>{{item.title}}</p>
+                        </a>
                     </div>
-                    <a href="{{url_for('idea',ideaId=item.id)}}">
-                        <p>{{item.title}}</p>
-                    </a>
+                    {% endfor %}
                 </div>
-                {% endfor %} {% endif %}
+                {% endif %}
+                <p class="summary" style="margin-top:20px;margin-bottom:5px;">待删除创意</p>
+                <p style="font-size:8px;color:#999;width:80%;margin:0 10% 15px 10%;">创意删除后会暂时出现在这里，可以被恢复。如果再次被删除，<span style="color:#e4007e;">将永久无法恢复</span>，请谨慎操作</p>
+                <div id="myTrashs">
+                    {% if not trashs == None %}
+                    {% for item in trashs%}
+                    <div class="myTrash">
+                        <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
+                            <span name="{{item.id}}" style="position:absolute;left:5px;top:5px;cursor:pointer" class="recover_idea"><img src="{{url_for('static',filename='img/icon/icon-20.png')}}" style="width:25px;" title="恢复创意"></span>
+                            <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="delete_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:25px;" title="删除创意"></span>
+                        </div>
+                        <a href="{{url_for('idea',ideaId=item.id)}}">
+                            <p>{{item.title}}</p>
+                        </a>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="user-like">
@@ -642,8 +664,79 @@ $(document).ready(function() {
     $('#me #edit_user_info #preview button').click(function() {
         var imageData = $('.image-editor').cropit('export', {
             quality: .5
-        });   
+        });
         $('#me #edit_user_info #portrait').attr('src', imageData);
+    });
+
+    // 待删除创意
+    $('body').on('click', '#me #user-profile-content .trash_idea', function() {
+        $(this).removeClass('trash_idea').addClass('delete_idea');
+        var ideaId = $(this).attr('name');
+        $r = '<span name="' + ideaId + '" style="position:absolute;left:5px;top:5px;cursor:pointer" class="recover_idea"><img src="' + "{{url_for('static',filename='img/icon/icon-20.png')}}" + '" style="width:25px;" title="恢复创意"></span>';
+        $(this).before($r);
+        var $p = $(this).parent().parent('.myIdea');
+        $p.removeClass('myIdea').addClass('myTrash');
+        $.ajax({
+            url: "{{url_for('api_idea_trash')}}",
+            type: 'POST',
+            data: {
+                ideaId: ideaId,
+                username: "{{session.get('username')}}",
+                token: "{{session.get('token')}}"
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $p.appendTo('#me #user-profile-content #myTrashs');
+                $('#me #user-profile-content .ideasCount').text(parseInt($('#me #user-profile-content .ideasCount').text()) - 1);
+                $('#me #user-profile-nav .ideasCount').text(parseInt($('#me #user-profile-nav .ideasCount').text()) - 1);
+            }
+        });
+    });
+
+    // 恢复创意
+    $('body').on('click', '#me #user-profile-content .recover_idea', function() {
+        var ideaId = $(this).attr('name');
+        var $p = $(this).parent().parent('.myTrash');
+        $(this).next('.delete_idea').removeClass('delete_idea').addClass('trash_idea');
+        $(this).remove();
+        $p.removeClass('myTrash').addClass('myIdea');
+        $.ajax({
+            url: "{{url_for('api_idea_recover')}}",
+            type: 'POST',
+            data: {
+                ideaId: ideaId,
+                username: "{{session.get('username')}}",
+                token: "{{session.get('token')}}"
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $p.appendTo('#me #user-profile-content #myIdeas');
+                $('#me #user-profile-content .ideasCount').text(parseInt($('#me #user-profile-content .ideasCount').text()) + 1);
+                $('#me #user-profile-nav .ideasCount').text(parseInt($('#me #user-profile-nav .ideasCount').text()) + 1);
+            }
+        });
+    });
+
+    // 永久删除创意
+    $('body').on('click', '#me #user-profile-content .delete_idea', function() {
+        var ideaId = $(this).attr('name');
+        var $p = $(this).parent().parent('.myTrash');
+        $.ajax({
+            url: "{{url_for('api_idea_delete')}}",
+            type: 'POST',
+            data: {
+                ideaId: ideaId,
+                username: "{{session.get('username')}}",
+                token: "{{session.get('token')}}"
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $p.remove();
+            }
+        });
     });
 
     // 不喜欢创意了
