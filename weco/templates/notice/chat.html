@@ -95,6 +95,7 @@
 {% endblock %} {% block body %}
 <div id="chat">
     <div id="chatRecords">
+        <div style="display:none;"></div>
         {% for item in chats %} {% if not item.timestamp == '' %}
         <p class="time"><span>{{item.timestamp}}</span></p>
         {% endif %} {% if item.source == session.get('username') %}

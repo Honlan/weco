@@ -4,6 +4,10 @@
     padding: 15px 15px 20px 15px;
 }
 
+#me ul.nav {
+    border: none;
+}
+
 #me #user-basic-info {
     padding: 10px 20px;
 }
@@ -260,7 +264,7 @@
     color: #009c81;
 }
 
-#me #edit_user_info #save span {
+#me #edit_user_info #save>span {
     background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
     background-size: 100% 100%;
     padding: 12px 27px 10px 30px;
@@ -429,6 +433,14 @@
                     <p style="min-height:20px;">{{user.description}}</p>
                 </div>
                 <div style="border-bottom: 1px solid rgba(201, 201, 202, 0.6);position:relative;">
+                    <h5>爱好</h5>
+                    <p style="min-height:20px;">{{user.hobby}}</p>
+                </div>
+                <div style="border-bottom: 1px solid rgba(201, 201, 202, 0.6);position:relative;">
+                    <h5>所在地</h5>
+                    <p style="min-height:20px;">{{user.location}}</p>
+                </div>
+                <div style="border-bottom: 1px solid rgba(201, 201, 202, 0.6);position:relative;">
                     <h5>邮箱</h5>
                     <p style="min-height:20px;">{{user.email}}</p>
                 </div>
@@ -573,6 +585,14 @@
             {% endfor %} {% endfor %}
         </div>
         <div class="weco_form">
+            <div class="weco_input">
+                <p>爱好</p>
+                <input type="text" name="hobby" value="{{user.hobby}}" placeholder="我有哪些爱好呢">
+            </div>
+            <div class="weco_input">
+                <p>所在地</p>
+                <input type="text" name="location" value="{{user.location}}" placeholder="我在XX省份XX城市">
+            </div>
             <div class="weco_input">
                 <p>邮箱</p>
                 <input type="text" name="email" value="{{user.email}}" placeholder="让我们保持联系吧">
@@ -759,6 +779,7 @@ $(document).ready(function() {
 
     // 保存个人资料
     $('#me #save').click(function() {
+        $('#me #edit_user_info #save span').text('').append("<span class='fa fa-fw fa-spin fa-spinner'></span>");
         if (change_portrait) {
             // 改变了头像，一并上传
             $.ajax({
@@ -773,6 +794,8 @@ $(document).ready(function() {
                     tags: $('#me #edit_user_info input[name="tags"]').val(),
                     description: $('#me #edit_user_info textarea').val(),
                     email: $('#me #edit_user_info input[name="email"]').val(),
+                    hobby: $('#me #edit_user_info input[name="hobby"]').val(),
+                    location: $('#me #edit_user_info input[name="location"]').val(),
                     wechat: $('#me #edit_user_info input[name="wechat"]').val()
                 },
                 dataType: 'json',
@@ -794,6 +817,8 @@ $(document).ready(function() {
                     tags: $('#me #edit_user_info input[name="tags"]').val(),
                     description: $('#me #edit_user_info textarea').val(),
                     email: $('#me #edit_user_info input[name="email"]').val(),
+                    hobby: $('#me #edit_user_info input[name="hobby"]').val(),
+                    location: $('#me #edit_user_info input[name="location"]').val(),
                     wechat: $('#me #edit_user_info input[name="wechat"]').val()
                 },
                 dataType: 'json',

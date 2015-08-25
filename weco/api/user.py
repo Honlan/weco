@@ -77,6 +77,8 @@ def api_user_edit():
 		description = data['description']
 		email = data['email']
 		wechat = data['wechat']
+		hobby = data['hobby']
+		location = data['location']
 
 		# 统计用户tag次数
 		for tag in tags.split(' '):
@@ -90,7 +92,7 @@ def api_user_edit():
 				count = int(record['count']) + 1
 				cursor.execute("update userTagStat set count=%s where tag=%s and gender=%s",[count,tag,gender])
 		
-		cursor.execute("update user set nickname=%s, gender=%s,tags=%s,description=%s,email=%s,wechat=%s where username=%s", [nickname,gender,tags,description,email,wechat,data['username']])
+		cursor.execute("update user set nickname=%s, gender=%s,tags=%s,description=%s,email=%s,wechat=%s,hobby=%s,location=%s where username=%s", [nickname,gender,tags,description,email,wechat,hobby,location,data['username']])
 		
 		# 处理用户头像
 		if data.has_key('portrait'):
