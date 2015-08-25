@@ -477,23 +477,7 @@
                                 this.image.crossOrigin = this.preImage.src.indexOf('data:') === 0 ? null : 'Anonymous';
                             }
 
-                            var temp = this;
-                            lrz(this.$fileInput.get(0).files[0], {
-                                    width: 720,
-                                    height: 720,
-                                    quality: 0.4
-                                })
-                                .then(function(rst) {
-                            		temp.image.src = temp.imageSrc = rst.base64;	
-                                })
-                                .catch(function(err) {
-                                    // 处理失败会执行
-                                })
-                                .always(function() {
-                                    // 不管是成功失败，都会执行
-                                });
-
-                            // this.image.src = this.imageSrc = this.preImage.src;
+                            this.image.src = this.imageSrc = this.preImage.src;
                         }
                     }, {
                         key: 'onImageLoaded',
@@ -513,7 +497,6 @@
                             this.options.imageState = {};
 
                             this.$preview.css('background-image', 'url(' + this.imageSrc + ')');
-
                             if (this.options.imageBackground) {
                                 this.$imageBg.attr('src', this.imageSrc);
                             }
