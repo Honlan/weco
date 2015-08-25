@@ -67,7 +67,7 @@ def logout():
 def register():
 	if request.method == 'GET':
 		if not session.get('username') == None:
-			return redirect(url_for('/'))
+			return redirect(url_for('home'))
 		else:
 			return render_template('user/register.html')
 	elif request.method == 'POST':

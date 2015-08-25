@@ -226,10 +226,23 @@ def api_idea_delete():
 
 		# 创意确实属于用户
 		if owner == username:
+			
+			# 删除创意的缩略图
+			cursor.execute('select thumbnail,feature from idea where id=%s',[ideaId])
+			oldthumb = cursor.fetchone()
+			print oldthumb
+			oldfeature = oldthumb['feature']
+			oldthumb = oldthumb['thumbnail']
+			if (not oldthumb == '/static/img/idea.jpg') and (os.path.exists(WECOROOT + oldthumb)):
+				os.remove(WECOROOT + oldthumb)
+			if (not oldfeature == '/static/img/idea.jpg') and (os.path.exists(WECOROOT + oldfeature)):
+				os.remove(WECOROOT + oldfeature)
+
 			cursor.execute("delete from idea where id=%s",[ideaId])
 			cursor.execute("select ideas from user where username=%s",[username])
 			ideas = cursor.fetchone()['ideas'].split(',')
 
+			# 从该用户的创意列表中去除该创意
 			if ideaId in ideas:
 				ideas.remove(ideaId)
 			temp = ''
@@ -423,9 +436,6 @@ def api_idea_edit():
 					os.remove(WECOROOT + oldthumb)
 				if (not oldfeature == '/static/img/idea.jpg') and (os.path.exists(WECOROOT + oldfeature)):
 					os.remove(WECOROOT + oldfeature)
-
-				print oldthumb,oldfeature
-				print relapath,relapath1,ideaId
 
 				cursor.execute("update idea set thumbnail=%s,feature=%s where id=%s",[relapath,relapath1,ideaId])
 

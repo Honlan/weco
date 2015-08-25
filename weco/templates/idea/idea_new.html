@@ -47,11 +47,11 @@
     margin: 0px auto;
 }
 
-#idea_new form button[type="submit"] {
+#idea_new form #next_step {
     border: none;
     color: #009c81;
     font-size: 15px;
-    background-color: white;
+    background-color: #f9f9f9;
     width: 100%;
     padding: 10px 20px;
 }
@@ -85,6 +85,38 @@
     cursor: pointer;
     display: inline-block;
 }
+
+#idea_draft {
+    padding: 15px 20px;
+    display: none;
+}
+
+#idea_draft img {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 120px;
+    border-radius: 10px;
+    max-width: 100%;
+}
+
+#idea_draft textarea {
+    padding: 10px;
+    resize: none;
+}
+
+#idea_draft #publish_idea span {
+    border: none;
+    color: #009c81;
+    font-size: 15px;
+    background-color: #f9f9f9;
+    width: 100%;
+    padding: 10px 20px;
+    text-align: center;
+    word-wrap: break-word;
+    word-break: break-all;
+}
 </style>
 {% endblock %} {% block body %}
 <div id="idea_new">
@@ -106,7 +138,7 @@
         <p>广告</p>
         <p>其他</p>
     </div>
-    <form method="post" action="{{url_for('idea_new')}}">
+    <form>
         <div class="weco_form">
             <h5>我想通过一个</h>
             <h5 style="margin:10px;"><span id="category">社会创新</span>创意</h5>
@@ -124,9 +156,24 @@
             {% endfor %} {% endfor %}
         </div>
         <div class="weco_form">
-            <button type="submit" class="btn btn-default disabled">开启我的创意之旅 ></button>
+            <span class="btn btn-default disabled" id="next_step">下一步 ></span>
         </div>
     </form>
+</div>
+<div id="idea_draft">
+    <div class="weco_form" style="position:relative;">
+        <div style="position:relative;cursor:pointer;border-bottom:1px solid rgba(201,201,202,0.4);margin-left:10px;margin-right:10px;padding-bottom:10px;" id="thumbnail_input">
+            <p style="margin-bottom:0;padding-top:10px;color:#aaa;">选择封面图片</p>
+            <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;z-index:999;" name="thumbnail" capture="camera">
+            <img id="thumbnail" src="">
+        </div>
+        <div class="weco_input" style="border-bottom:none;">
+            <textarea rows="10" name="content" placeholder="点击编辑创意内容"></textarea>
+        </div>
+    </div>
+    <div class="weco_form" id="publish_idea">
+        <span class="btn btn-default disabled">开启我的创意之旅 ></span>
+    </div>
 </div>
 <script>
 $(document).ready(function() {
@@ -134,7 +181,7 @@ $(document).ready(function() {
     $('#header p#page_title').text("发布创意");
 
     // 默认仅显示“社会”类别创意的热门标签
-    $('#idea_new .hot-tag[name="社会"]').show();
+    $('#idea_new .hot-tag[name="社会创新"]').show();
 
     // 选择创意类别
     $('#idea_new #category').click(function() {
@@ -165,9 +212,9 @@ $(document).ready(function() {
         $('#idea_new input[name="tags"]').val(tagsText);
         tag = true;
         if (title && tag) {
-            $('#idea_new button').removeClass('disabled');
+            $('#idea_new #next_step').removeClass('disabled');
         } else {
-            $('#idea_new button').addClass('disabled');
+            $('#idea_new #next_step').addClass('disabled');
         }
     });
 
@@ -179,9 +226,9 @@ $(document).ready(function() {
             title = false;
         }
         if (title && tag) {
-            $('#idea_new button').removeClass('disabled');
+            $('#idea_new #next_step').removeClass('disabled');
         } else {
-            $('#idea_new button').addClass('disabled');
+            $('#idea_new #next_step').addClass('disabled');
         }
     });
     $('#idea_new input[name="tags"]').keyup(function() {
@@ -191,11 +238,96 @@ $(document).ready(function() {
             tag = false;
         }
         if (title && tag) {
-            $('#idea_new button').removeClass('disabled');
+            $('#idea_new #next_step').removeClass('disabled');
         } else {
-            $('#idea_new button').addClass('disabled');
+            $('#idea_new #next_step').addClass('disabled');
         }
     });
+
+    $('#idea_new #next_step').click(function() {
+        $('#idea_new').hide();
+        $('#idea_draft').show();
+    });
+
+    var ok1 = false,
+        ok2 = false;
+    // 添加了封面图片
+    var thumbnail = '',
+        feature = '';
+    $('#idea_draft input[name="thumbnail"]').change(function() {
+        lrz($(this)[0].files[0], {
+                width: 960,
+                height: 960,
+                quality: 0.8
+            })
+            .then(function(rst) {
+                thumbnail = rst.base64;
+                lrz($('#idea_draft input[name="thumbnail"]')[0].files[0], {
+                        width: 320,
+                        height: 320,
+                        quality: 0.8
+                    })
+                    .then(function(rst) {
+                        feature = rst.base64;
+
+                        $('#idea_draft #thumbnail_input').css('height', '130px');
+                        $('#idea_draft #thumbnail').attr('src', thumbnail).css('display', 'inline-block');
+
+                        ok1 = true;
+                        if (ok1 && ok2) {
+                            $('#idea_draft #publish_idea span').removeClass('disabled');
+                        }
+                    })
+                    .catch(function(err) {
+                        // 处理失败会执行
+                    })
+                    .always(function() {
+                        // 不管是成功失败，都会执行
+                    });
+            })
+            .catch(function(err) {
+                // 处理失败会执行
+            })
+            .always(function() {
+                // 不管是成功失败，都会执行
+            });
+    });
+
+    $('#idea_draft textarea').keyup(function() {
+        var content = $(this).val();
+        if (content != '') {
+            ok2 = true;
+        } else {
+            ok2 = false;
+        }
+        if (ok1 && ok2) {
+            $('#idea_draft #publish_idea span').removeClass('disabled');
+        } else {
+            $('#idea_draft #publish_idea span').addClass('disabled');
+        }
+    });
+
+    $('#idea_draft #publish_idea span').click(function() {
+        $.ajax({
+            url: '{{url_for("idea_new")}}',
+            type: 'POST',
+            data: {
+                username: "{{session.get('username')}}",
+                title: $("#idea_new input[name='title']").val(),
+                tags: $("#idea_new input[name='tags']").val(),
+                category: $("#idea_new input[name='category']").val(),
+                thumbnail: thumbnail,
+                feature: feature,
+                content: $('#idea_draft textarea').val()
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                window.location.href = "{{url_for('idea',ideaId='')}}" + data['ideaId'];
+            }
+        });
+    });
+
 });
 </script>
 {% endblock %}

@@ -98,6 +98,7 @@ def home():
 	
 	else:
 		# 访问个人主页前需登录
+		session['url'] = request.path
 		return redirect(url_for('login'))
 
 # 其他用户主页

@@ -14,7 +14,7 @@
     <script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
     <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />
     <script src="http://cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/font-awesome/css/font-awesome.min.css')}}">
     <script src="{{url_for('static', filename='js/lrz.bundle.js')}}"></script>
     <script src="{{url_for('static', filename='js/jquery.cropit.js')}}"></script>
     <link href="{{url_for('static', filename='css/layout.css')}}" rel="stylesheet">
@@ -51,6 +51,9 @@
         </div>
         <p id="page_title">&nbsp;&nbsp;&nbsp;&nbsp;</p>
         <div id="menu"></div>
+        <div id="setting">
+            <span class="fa fa-fw fa-cog"></span>
+        </div>
     </div>
     <div id="nav">
         <ul>

@@ -4,6 +4,7 @@ from flask import *
 from weco import app
 from weco import cursor
 import time
+import base64
 import random
 from hashlib import md5
 from werkzeug import secure_filename
@@ -68,7 +69,7 @@ def idea_new():
 		# 用户已经登陆
 		if not session.get('username') == None:
 			# 获取热门标签
-			category = ['社会','设计','生活','城市','娱乐','健康','旅行','教育','运动','产品','艺术','科技','工程','广告','其他']
+			category = ['社会创新','设计','生活','城市','娱乐','健康','旅行','教育','运动','产品','艺术','科技','工程','广告','其他']
 			hotTags = {}
 			for item in category:
 				cursor.execute("select tag from ideaTagStat where category=%s order by count desc limit 10",[item])
@@ -78,24 +79,56 @@ def idea_new():
 
 		# 用户尚未登录
 		else:
+			session['url'] = request.path
 			return redirect(url_for('login'))
 
 	elif request.method == 'POST':
 		# 用户已经登陆
 		if not session.get('username') == None:
 			# 新增创意数据
-			username = session.get('username')
+			username = request.form['username']
 			title = request.form['title']
 			category = request.form['category']
 			tags = request.form['tags']
+			content = request.form['content']
 			timestamp = str(int(time.time()))
-			cursor.execute('select nickname from user where username=%s',[username])
-			nickname = cursor.fetchone()['nickname']
-			cursor.execute('insert into idea(title,category,tags,timestamp,owner,nickname) values(%s,%s,%s,%s,%s,%s)',[title,category,tags,timestamp,username,nickname])
-			
+			cursor.execute('select nickname,portrait from user where username=%s',[username])
+			portrait = cursor.fetchone()
+			nickname = portrait['nickname']
+			portrait = portrait['portrait']
+
+			# 保存封面图片
+			imgBase = request.form['thumbnail']
+			imgBase = imgBase[imgBase.find('base64')+7:]
+			imageData = base64.b64decode(imgBase)
+			today = time.strftime('%Y%m%d%H', time.localtime(time.time()))
+			temp = genKey()[:10]
+			filename = today + '_' + temp + '.jpg'
+			UPLOAD_FOLDER = '/static/uploads/img'
+			filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+			relapath = os.path.join(UPLOAD_FOLDER, filename)
+			imageFile = open(filepath,'wb')
+			imageFile.write(imageData)
+			imageFile.close()
+
+			imgBase = request.form['feature']
+			imgBase = imgBase[imgBase.find('base64')+7:]
+			imageData = base64.b64decode(imgBase)
+			filename = today + '_' + temp + '_thumb.jpg'
+			filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+			relapath1 = os.path.join(UPLOAD_FOLDER, filename)
+			imageFile = open(filepath,'wb')
+			imageFile.write(imageData)
+			imageFile.close()
+
+			# 新增创意并添加内容
+			cursor.execute('insert into idea(title,category,tags,timestamp,owner,nickname,portrait,thumbnail,feature) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)',[title,category,tags,timestamp,username,nickname,portrait,relapath,relapath1])
+
 			# 获取新增创意id
-			cursor.execute('select id from idea where title=%s and category=%s and tags=%s and timestamp=%s and owner=%s and nickname=%s',[title,category,tags,timestamp,username,nickname])
+			cursor.execute('select id from idea where title=%s and category=%s and tags=%s and timestamp=%s and owner=%s',[title,category,tags,timestamp,username])
 			ideaId = cursor.fetchone()['id']
+
+			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,content,str(int(time.time())), username])
 
 			# 将该id添加至用户的创意列表中
 			cursor.execute('select ideas from user where username=%s',[username])
@@ -115,10 +148,12 @@ def idea_new():
 				else:
 					count = int(record['count']) + 1
 					cursor.execute("update ideaTagStat set count=%s where tag=%s and category=%s",[count,tag,category])
-			return redirect(url_for('idea',ideaId=ideaId))
+			
+			return json.dumps({"ideaId": ideaId})
 
 		# 用户尚未登录
 		else:
+			session['url'] = request.path
 			return redirect(url_for('login'))
 
 # 创意主页
@@ -126,6 +161,8 @@ def idea_new():
 def idea(ideaId):
 	# 如果创意已被锁定，则给出错误提示
 	# TO DO
+
+	print ideaId
 
 	# 缓存该创意的阅读、点赞等用户行为
 	if session.get('ideas') == None:
@@ -171,7 +208,7 @@ def idea(ideaId):
 	fans = len(cursor.fetchone()['fans'].split(','))
 
 	# 获取热门标签以供编辑
-	category = ['社会','设计','生活','城市','娱乐','健康','旅行','教育','运动','产品','艺术','科技','工程','广告','其他']
+	category = ['社会创新','设计','生活','城市','娱乐','健康','旅行','教育','运动','产品','艺术','科技','工程','广告','其他']
 	hotTags = {}
 	for item in category:
 		cursor.execute("select tag from ideaTagStat where category=%s order by count desc limit 10",[item])
@@ -190,6 +227,7 @@ def idea_add_text(ideaId):
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,text,str(int(time.time())), session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
+		session['url'] = request.path
 		return redirect(url_for('login'))
 
 # 为创意添加视频内容
@@ -206,5 +244,6 @@ def idea_add_video(ideaId):
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,2,relapath,str(int(time.time())), session.get('username')])
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
+		session['url'] = request.path
 		return redirect(url_for('login'))
 

@@ -496,14 +496,14 @@
     <div id="idea_add_content" class="weco_form">
         <div id="add_text">
             <form method="post" action="{{url_for('idea_add_text',ideaId=idea.id)}}" class="weco_input">
-                <textarea rows="3" name="content" placeholder="給创意添加一些文字吧"></textarea>
+                <textarea rows="3" name="content" placeholder="給创意再添加一些文字吧"></textarea>
                 <button type="submit"><img src="{{url_for('static',filename='img/icon/icon-20.png')}}"></button>
             </form>
         </div>
         <div id="add_image">
             <form style="position:relative;">
                 <div style="position:relative;">
-                    <p style="height:51px;padding:15px;color:#aaa;border-bottom:1px solid rgba(201,201,202,0.4);margin-bottom:0;">給创意添加一张图片吧</p>
+                    <p style="height:51px;padding:15px;color:#aaa;border-bottom:1px solid rgba(201,201,202,0.4);margin-bottom:0;">給创意再添加一张图片吧</p>
                     <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content" capture="camera">
                 </div>
                 <span><img src="{{url_for('static',filename='img/icon/icon-20.png')}}"></span>
@@ -512,7 +512,7 @@
         <div id="add_video">
             <form enctype="multipart/form-data" method="post" action="{{url_for('idea_add_video',ideaId=idea.id)}}" style="position:relative;">
                 <div style="position:relative;">
-                    <p style="height:51px;padding:15px;color:#aaa;margin-bottom:0;">給创意添加一段视频吧</p>
+                    <p style="height:51px;padding:15px;color:#aaa;margin-bottom:0;">給创意再添加一段视频吧</p>
                     <input type="file" accept="video/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content">
                 </div>
                 <button type="submit"><img src="{{url_for('static',filename='img/icon/icon-20.png')}}"></button>

@@ -10,6 +10,7 @@ import time
 def notice():
 	if session.get('username') == None:
 		# 用户尚未登录
+		session['url'] = request.path
 		return redirect(url_for('login'))
 	else:
 		# 获取和当前用户有关的动态
@@ -52,6 +53,7 @@ def notice():
 def chat(username):
 	if session.get('username') == None:
 		# 用户尚未登录
+		session['url'] = request.path
 		return redirect(url_for('login'))
 	else:
 		# 用户已经登陆，获取所有聊天记录
