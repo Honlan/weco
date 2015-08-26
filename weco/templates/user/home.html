@@ -460,10 +460,10 @@ $(document).ready(function() {
                 <div id="myIdeas">
                     {% for item in ideas%}
                     <div class="myIdea">
-                        <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
-                            <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="delete_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:20px;" title="删除创意"></span>
-                        </div>
                         <a href="{{url_for('idea',ideaId=item.id)}}">
+                            <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
+                                <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="delete_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:20px;" title="删除创意"></span>
+                            </div>
                             <p>{{item.title}}</p>
                         </a>
                     </div>
@@ -495,10 +495,10 @@ $(document).ready(function() {
                 <p class="summary">我喜欢了<span class="followIdeasCount">{{followIdeasCount}}</span>个创意</p>
                 {% for item in followIdeas%}
                 <div class="otherIdea">
-                    <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
-                        <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="disfollow_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:25px;" title="不喜欢了"></span>
-                    </div>
                     <a href="{{url_for('idea',ideaId=item.id)}}">
+                        <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
+                            <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="disfollow_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:25px;" title="不喜欢了"></span>
+                        </div>
                         <p>{{item.title}}</p>
                     </a>
                 </div>
@@ -670,7 +670,7 @@ $(document).ready(function() {
     $('#me #edit_user_info #preview button').click(function() {
         var imageData = $('.image-editor').cropit('export', {
             type: 'image/jpeg',
-            quality: .5
+            quality: .2
         });
         $('#me #edit_user_info #portrait').attr('src', imageData);
     });

@@ -185,7 +185,9 @@ $(document).ready(function() {
         {% for item in result %}
         <div class="idea" name="{{item.id}}">
             <div class="idea_header">
-                <div class="img" style="background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;"></div>
+                <a href="{{url_for('idea',ideaId=item.id)}}">
+                    <div class="img" style="background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;"></div>
+                </a>
                 <div class="idea_info">
                     <div>
                         <span class="fa fa-fw fa-thumbs-o-up"></span>
@@ -207,7 +209,9 @@ $(document).ready(function() {
                 </a>
                 <div style="border-top: 1px solid rgba(201, 201, 202, 0.4);padding-top:10px;padding-bottom:10px;">
                     <div style="padding-right:5px;">
-                        <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                        <a href="{{url_for('user',username=item.owner)}}">
+                            <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                        </a>
                     </div>
                     <div style="padding-left:5px;">
                         <div>
@@ -224,7 +228,9 @@ $(document).ready(function() {
     <div id="users" class="weco_form">
         {% for item in result %}
         <div class="user">
-            <img src="{{url_for('static',filename=item.portrait[8:])}}">
+            <a href="{{url_for('user',username=item.username)}}">
+                <img src="{{url_for('static',filename=item.portrait[8:])}}">
+            </a>
             <div class="user_info">
                 <a style="color:#555;font-size:16px;" href="{{url_for('user',username=item.username)}}">{{item.nickname}}</a>
                 <p style="color:#009c81;font-size:12px;margin-top:5px;margin-bottom:5px;">Ta的粉丝：{{item.fans}}人</p>
