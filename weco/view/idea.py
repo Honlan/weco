@@ -22,7 +22,7 @@ def genKey():
 # 主页，展示热门创意
 @app.route('/')
 def index():
-	cursor.execute('select * from idea where locked=0 order by praise desc, timestamp desc limit 10')
+	cursor.execute('select * from idea where published=1 and locked=0 order by praise desc, timestamp desc limit 10')
 
 	# 转换时间戳
 	ideas = cursor.fetchall()
@@ -44,7 +44,7 @@ def index():
 @app.route('/<mode>')
 def index_latest(mode):
 	if mode == 'latest':
-		cursor.execute('select * from idea where locked=0 order by timestamp desc, praise desc limit 10')
+		cursor.execute('select * from idea where published=1 and locked=0 order by timestamp desc, praise desc limit 10')
 
 		# 转换时间戳
 		ideas = cursor.fetchall()
@@ -90,7 +90,7 @@ def idea_new():
 			title = request.form['title']
 			category = request.form['category']
 			tags = request.form['tags']
-			content = request.form['content']
+			# content = request.form['content']
 			timestamp = str(int(time.time()))
 			cursor.execute('select nickname,portrait from user where username=%s',[username])
 			portrait = cursor.fetchone()
@@ -98,37 +98,38 @@ def idea_new():
 			portrait = portrait['portrait']
 
 			# 保存封面图片
-			imgBase = request.form['thumbnail']
-			imgBase = imgBase[imgBase.find('base64')+7:]
-			imageData = base64.b64decode(imgBase)
-			today = time.strftime('%Y%m%d%H', time.localtime(time.time()))
-			temp = genKey()[:10]
-			filename = today + '_' + temp + '.jpg'
-			UPLOAD_FOLDER = '/static/uploads/img'
-			filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
-			relapath = os.path.join(UPLOAD_FOLDER, filename)
-			imageFile = open(filepath,'wb')
-			imageFile.write(imageData)
-			imageFile.close()
+			# imgBase = request.form['thumbnail']
+			# imgBase = imgBase[imgBase.find('base64')+7:]
+			# imageData = base64.b64decode(imgBase)
+			# today = time.strftime('%Y%m%d%H', time.localtime(time.time()))
+			# temp = genKey()[:10]
+			# filename = today + '_' + temp + '.jpg'
+			# UPLOAD_FOLDER = '/static/uploads/img'
+			# filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+			# relapath = os.path.join(UPLOAD_FOLDER, filename)
+			# imageFile = open(filepath,'wb')
+			# imageFile.write(imageData)
+			# imageFile.close()
 
-			imgBase = request.form['feature']
-			imgBase = imgBase[imgBase.find('base64')+7:]
-			imageData = base64.b64decode(imgBase)
-			filename = today + '_' + temp + '_thumb.jpg'
-			filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
-			relapath1 = os.path.join(UPLOAD_FOLDER, filename)
-			imageFile = open(filepath,'wb')
-			imageFile.write(imageData)
-			imageFile.close()
+			# imgBase = request.form['feature']
+			# imgBase = imgBase[imgBase.find('base64')+7:]
+			# imageData = base64.b64decode(imgBase)
+			# filename = today + '_' + temp + '_thumb.jpg'
+			# filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+			# relapath1 = os.path.join(UPLOAD_FOLDER, filename)
+			# imageFile = open(filepath,'wb')
+			# imageFile.write(imageData)
+			# imageFile.close()
 
 			# 新增创意并添加内容
-			cursor.execute('insert into idea(title,category,tags,timestamp,owner,nickname,portrait,thumbnail,feature) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)',[title,category,tags,timestamp,username,nickname,portrait,relapath,relapath1])
+			# cursor.execute('insert into idea(title,category,tags,timestamp,owner,nickname,portrait,thumbnail,feature) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)',[title,category,tags,timestamp,username,nickname,portrait,relapath,relapath1])
+			cursor.execute('insert into idea(title,category,tags,timestamp,owner,nickname,portrait) values(%s,%s,%s,%s,%s,%s,%s)',[title,category,tags,timestamp,username,nickname,portrait])
 
 			# 获取新增创意id
 			cursor.execute('select id from idea where title=%s and category=%s and tags=%s and timestamp=%s and owner=%s',[title,category,tags,timestamp,username])
 			ideaId = cursor.fetchone()['id']
 
-			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,content,str(int(time.time())), username])
+			# cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,content,str(int(time.time())), username])
 
 			# 将该id添加至用户的创意列表中
 			cursor.execute('select ideas from user where username=%s',[username])

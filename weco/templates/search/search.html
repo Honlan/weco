@@ -79,10 +79,14 @@
 }
 
 #search #categories h3 {
-    color: #009c81;
-    margin-top: 10px;
+    color: white;
+    font-size: 13px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
     text-align: center;
-    font-size: 15px;
+    margin-top: -5px;
 }
 
 #search #categories p {
@@ -104,7 +108,7 @@
 </style>
 {% endblock %} {% block body %}
 <script>
-$(document).ready(function(){
+$(document).ready(function() {
     // 更改页面标题
     $('#header p#page_title').text("搜索");
 });
@@ -123,17 +127,28 @@ $(document).ready(function(){
     <div id="keywords">
         {% if not recent == None %}
         <div id="recent">
-            <p><span>最近搜索</span></p> 
+            <p><span>最近搜索</span></p>
             {% for item in recent %}
-            <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}"><span>{{item.keyword}}</span></a> 
-            {% else %}
+            <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}">
+                <span>
+                    {% if item.target == 'idea' %}
+                    <span class="fa fa-fw fa-lightbulb-o"></span> {% else %}
+                <span class="fa fa-fw fa-user"></span> {% endif %} {{item.keyword}}
+                </span>
+            </a> {% else %}
             <div style="color:#aaa;font-size:8px;margin-bottom:20px;">暂无记录</div>
             {% endfor %}
         </div>
         {% endif %}
         <div id="hot">
             <p><span>实时热搜</span></p> {% for item in hot %}
-            <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}"><span>{{item.keyword}}</span></a> {% endfor %}
+            <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}">
+                <span>
+                    {% if item.target == 'idea' %}
+                    <span class="fa fa-fw fa-lightbulb-o"></span> {% else %}
+                <span class="fa fa-fw fa-user"></span> {% endif %} {{item.keyword}}
+                </span>
+            </a> {% endfor %}
         </div>
     </div>
     <div id="categories">
@@ -142,56 +157,56 @@ $(document).ready(function(){
                 <div>
                     <a href="{{url_for('search_category',category='社会创新',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/1.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/社会创新.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('社会创新') %}{{categoryStat['社会创新']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>社会创新</h3>
                         </div>
-                        <h3>社会创新</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='设计',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/2.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/设计.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('设计') %}{{categoryStat['设计']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>设计</h3>
                         </div>
-                        <h3>设计</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='生活',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/3.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/生活.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('生活') %}{{categoryStat['生活']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>生活</h3>
                         </div>
-                        <h3>生活</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='城市',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/4.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/城市.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('城市') %}{{categoryStat['城市']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>城市</h3>
                         </div>
-                        <h3>城市</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='娱乐',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/5.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/娱乐.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('娱乐') %}{{categoryStat['娱乐']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>娱乐</h3>
                         </div>
-                        <h3>娱乐</h3>
                     </a>
                 </div>
             </div>
@@ -199,56 +214,56 @@ $(document).ready(function(){
                 <div>
                     <a href="{{url_for('search_category',category='健康',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/6.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/健康.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('健康') %}{{categoryStat['健康']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>健康</h3>
                         </div>
-                        <h3>健康</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='旅行',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/7.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/旅行.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('旅行') %}{{categoryStat['旅行']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>旅行</h3>
                         </div>
-                        <h3>旅行</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='教育',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/8.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/教育.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('教育') %}{{categoryStat['教育']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>教育</h3>
                         </div>
-                        <h3>教育</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='运动',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/9.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/运动.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('运动') %}{{categoryStat['运动']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>运动</h3>
                         </div>
-                        <h3>运动</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='产品',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/10.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/产品.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('产品') %}{{categoryStat['产品']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>产品</h3>
                         </div>
-                        <h3>产品</h3>
                     </a>
                 </div>
             </div>
@@ -256,56 +271,56 @@ $(document).ready(function(){
                 <div>
                     <a href="{{url_for('search_category',category='艺术',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/11.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/艺术.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('艺术') %}{{categoryStat['艺术']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>艺术</h3>
                         </div>
-                        <h3>艺术</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='科技',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/12.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/科技.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('科技') %}{{categoryStat['科技']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>科技</h3>
                         </div>
-                        <h3>科技</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='工程',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/13.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/工程.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('工程') %}{{categoryStat['工程']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>工程</h3>
                         </div>
-                        <h3>工程</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='广告',pageId=0)}}">
                         <div style="position:relative">
-                            <img src="{{url_for('static',filename='img/category/14.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/广告.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('广告') %}{{categoryStat['广告']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>广告</h3>
                         </div>
-                        <h3>广告</h3>
                     </a>
                 </div>
                 <div>
                     <a href="{{url_for('search_category',category='其他',pageId=0)}}">
                         <div style="position:relative;">
-                            <img src="{{url_for('static',filename='img/category/15.jpg')}}">
+                            <img src="{{url_for('static',filename='img/category/其他.jpg')}}">
                             <p>
                                 <span>{% if categoryStat.has_key('其他') %}{{categoryStat['其他']}}{% else %}0{% endif %}</span>
                             </p>
+                            <h3>其他</h3>
                         </div>
-                        <h3>其他</h3>
                     </a>
                 </div>
             </div>

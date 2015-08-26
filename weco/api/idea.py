@@ -48,7 +48,7 @@ def validate(username, token):
 @app.route('/api/idea/hot', methods=['POST'])
 def api_idea_hot():
 	offset = int(request.form['offset'])
-	cursor.execute('select * from idea where locked=0 order by praise desc, timestamp desc limit ' + str(offset*10) + ',10')
+	cursor.execute('select * from idea where published=1 and locked=0 order by praise desc, timestamp desc limit ' + str(offset*10) + ',10')
 	ideas = cursor.fetchall()
 
 	# 转换时间戳
@@ -70,7 +70,7 @@ def api_idea_hot():
 @app.route('/api/idea/latest', methods=['POST'])
 def api_idea_latest():
 	offset = int(request.form['offset'])
-	cursor.execute('select * from idea where locked=0 order by timestamp desc, praise desc limit ' + str(offset*10) + ',10')
+	cursor.execute('select * from idea where published=1 and locked=0 order by timestamp desc, praise desc limit ' + str(offset*10) + ',10')
 	ideas = cursor.fetchall()
 
 	# 转换时间戳
@@ -336,12 +336,40 @@ def api_idea_addImg():
 			imageFile = open(filepath,'wb')
 			imageFile.write(imageData)
 			imageFile.close()
-			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,relapath,str(int(time.time())), data['username']])
-			return json.dumps({"ok": True})
+
+			timestamp = str(int(time.time()))
+			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,relapath,timestamp, data['username']])
+			cursor.execute("select id from attachment where ideaId=%s and fileType=1 and url=%s and timestamp=%s and username=%s",[ideaId,relapath,timestamp,data['username']])
+			return json.dumps({"ok": True, "attachmentId": cursor.fetchone()['id']})
 
 		else:
 			return json.dumps({"ok": False, "error": "invalid token"})
 
+	else:
+		# 验证失败
+		return json.dumps({"ok": False, "error": "invalid token"})
+
+# 为创意添加文字内容
+# 需要进行token验证
+@app.route('/api/idea/addText', methods=['POST'])
+def api_idea_addText():
+	data = request.form
+	if validate(data['username'], data['token']):
+		# 验证通过
+		ideaId = data['ideaId']
+		cursor.execute("select owner from idea where id=%s",[ideaId])
+
+		# 创意确实属于用户
+		if cursor.fetchone()['owner'] == data['username']:	
+			timestamp = str(int(time.time()))
+			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,data['text'],timestamp, data['username']])
+			cursor.execute("select id from attachment where ideaId=%s and fileType=0 and url=%s and timestamp=%s and username=%s",[ideaId,data['text'],timestamp,data['username']])
+			return json.dumps({"ok": True, "attachmentId": cursor.fetchone()['id']})
+
+		# 创意不属于该用户
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
+	
 	else:
 		# 验证失败
 		return json.dumps({"ok": False, "error": "invalid token"})
@@ -472,6 +500,63 @@ def api_idea_edit():
 		# 验证失败
 		return json.dumps({"ok": False, "error": "invalid token"})
 
+# 更换创意封面
+# 需要进行token验证
+@app.route('/api/idea/changeThumbnail', methods=['POST'])
+def api_idea_change_thumbnail():
+	data = request.form
+	if validate(data['username'], data['token']):
+		# 验证通过
+		ideaId = data['ideaId']
+		cursor.execute("select owner from idea where id=%s",[ideaId])
+
+		# 创意确实属于用户
+		if cursor.fetchone()['owner'] == data['username']:	
+			# 处理创意缩略图
+			imgBase = data['thumbnail']
+			imgBase = imgBase[imgBase.find('base64')+7:]
+			imageData = base64.b64decode(imgBase)
+			today = time.strftime('%Y%m%d%H', time.localtime(time.time()))
+			temp = genKey()[:10]
+			filename = today + '_' + temp + '.jpg'
+			UPLOAD_FOLDER = '/static/uploads/img'
+			filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+			relapath = os.path.join(UPLOAD_FOLDER, filename)
+			imageFile = open(filepath,'wb')
+			imageFile.write(imageData)
+			imageFile.close()
+
+			imgBase = data['feature']
+			imgBase = imgBase[imgBase.find('base64')+7:]
+			imageData = base64.b64decode(imgBase)
+			filename = today + '_' + temp + '_thumb.jpg'
+			filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
+			relapath1 = os.path.join(UPLOAD_FOLDER, filename)
+			imageFile = open(filepath,'wb')
+			imageFile.write(imageData)
+			imageFile.close()
+
+			# 删除旧缩略图并更新新缩略图路径
+			cursor.execute('select thumbnail,feature from idea where id=%s',[ideaId])
+			oldthumb = cursor.fetchone()
+			oldfeature = oldthumb['feature']
+			oldthumb = oldthumb['thumbnail']
+			if (not oldthumb == '/static/img/idea.jpg') and (os.path.exists(WECOROOT + oldthumb)):
+				os.remove(WECOROOT + oldthumb)
+			if (not oldfeature == '/static/img/idea.jpg') and (os.path.exists(WECOROOT + oldfeature)):
+				os.remove(WECOROOT + oldfeature)
+
+			cursor.execute("update idea set thumbnail=%s,feature=%s where id=%s",[relapath,relapath1,ideaId])
+			return json.dumps({"ok": True})
+
+		# 创意不属于该用户
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
+	
+	else:
+		# 验证失败
+		return json.dumps({"ok": False, "error": "invalid token"})
+
 # 用户评论创意
 # 需要进行token验证
 @app.route('/api/idea/comment', methods=['POST'])
@@ -506,3 +591,25 @@ def api_idea_comment():
 		# 验证失败
 		return json.dumps({"ok": False, "error": "invalid token"})
 
+# 用户发布创意
+# 需要进行token验证
+@app.route('/api/idea/publish', methods=['POST'])
+def api_idea_publish():
+	data = request.form
+	if validate(data['username'], data['token']):
+		# 验证通过
+		ideaId = data['ideaId']
+		cursor.execute("select owner from idea where id=%s",[ideaId])
+
+		# 创意确实属于用户
+		if cursor.fetchone()['owner'] == data['username']:	
+			cursor.execute("update idea set published=1 where id=%s",[ideaId])
+			return json.dumps({"ok": True})
+
+		# 创意不属于该用户
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
+	
+	else:
+		# 验证失败
+		return json.dumps({"ok": False, "error": "invalid token"})

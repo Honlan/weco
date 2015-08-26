@@ -22,7 +22,7 @@ def search():
 	hot = cursor.fetchall();
 
 	# 获取各个类别的创意数量
-	cursor.execute("select count(id) as count, category from idea where locked=0 group by category")
+	cursor.execute("select count(id) as count, category from idea where published=1 and locked=0 group by category")
 	categoryStat = cursor.fetchall()
 	temp = {}
 	for item in categoryStat:
@@ -53,7 +53,7 @@ def search_keyword():
 		# 搜索的是创意
 		for item in keyword:
 			cursor.execute("insert into search(username,target,keyword,timestamp) values(%s,%s,%s,%s)",[username,target,item,str(int(time.time()))])
-			cursor.execute("select * from idea where locked=0 and (title like '%%%s%%' or tags like '%%%s%%' or category like '%%%s%%')" % (item,item,item))
+			cursor.execute("select * from idea where published=1 and locked=0 and (title like '%%%s%%' or tags like '%%%s%%' or category like '%%%s%%')" % (item,item,item))
 			ideas = cursor.fetchall()
 			for i in ideas:
 				temp = int(time.time()) - int(i['timestamp'])
@@ -110,11 +110,11 @@ def search_category():
 	numPerPage = 10
 
 	# 计算该分类的创意数量
-	cursor.execute('select count(*) as count from idea where category=%s and locked=0',[category])
+	cursor.execute('select count(*) as count from idea where category=%s and published=1 and locked=0',[category])
 	count = cursor.fetchone()['count']
 
 	# 获取该分类的创意并分页
-	cursor.execute('select * from idea where category=%s and locked=0 order by praise desc, timestamp desc limit %s,%s',[category,int(pageId)*numPerPage,numPerPage])
+	cursor.execute('select * from idea where category=%s and published=1 and locked=0 order by praise desc, timestamp desc limit %s,%s',[category,int(pageId)*numPerPage,numPerPage])
 	ideas = cursor.fetchall()
 
 	# 转换时间戳

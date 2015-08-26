@@ -441,11 +441,11 @@ $(document).ready(function() {
                     <h5>所在地</h5>
                     <p style="min-height:20px;">{{user.location}}</p>
                 </div>
-                <div style="border-bottom: 1px solid rgba(201, 201, 202, 0.6);position:relative;">
+                <div style="position:relative;">
                     <h5>邮箱</h5>
                     <p style="min-height:20px;">{{user.email}}</p>
                 </div>
-                <div style="position:relative;">
+                <div style="position:relative;display:none;">
                     <h5>微信</h5>
                     <p style="min-height:20px;">{{user.wechat}}</p>
                 </div>
@@ -461,7 +461,7 @@ $(document).ready(function() {
                     {% for item in ideas%}
                     <div class="myIdea">
                         <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
-                            <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="trash_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:25px;" title="删除创意"></span>
+                            <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="delete_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:20px;" title="删除创意"></span>
                         </div>
                         <a href="{{url_for('idea',ideaId=item.id)}}">
                             <p>{{item.title}}</p>
@@ -470,7 +470,7 @@ $(document).ready(function() {
                     {% endfor %}
                 </div>
                 {% endif %}
-                <p class="summary" style="margin-top:20px;margin-bottom:5px;">待删除创意</p>
+                <!--  <p class="summary" style="margin-top:20px;margin-bottom:5px;">待删除创意</p>
                 <p style="font-size:8px;color:#999;width:80%;margin:0 10% 15px 10%;">创意删除后会暂时出现在这里，可以被恢复。如果再次被删除，<span style="color:#e4007e;">将永久无法恢复</span>，请谨慎操作</p>
                 <div id="myTrashs">
                     {% if not trashs == None %} {% for item in trashs%}
@@ -484,7 +484,7 @@ $(document).ready(function() {
                         </a>
                     </div>
                     {% endfor %} {% endif %}
-                </div>
+                </div> -->
             </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="user-like">
@@ -616,11 +616,11 @@ $(document).ready(function() {
                 <p>所在地</p>
                 <input type="text" name="location" value="{{user.location}}" placeholder="我在XX省份XX城市">
             </div>
-            <div class="weco_input">
+            <div class="weco_input" style="border:none;">
                 <p>邮箱</p>
                 <input type="text" name="email" value="{{user.email}}" placeholder="让我们保持联系吧">
             </div>
-            <div class="weco_input" style="border:none;">
+            <div class="weco_input" style="display:none;">
                 <p>微信</p>
                 <input type="text" name="wechat" value="{{user.wechat}}" placeholder="加个微信加个朋友">
             </div>
@@ -676,60 +676,60 @@ $(document).ready(function() {
     });
 
     // 待删除创意
-    $('body').on('click', '#me #user-profile-content .trash_idea', function() {
-        $(this).removeClass('trash_idea').addClass('delete_idea');
-        var ideaId = $(this).attr('name');
-        $r = '<span name="' + ideaId + '" style="position:absolute;left:5px;top:5px;cursor:pointer" class="recover_idea"><img src="' + "{{url_for('static',filename='img/icon/icon-20.png')}}" + '" style="width:25px;" title="恢复创意"></span>';
-        $(this).before($r);
-        var $p = $(this).parent().parent('.myIdea');
-        $p.removeClass('myIdea').addClass('myTrash');
-        $.ajax({
-            url: "{{url_for('api_idea_trash')}}",
-            type: 'POST',
-            data: {
-                ideaId: ideaId,
-                username: "{{session.get('username')}}",
-                token: "{{session.get('token')}}"
-            },
-            dataType: 'json',
-            error: function() {},
-            success: function(data) {
-                $p.appendTo('#me #user-profile-content #myTrashs');
-                $('#me #user-profile-content .ideasCount').text(parseInt($('#me #user-profile-content .ideasCount').text()) - 1);
-                $('#me #user-profile-nav .ideasCount').text(parseInt($('#me #user-profile-nav .ideasCount').text()) - 1);
-            }
-        });
-    });
+    // $('body').on('click', '#me #user-profile-content .trash_idea', function() {
+    //     $(this).removeClass('trash_idea').addClass('delete_idea');
+    //     var ideaId = $(this).attr('name');
+    //     $r = '<span name="' + ideaId + '" style="position:absolute;left:5px;top:5px;cursor:pointer" class="recover_idea"><img src="' + "{{url_for('static',filename='img/icon/icon-20.png')}}" + '" style="width:25px;" title="恢复创意"></span>';
+    //     $(this).before($r);
+    //     var $p = $(this).parent().parent('.myIdea');
+    //     $p.removeClass('myIdea').addClass('myTrash');
+    //     $.ajax({
+    //         url: "{{url_for('api_idea_trash')}}",
+    //         type: 'POST',
+    //         data: {
+    //             ideaId: ideaId,
+    //             username: "{{session.get('username')}}",
+    //             token: "{{session.get('token')}}"
+    //         },
+    //         dataType: 'json',
+    //         error: function() {},
+    //         success: function(data) {
+    //             $p.appendTo('#me #user-profile-content #myTrashs');
+    //             $('#me #user-profile-content .ideasCount').text(parseInt($('#me #user-profile-content .ideasCount').text()) - 1);
+    //             $('#me #user-profile-nav .ideasCount').text(parseInt($('#me #user-profile-nav .ideasCount').text()) - 1);
+    //         }
+    //     });
+    // });
 
     // 恢复创意
-    $('body').on('click', '#me #user-profile-content .recover_idea', function() {
-        var ideaId = $(this).attr('name');
-        var $p = $(this).parent().parent('.myTrash');
-        $(this).next('.delete_idea').removeClass('delete_idea').addClass('trash_idea');
-        $(this).remove();
-        $p.removeClass('myTrash').addClass('myIdea');
-        $.ajax({
-            url: "{{url_for('api_idea_recover')}}",
-            type: 'POST',
-            data: {
-                ideaId: ideaId,
-                username: "{{session.get('username')}}",
-                token: "{{session.get('token')}}"
-            },
-            dataType: 'json',
-            error: function() {},
-            success: function(data) {
-                $p.appendTo('#me #user-profile-content #myIdeas');
-                $('#me #user-profile-content .ideasCount').text(parseInt($('#me #user-profile-content .ideasCount').text()) + 1);
-                $('#me #user-profile-nav .ideasCount').text(parseInt($('#me #user-profile-nav .ideasCount').text()) + 1);
-            }
-        });
-    });
+    // $('body').on('click', '#me #user-profile-content .recover_idea', function() {
+    //     var ideaId = $(this).attr('name');
+    //     var $p = $(this).parent().parent('.myTrash');
+    //     $(this).next('.delete_idea').removeClass('delete_idea').addClass('trash_idea');
+    //     $(this).remove();
+    //     $p.removeClass('myTrash').addClass('myIdea');
+    //     $.ajax({
+    //         url: "{{url_for('api_idea_recover')}}",
+    //         type: 'POST',
+    //         data: {
+    //             ideaId: ideaId,
+    //             username: "{{session.get('username')}}",
+    //             token: "{{session.get('token')}}"
+    //         },
+    //         dataType: 'json',
+    //         error: function() {},
+    //         success: function(data) {
+    //             $p.appendTo('#me #user-profile-content #myIdeas');
+    //             $('#me #user-profile-content .ideasCount').text(parseInt($('#me #user-profile-content .ideasCount').text()) + 1);
+    //             $('#me #user-profile-nav .ideasCount').text(parseInt($('#me #user-profile-nav .ideasCount').text()) + 1);
+    //         }
+    //     });
+    // });
 
-    // 永久删除创意
+    // 删除创意
     $('body').on('click', '#me #user-profile-content .delete_idea', function() {
         var ideaId = $(this).attr('name');
-        var $p = $(this).parent().parent('.myTrash');
+        var $p = $(this).parent().parent('.myIdea');
         $.ajax({
             url: "{{url_for('api_idea_delete')}}",
             type: 'POST',
@@ -742,6 +742,8 @@ $(document).ready(function() {
             error: function() {},
             success: function(data) {
                 $p.remove();
+                $('#me #user-profile-content .ideasCount').text(parseInt($('#me #user-profile-content .ideasCount').text()) - 1);
+                $('#me #user-profile-nav .ideasCount').text(parseInt($('#me #user-profile-nav .ideasCount').text()) - 1);
             }
         });
     });
