@@ -326,7 +326,7 @@
     width: 318px;
     position: absolute;
     height: 420px;
-    top: 0px;
+    top: -20px;
     left: 50%;
     margin-left: -159px;
 }
@@ -393,6 +393,13 @@
 }*/
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function() {
+    // 更改页面标题
+    $('#header p#page_title').text("个人主页");
+    $('#header #setting').show();
+});
+</script>
 <div id='me'>
     <div id="user-basic-info" class="weco_form">
         <div style="text-align:center;position:relative">
@@ -466,8 +473,7 @@
                 <p class="summary" style="margin-top:20px;margin-bottom:5px;">待删除创意</p>
                 <p style="font-size:8px;color:#999;width:80%;margin:0 10% 15px 10%;">创意删除后会暂时出现在这里，可以被恢复。如果再次被删除，<span style="color:#e4007e;">将永久无法恢复</span>，请谨慎操作</p>
                 <div id="myTrashs">
-                    {% if not trashs == None %}
-                    {% for item in trashs%}
+                    {% if not trashs == None %} {% for item in trashs%}
                     <div class="myTrash">
                         <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
                             <span name="{{item.id}}" style="position:absolute;left:5px;top:5px;cursor:pointer" class="recover_idea"><img src="{{url_for('static',filename='img/icon/icon-20.png')}}" style="width:25px;" title="恢复创意"></span>
@@ -477,8 +483,7 @@
                             <p>{{item.title}}</p>
                         </a>
                     </div>
-                    {% endfor %}
-                    {% endif %}
+                    {% endfor %} {% endif %}
                 </div>
             </div>
         </div>
@@ -508,7 +513,9 @@
                 <p class="summary">我关注了<span class="followUsersCount">{{followUsersCount}}</span>名用户</p>
                 {% for item in followUsers%}
                 <div class="myFollow">
-                    <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    <a href="{{url_for('user',username=item.username)}}">
+                        <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    </a>
                     <span name="{{item.username}}" class="disfollow_user">取消关注</span>
                     <div style="margin-left:84px;margin-right:60px;padding-top:5px;">
                         <a href="{{url_for('user',username=item.username)}}" style="color:#555;">
@@ -528,7 +535,9 @@
                 <p class="summary">有<span class="fansCount">{{fansCount}}</span>名用户关注了我</p>
                 {% for item in fans%}
                 <div class="myFan">
-                    <img src="{{url_for('static',filename=item.portrait[8:])}}"> {% if followUserStr.find(item.username) >= 0 %}
+                    <a href="{{url_for('user',username=item.username)}}">
+                        <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    </a> {% if followUserStr.find(item.username) >= 0 %}
                     <span name="{{item.username}}" class="follow_or_not followed">取消关注</span> {% else %}
                     <span name="{{item.username}}" class="follow_or_not unfollowed">关注</span> {% endif %}
                     <div style="margin-left:84px;margin-right:60px;padding-top:5px;">
@@ -633,16 +642,12 @@
 </div>
 <script>
 $(document).ready(function() {
-    // 更改页面标题
-    $('#header p#page_title').text("个人主页");
-    $('#header #setting').show();
-
-    $('#header #setting').click(function(){
+    $('#header #setting').click(function() {
         event.stopPropagation();
         $('#header #setting-menu').fadeIn(200);
     });
 
-    $('body').click(function(){
+    $('body').click(function() {
         $('#header #setting-menu').fadeOut(200);
     })
 
@@ -656,9 +661,9 @@ $(document).ready(function() {
         imageBackgroundBorderWidth: 20,
         width: 200,
         height: 200
-        // imageState: {
-        //     src: 'http://lorempixel.com/500/400/',
-        // },
+            // imageState: {
+            //     src: 'http://lorempixel.com/500/400/',
+            // },
     });
 
     // 图像裁剪完毕并预览

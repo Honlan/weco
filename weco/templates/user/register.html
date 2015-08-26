@@ -48,6 +48,12 @@
 }
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function(){
+    // 更改页面标题
+    $('#header p#page_title').text("注册");
+});
+</script>
 <div id="register">
     <!-- <img class="weco_logo" src="{{url_for('static',filename='img/icon/icon-01.png')}}"> -->
     <form class="form-inline" method="post" action="{{ url_for('register') }}">
@@ -68,9 +74,6 @@
 </div>
 <script>
 $(document).ready(function() {
-    // 更改页面标题
-    $('#header p#page_title').text("注册");
-
     // 确认注册信息是否完善
     var ok1 = false,
         ok2 = false,

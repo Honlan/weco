@@ -319,7 +319,7 @@
 #idea #idea_comments #add_comment {
     position: relative;
     margin-bottom: 20px;
-    border-bottom: 1px solid rgba(201,201,202,0.4)
+    border-bottom: 1px solid rgba(201, 201, 202, 0.4)
 }
 
 #idea #idea_comments #publish_comment {
@@ -360,8 +360,26 @@
     margin-right: 5px;
     margin-top: 10px;
 }
+
+#idea #edit_attachment button {
+    background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
+    background-size: 100% 100%;
+    padding: 12px 20px 10px 20px;
+    background-position: -2px 0px;
+    border: none;
+    background-color: #f9f9f9;
+    color: #009c81;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function() {
+    // 更改页面标题
+    $('#header p#page_title').text("创意详情");
+});
+</script>
 <div id="idea">
     <div id="idea_info">
         <div style="position:relative;">
@@ -380,7 +398,9 @@
                 </div>
             </div>
             <div id="owner">
-                <img src="{{url_for('static',filename=idea.portrait[8:])}}">
+                <a href="{{url_for('user',username=idea.owner)}}">
+                    <img src="{{url_for('static',filename=idea.portrait[8:])}}">
+                </a>
                 <div style="margin-left:92px;margin-right:90px;padding-top:5px;">
                     <a href="{{url_for('user',username=idea.owner)}}" style="color:#555;">
                         <p style="font-size:16px;margin-bottom:3px;margin-top:3px;">{{idea.nickname}}</p>
@@ -484,7 +504,10 @@
         <div class="content_cell">
             {% if idea.owner == session.get('username') %}
             <span class="fa fa-fw fa-times" name="{{item.id}}"></span> {% endif %} {% if item.fileType == 0 %}
-            <p style="word-wrap:break-word;word-break:break-all;" name="{{item.id}}">{{item.url}}</p>
+            <p style="word-wrap:break-word;word-break:break-all;" name="{{item.id}}">
+                {% for i in item.url %} {{i}}
+                <br> {% endfor %}
+            </p>
             {% elif item.fileType == 1 %}
             <img src="{{url_for('static',filename=item.url[8:])}}"> {% elif item.fileType == 2 %}
             <video src="{{url_for('static',filename=item.url[8:])}}" controls="controls" loop="loop" muted>
@@ -543,15 +566,25 @@
         <p style="text-align:center;margin-top:30px;color:#009c81;">沙发空缺，快快来抢</p>
         {% endfor%}
     </div>
+    <div class="modal fade" id="edit_attachment">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="background-color:#f9f9f9;">
+                <div class="modal-body">
+                    <div class="weco_input" style="border-bottom:none;">
+                        <textarea rows="5" style="padding:20px;" style="text-align:left;"></textarea>
+                    </div>
+                    <div style="text-align:center;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">更改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
 $(document).ready(function() {
-    // 更改页面标题
-    $('#header p#page_title').text("创意详情");
-
     // 用户直接改变了封面图标
     $('#idea #idea_info input[name="direct_change"]').change(function() {
-        console.log(11111);
         lrz($(this)[0].files[0], {
                 width: 960,
                 height: 960,
@@ -921,8 +954,54 @@ $(document).ready(function() {
         $('#idea #edit_idea_info .hot-tag[name="' + category + '"]').show();
     });
 
-    $('#idea #idea_content .content_cell p').click(function(){
-        console.log($(this).attr('name'));
+    // 更改创意文本内容
+    var attachmentId = '';
+    $('#idea #idea_content .content_cell p').click(function() {
+        if ("{{idea.owner}}" == "{{session.get('username')}}") {
+            attachmentId = $(this).attr('name');
+            var content = $(this).html();
+            content = content.split('<br>');
+            var temp = '';
+            for (var i = 0; i < content.length; i++) {
+                content[i] = content[i].replace(/[ ]/g, "");
+                content[i] = content[i].replace(/[\n]/g, "");
+                if (content[i] != '') {
+                    console.log(content[i]);
+                    console.log(content[i].length);
+                    temp = temp + content[i] + '\n';
+                }
+            }
+            $('#idea #edit_attachment textarea').val(temp);
+            $('#idea #edit_attachment').modal();
+        }
+    });
+
+    $('#idea #edit_attachment button').click(function() {
+        var content = $('#idea #edit_attachment textarea').val();
+        $.ajax({
+            url: '{{url_for("api_attachment_edit")}}',
+            type: 'POST',
+            data: {
+                attachmentId: attachmentId,
+                username: "{{session.get('username')}}",
+                token: "{{session.get('token')}}",
+                content: content
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $("#idea #idea_content .content_cell p[name='" + attachmentId + "']").html('');
+                var content = $('#idea #edit_attachment textarea').val();
+                content = content.split('\n');
+                for (var i = 0; i < content.length; i++) {
+                    content[i] = content[i].replace(/[ ]/g, "");
+                    content[i] = content[i].replace(/[\n]/g, "");
+                    if (content[i] != '') {
+                        $("#idea #idea_content .content_cell p[name='" + attachmentId + "']").append(content[i] + '<br>');
+                    }
+                }
+            }
+        });
     });
 });
 </script>

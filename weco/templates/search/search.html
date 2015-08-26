@@ -103,6 +103,12 @@
 }
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function(){
+    // 更改页面标题
+    $('#header p#page_title').text("搜索");
+});
+</script>
 <div id="search">
     <div id="search_form">
         <form>
@@ -308,9 +314,6 @@
 </div>
 <script>
 $(document).ready(function() {
-    // 更改页面标题
-    $('#header p#page_title').text("搜索");
-
     // 关键词发生变化，更新搜索链接地址
     var target = "idea";
     $('#search #search_form input').keyup(function() {

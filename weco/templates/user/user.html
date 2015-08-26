@@ -240,6 +240,11 @@
 }
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function() {
+    $('#header p#page_title').text("其他用户");
+});
+</script>
 <div id='user'>
     <div id="user-basic-info" class="weco_form">
         <div style="text-align:center;position:relative">
@@ -329,7 +334,9 @@
                 <p class="summary">Ta关注了<span class="followUsersCount">{{followUsersCount}}</span>名用户</p>
                 {% for item in followUsers%}
                 <div class="myFollow">
-                    <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    <a href="{{url_for('user',username=item.username)}}">
+                        <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    </a>
                     <div style="margin-left:84px;margin-right:60px;padding-top:5px;">
                         <a href="{{url_for('user',username=item.username)}}" style="color:#555;">
                             <p style="font-size:16px;margin-bottom:5px;">{{item.nickname}}</p>
@@ -351,7 +358,9 @@
                 <p class="summary">有<span class="fansCount">{{fansCount}}</span>名用户关注了Ta</p>
                 {% for item in fans%}
                 <div class="myFan">
-                    <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    <a href="{{url_for('user',username=item.username)}}">
+                        <img src="{{url_for('static',filename=item.portrait[8:])}}">
+                    </a>
                     <div style="margin-left:84px;margin-right:60px;padding-top:5px;">
                         <a href="{{url_for('user',username=item.username)}}" style="color:#555;">
                             <p style="font-size:16px;margin-bottom:5px;">{{item.nickname}}</p>
@@ -369,8 +378,6 @@
 </div>
 <script>
 $(document).ready(function() {
-    $('#header p#page_title').text("其他用户");
-
     $('#user .follow_or_not').click(function() {
         var me = $('#session_username').text();
         var username = $(this).attr('name');

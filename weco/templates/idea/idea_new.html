@@ -119,6 +119,12 @@
 }
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function(){
+    // 更改页面标题
+    $('#header p#page_title').text("发布创意");
+});
+</script>
 <div id="idea_new">
     <img class="weco_logo" src="{{url_for('static',filename='img/icon/icon-01.png')}}">
     <div id="all_categories" class="weco_form">
@@ -177,9 +183,6 @@
 </div>
 <script>
 $(document).ready(function() {
-    // 更改页面标题
-    $('#header p#page_title').text("发布创意");
-
     // 默认仅显示“社会”类别创意的热门标签
     $('#idea_new .hot-tag[name="社会创新"]').show();
 

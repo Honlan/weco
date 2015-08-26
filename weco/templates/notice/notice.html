@@ -112,6 +112,12 @@
 }
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function(){
+    // 更改页面标题
+    $('#header p#page_title').text("通知");
+});
+</script>
 <div id="notice">
     <div>
         <div class="weco_form">
@@ -165,10 +171,4 @@
         </div>
     </div>
 </div>
-<script>
-$(document).ready(function() {
-    // 更改页面标题
-    $('#header p#page_title').text("通知");
-});
-</script>
 {% endblock %}

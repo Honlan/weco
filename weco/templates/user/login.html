@@ -71,6 +71,12 @@
 }
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function() {
+    // 更改页面标题
+    $('#header p#page_title').text("登录");
+});
+</script>
 <div id="login">
     <img class="weco_logo" src="{{url_for('static',filename='img/icon/icon-01.png')}}">
     <form class="form-inline" method="post" action="{{ url_for('login') }}">
@@ -90,10 +96,4 @@
         </div>
     </form>
 </div>
-<script>
-$(document).ready(function() {
-    // 更改页面标题
-    $('#header p#page_title').text("登录");
-});
-</script>
 {% endblock %}

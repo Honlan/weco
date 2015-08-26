@@ -375,6 +375,29 @@ def api_attachment_remove():
 		# 验证失败
 		return json.dumps({"ok": False, "error": "invalid token"})
 
+# 更改文本创意附件的内容
+# 需要进行token验证
+@app.route('/api/attachment/edit',methods=['POST'])
+def api_attachment_edit():
+	data = request.form
+	if validate(data['username'], data['token']):
+		# 验证通过
+		attachmentId = data['attachmentId']
+		cursor.execute("select * from attachment where id=%s",[attachmentId])
+		attachment = cursor.fetchone()
+
+		if attachment['username'] == data['username']:
+			# 附件确实属于该用户
+			cursor.execute("update attachment set url=%s where id=%s",[data['content'],attachmentId])
+			return json.dumps({"ok": True})
+
+		else:
+			return json.dumps({"ok": False, "error": "invalid token"})
+
+	else:
+		# 验证失败
+		return json.dumps({"ok": False, "error": "invalid token"})
+
 # 编辑创意
 # 需要进行token验证
 @app.route('/api/idea/edit', methods=['POST'])

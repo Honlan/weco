@@ -93,6 +93,12 @@
 }
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function(){
+    // 更改页面标题
+    $('#header p#page_title').text("{{targetNickname}}");
+});
+</script>
 <div id="chat">
     <div id="chatRecords">
         <div style="display:none;"></div>
@@ -117,9 +123,6 @@
 </div>
 <script>
 $(document).ready(function() {
-    // 更改页面标题
-    $('#header p#page_title').text("{{targetNickname}}");
-
     $('body,html').animate({
         scrollTop: $('#chat #chatRecords>div:last-child').offset().top
     }, 0);

@@ -109,6 +109,12 @@
 }
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function() {
+    // 更换页面标题
+    $('#header p#page_title').text("分类搜索");
+});
+</script>
 <div id="search_result">
     {% if count > 0 %}
     <h4 class="weco_form" style="margin-bottom:10px;"><span class="category">{{category}}</span>创意共<span style="color:#e4007e;margin-left:5px;margin-right:5px;">{{count}}</span>个</h4>
@@ -165,10 +171,4 @@
     {% else %}
     <h4 style="text-align:center;margin-top:15px;"><span class="fa fa-fw fa-frown-o"></span><span class="category">{{category}}</span>创意还是无人区</h4> {% endif %}
 </div>
-<script>
-$(document).ready(function() {
-	// 更换页面标题
-    $('#header p#page_title').text("分类搜索");
-});
-</script>
 {% endblock %}

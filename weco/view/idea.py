@@ -193,6 +193,14 @@ def idea(ideaId):
 	attachments = cursor.fetchall()
 	for item in attachments:
 		item['timestamp'] = time.strftime('%m-%d %H:%M', time.localtime(float(item['timestamp'])))
+		if item['fileType'] == 0:
+			item['url'] = item['url'].split('\n')
+			temp = []
+			for i in item['url']:
+				i = i.strip()
+				if not i == '':
+					temp.append(i)
+			item['url'] = temp
 
 	# 获取该创意所有评论
 	cursor.execute("select * from comment where ideaId=%s order by praise desc, timestamp desc", [ideaId])

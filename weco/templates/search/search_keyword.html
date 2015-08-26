@@ -171,6 +171,12 @@
 }
 </style>
 {% endblock %} {% block body %}
+<script>
+$(document).ready(function() {
+    // 更换页面标题
+    $('#header p#page_title').text("关键词搜索");
+});
+</script>
 <div id="search_result">
     {% if count > 0 %}
     <h4 class="weco_form"><span style="color:#e4007e;margin-left:5px;margin-right:5px;">{{count}}</span>个和<span style="color:#009c81;margin-left:5px;margin-right:5px;">{{keyword}}</span>相关的{% if target == "idea" %}创意{% elif target == "user" %}用户{% endif %}</h4> {% if target == "idea" %}
@@ -248,10 +254,4 @@
     </div>
     {% endif %}
 </div>
-<script>
-$(document).ready(function() {
-    // 更换页面标题
-    $('#header p#page_title').text("关键词搜索");
-});
-</script>
 {% endblock %}
