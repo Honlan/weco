@@ -19,6 +19,8 @@ def notice():
 		cursor.execute("select * from activity where me=%s and checked=0 order by timestamp desc",[username])
 		activities = cursor.fetchall()
 		activityCount = len(activities)
+		cursor.execute("select * from activity where me=%s order by timestamp desc",[username])
+		activities = cursor.fetchall()
 		for item in activities:
 			item['weekday'] = time.localtime(float(item['timestamp'])).tm_wday
 			if item['weekday'] == 0:
