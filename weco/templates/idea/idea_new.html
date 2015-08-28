@@ -222,7 +222,7 @@ $(document).ready(function() {
                     <p style="height:51px;padding:15px;color:#aaa;margin-bottom:0;">給创意添加一张图片吧</p>
                     <input type="file" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content" capture="camera">
                 </div>
-                <span style="color:#009c81;"><img src="{{url_for('static',filename='img/icon/icon-20.png')}}"></span>
+                <span style="color:#009c81;" class="fa fa-fw fa-spin fa-spinner"></span>
             </form>
         </div>
     </div>
@@ -426,22 +426,16 @@ $(document).ready(function() {
             }
         });
     });
-    
+
     var $image_input = $('#idea_draft #idea_add_content #add_image form').clone();
     // 添加图片
-    $('body').on('change','#idea_draft #idea_add_content #add_image input',function() {
-        var filename = $(this).val();
-        filename = filename.substr(filename.lastIndexOf("\\") + 1);
-        $('#idea_draft #idea_add_content #add_image p').text(filename);
-        $('#idea_draft #idea_add_content #add_image span').fadeIn();
-    });
-
-    // 上传图片
-    $('body').on('click','#idea_draft #idea_add_content #add_image span',function() {
-        $(this).fadeOut();
+    $('body').on('change', '#idea_draft #idea_add_content #add_image input', function() {
+        // var filename = $(this).val();
+        // filename = filename.substr(filename.lastIndexOf("\\") + 1);
+        // $('#idea_draft #idea_add_content #add_image p').text(filename);
+        // $('#idea_draft #idea_add_content #add_image span').fadeIn();
         $('#idea_draft #idea_content').css('display', 'block');
-        $('#idea_draft #idea_add_content #add_image span img').remove();
-        $('#idea_draft #idea_add_content #add_image span').addClass("fa fa-fw fa-spin fa-spinner");
+        $('#idea_draft #idea_add_content #add_image span').show()
         lrz($('#idea_draft #idea_add_content #add_image input')[0].files[0], {
                 width: 960,
                 height: 960,
@@ -475,6 +469,45 @@ $(document).ready(function() {
             });
     });
 
+    // 上传图片
+    $('body').on('click', '#idea_draft #idea_add_content #add_image span', function() {
+        // $(this).fadeOut();
+        // $('#idea_draft #idea_content').css('display', 'block');
+        // $('#idea_draft #idea_add_content #add_image span img').remove();
+        // $('#idea_draft #idea_add_content #add_image span').addClass("fa fa-fw fa-spin fa-spinner");
+        // lrz($('#idea_draft #idea_add_content #add_image input')[0].files[0], {
+        //         width: 960,
+        //         height: 960,
+        //         quality: 0.8
+        //     })
+        //     .then(function(rst) {
+        //         $.ajax({
+        //             url: '{{url_for("api_idea_addImg")}}',
+        //             type: 'POST',
+        //             data: {
+        //                 username: "{{session.get('username')}}",
+        //                 token: "{{session.get('token')}}",
+        //                 image: rst.base64,
+        //                 ideaId: ideaId
+        //             },
+        //             dataType: 'json',
+        //             error: function() {},
+        //             success: function(data) {
+        //                 $p = '<div class="content_cell"><span class="fa fa-fw fa-times" name="' + data['attachmentId'] + '"></span><img src="' + rst.base64 + '"></div>';
+        //                 $('#idea_draft #idea_content').append($p);
+        //                 $('#idea_draft #idea_add_content #add_image form').remove();
+        //                 $('#idea_draft #idea_add_content #add_image').append($image_input.clone());
+        //             }
+        //         });
+        //     })
+        //     .catch(function(err) {
+        //         // 处理失败会执行
+        //     })
+        //     .always(function() {
+        //         // 不管是成功失败，都会执行
+        //     });
+    });
+
     // 编辑完毕，发布创意
     $('#idea_draft #publish_idea span').click(function() {
         $.ajax({
@@ -494,7 +527,7 @@ $(document).ready(function() {
     });
 
     // 删除附件
-    $('body').on('click','#idea_draft #idea_content .content_cell span.fa',function(){
+    $('body').on('click', '#idea_draft #idea_content .content_cell span.fa', function() {
         var attachmentId = $(this).attr('name');
         var $p = $(this).parent('.content_cell');
         $.ajax({

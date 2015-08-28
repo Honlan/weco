@@ -390,9 +390,11 @@ def api_idea_addImg():
 			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,relapath,timestamp, data['username']])
 			cursor.execute("select id from attachment where ideaId=%s and fileType=1 and url=%s and timestamp=%s and username=%s",[ideaId,relapath,timestamp,data['username']])
 
+			attachmentId = cursor.fetchone()['id']
+
 			closedb(db,cursor)
 
-			return json.dumps({"ok": True, "attachmentId": cursor.fetchone()['id']})
+			return json.dumps({"ok": True, "attachmentId": attachmentId})
 
 		else:
 			closedb(db,cursor)
@@ -420,9 +422,11 @@ def api_idea_addText():
 			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,data['text'],timestamp, data['username']])
 			cursor.execute("select id from attachment where ideaId=%s and fileType=0 and url=%s and timestamp=%s and username=%s",[ideaId,data['text'],timestamp,data['username']])
 
+			attachmentId = cursor.fetchone()['id']
+
 			closedb(db,cursor)
 
-			return json.dumps({"ok": True, "attachmentId": cursor.fetchone()['id']})
+			return json.dumps({"ok": True, "attachmentId": attachmentId})
 
 		# 创意不属于该用户
 		else:
