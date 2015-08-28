@@ -2,7 +2,7 @@
 
 from flask import *
 from weco import app
-from weco import cursor
+from weco import connectdb,closedb
 import random
 from hashlib import md5
 import time
@@ -33,16 +33,20 @@ def login():
 	elif request.method == 'POST':
 		username = request.form['username']
 		password = request.form['password']
+		(db,cursor) = connectdb()
 		if cursor.execute("select id from user where username=%s or email=%s", [username,username]) == 0:
 			error = u"账号或邮箱不存在"
+			closedb(db,cursor)
 			return render_template('user/login.html', error=error)
 		elif cursor.execute("select id from user where username=%s and password=%s", [username,unicode(md5(password).hexdigest().upper())]) + cursor.execute("select id from user where email=%s and password=%s", [username,unicode(md5(password).hexdigest().upper())]) == 0:
 			error = u"账号或密码错误"
+			closedb(db,cursor)
 			return render_template('user/login.html', error=error)
 		else:
 			cursor.execute("update user set lastActive=%s, token=%s, TTL=100 where username=%s or email=%s",[str(int(time.time())),genKey(),username,username])
 			cursor.execute("select username, token from user where username=%s or email=%s", [username,username])
 			user = cursor.fetchone()
+			closedb(db,cursor)
 			session['username'] = user['username']
 			session['token'] =  user['token']
 			if not session.get('url') == None:
@@ -74,12 +78,14 @@ def register():
 		username = request.form['username']
 		password = request.form['password']
 		email = request.form['email']
+		(db,cursor) = connectdb()
 		cursor.execute("insert into user(username,nickname,password,email) values(%s,%s,%s,%s)", [username,username,unicode(md5(password).hexdigest().upper()),email])
 
 		# 注册完毕，直接登录
 		cursor.execute("update user set lastActive=%s, token=%s, TTL=100 where username=%s and email=%s",[str(int(time.time())),genKey(),username,email])
 		cursor.execute("select username, token from user where username=%s and email=%s", [username,email])
 		user = cursor.fetchone()
+		closedb(db,cursor)
 		session['username'] = user['username']
 		session['token'] =  user['token']
 		if not session.get('url') == None:

@@ -2,7 +2,7 @@
 
 from flask import *
 from weco import app
-from weco import cursor
+from weco import connectdb,closedb
 import time
 from weco.conf.configure import WECOPREFIX
 
@@ -15,6 +15,7 @@ def notice():
 		return redirect(url_for('login'))
 	else:
 		# 获取和当前用户有关的动态
+		(db,cursor) = connectdb()
 		username = session.get('username')
 		cursor.execute("select * from activity where me=%s and checked=0 order by timestamp desc",[username])
 		activities = cursor.fetchall()
@@ -49,6 +50,8 @@ def notice():
 			item['portrait'] = cursor.fetchone()['portrait']
 		chatsCount = len(chats)
 
+		closedb(db,cursor)
+
 		return render_template('notice/notice.html',activities=activities,activityCount=activityCount,chats=chats,chatsCount=chatsCount)
 
 # 私信界面
@@ -59,6 +62,7 @@ def chat(username):
 		session['url'] = WECOPREFIX + request.path
 		return redirect(url_for('login'))
 	else:
+		(db,cursor) = connectdb()
 		# 用户已经登陆，获取所有聊天记录
 		me = session.get('username')
 		cursor.execute("select * from chat where (source=%s and target=%s) or (source=%s and target=%s) order by timestamp desc limit 100",[username,me,me,username])
@@ -85,5 +89,7 @@ def chat(username):
 		portrait = cursor.fetchone()
 		targetNickname = portrait['nickname']
 		portrait = portrait['portrait']
+
+		closedb(db,cursor)
 
 		return render_template('notice/chat.html',target=username,targetNickname=targetNickname,chats=chats,myPortrait=myPortrait,portrait=portrait)

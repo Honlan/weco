@@ -2,7 +2,7 @@
 
 from flask import *
 from weco import app
-from weco import cursor
+from weco import connectdb,closedb
 import time
 import base64
 import random
@@ -27,10 +27,14 @@ def genKey():
 
 # 验证token是否属于用户并检测是否有效
 def validate(username, token):
+	(db,cursor) = connectdb()
+
 	count = cursor.execute("select lastActive, TTL from user where username = %s and token = %s", [username, token])
 	if count == 0:
+		closedb(db,cursor)
 		return False
 	else:
+		closedb(db,cursor)
 		return True
 		user = cursor.fetchone()
 		lastActive = user['lastActive']
@@ -47,9 +51,13 @@ def validate(username, token):
 # 根据offset获取热门创意
 @app.route('/api/idea/hot', methods=['POST'])
 def api_idea_hot():
+	(db,cursor) = connectdb()
+
 	offset = int(request.form['offset'])
 	cursor.execute('select * from idea where published=1 and locked=0 order by praise desc, timestamp desc limit ' + str(offset*10) + ',10')
 	ideas = cursor.fetchall()
+
+	closedb(db,cursor)
 
 	# 转换时间戳
 	for item in ideas:
@@ -69,9 +77,13 @@ def api_idea_hot():
 # 根据offset获取最新创意
 @app.route('/api/idea/latest', methods=['POST'])
 def api_idea_latest():
+	(db,cursor) = connectdb()
+
 	offset = int(request.form['offset'])
 	cursor.execute('select * from idea where published=1 and locked=0 order by timestamp desc, praise desc limit ' + str(offset*10) + ',10')
 	ideas = cursor.fetchall()
+
+	closedb(db,cursor)
 
 	# 转换时间戳
 	for item in ideas:
@@ -95,6 +107,8 @@ def api_idea_follow():
 	data = request.form
 
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		username = data['username']
@@ -121,6 +135,9 @@ def api_idea_follow():
 		ideaTitle = owner['title']
 		owner = owner['owner']
 		cursor.execute("insert into activity(me,other,otherNickname,ideaId,ideaTitle,activityType,timestamp) values(%s,%s,%s,%s,%s,%s,%s)",[owner,username,nickname,ideaId,ideaTitle,2,str(int(time.time()))])
+
+		closedb(db,cursor)
+
 		return json.dumps({"ok": True})
 
 	else:
@@ -134,6 +151,8 @@ def api_idea_disfollow():
 	data = request.form
 
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		username = data['username']
@@ -152,6 +171,8 @@ def api_idea_disfollow():
 		followIdeas = temp[:-1]
 		cursor.execute("update user set followIdeas = %s where username = %s", [followIdeas, username])
 
+		closedb(db,cursor)
+
 		return json.dumps({"ok": True})
 
 	else:
@@ -165,6 +186,8 @@ def api_idea_trash():
 	data = request.form
 
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		username = data['username']
@@ -175,9 +198,11 @@ def api_idea_trash():
 		# 创意确实属于用户
 		if owner == username:
 			cursor.execute("update idea set locked=1 where id=%s",[ideaId])
+			closedb(db,cursor)
 			return json.dumps({"ok": True})
 
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 
 	else:
@@ -191,6 +216,8 @@ def api_idea_recover():
 	data = request.form
 
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		username = data['username']
@@ -201,9 +228,11 @@ def api_idea_recover():
 		# 创意确实属于用户
 		if owner == username:
 			cursor.execute("update idea set locked=0 where id=%s",[ideaId])
+			closedb(db,cursor)
 			return json.dumps({"ok": True})
 
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 
 	else:
@@ -217,6 +246,8 @@ def api_idea_delete():
 	data = request.form
 
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		username = data['username']
@@ -253,9 +284,11 @@ def api_idea_delete():
 			ideas = temp[:-1]
 			cursor.execute("update user set ideas = %s where username = %s", [ideas, username])
 
+			closedb(db,cursor)
 			return json.dumps({"ok": True})
 
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 
 	else:
@@ -267,12 +300,16 @@ def api_idea_delete():
 def api_idea_praise():
 	ideaId = request.form['ideaId']
 	if (not session.get('ideas') == None) and (not session['ideas'].get(str(ideaId)) == None):
+		(db,cursor) = connectdb()
+
 		if session['ideas'][str(ideaId)] == 0:
 			# 点赞
 			cursor.execute('select praise from idea where id=%s', [ideaId])
 			praise = int(cursor.fetchone()['praise']) + 1
 			cursor.execute('update idea set praise=%s where id=%s', [praise,ideaId])
 			session['ideas'][str(ideaId)] = 1
+
+			closedb(db,cursor)
 
 			return json.dumps({"ok": True, "praise": praise, "action": "increase"})
 
@@ -283,6 +320,8 @@ def api_idea_praise():
 			cursor.execute('update idea set praise=%s where id=%s', [praise,ideaId])
 			session['ideas'][str(ideaId)] = 0
 
+			closedb(db,cursor)
+
 			return json.dumps({"ok": True, "praise": praise, "action": "decrease"})
 
 	else:
@@ -291,6 +330,8 @@ def api_idea_praise():
 # 用户点赞评论
 @app.route('/api/comment/praise', methods=['POST'])
 def api_comment_praise():
+	(db,cursor) = connectdb()
+
 	commentId = request.form['commentId']
 
 	if session.get('comments') == None:
@@ -302,6 +343,9 @@ def api_comment_praise():
 		cursor.execute('select praise from comment where id=%s', [commentId])
 		praise = int(cursor.fetchone()['praise']) + 1
 		cursor.execute('update comment set praise=%s where id=%s', [praise,commentId])
+
+		closedb(db,cursor)
+
 		return json.dumps({"ok": True, "praise": praise, "action": "increase"})
 
 	else:
@@ -310,6 +354,9 @@ def api_comment_praise():
 		cursor.execute('select praise from comment where id=%s', [commentId])
 		praise = int(cursor.fetchone()['praise']) - 1
 		cursor.execute('update comment set praise=%s where id=%s', [praise,commentId])
+
+		closedb(db,cursor)
+
 		return json.dumps({"ok": True, "praise": praise, "action": "decrease"})
 
 # 为创意添加图片内容
@@ -318,6 +365,8 @@ def api_comment_praise():
 def api_idea_addImg():
 	data = request.form
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		cursor.execute("select owner from idea where id=%s",[ideaId])
@@ -340,9 +389,13 @@ def api_idea_addImg():
 			timestamp = str(int(time.time()))
 			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,1,relapath,timestamp, data['username']])
 			cursor.execute("select id from attachment where ideaId=%s and fileType=1 and url=%s and timestamp=%s and username=%s",[ideaId,relapath,timestamp,data['username']])
+
+			closedb(db,cursor)
+
 			return json.dumps({"ok": True, "attachmentId": cursor.fetchone()['id']})
 
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 
 	else:
@@ -355,6 +408,8 @@ def api_idea_addImg():
 def api_idea_addText():
 	data = request.form
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		cursor.execute("select owner from idea where id=%s",[ideaId])
@@ -364,10 +419,14 @@ def api_idea_addText():
 			timestamp = str(int(time.time()))
 			cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,data['text'],timestamp, data['username']])
 			cursor.execute("select id from attachment where ideaId=%s and fileType=0 and url=%s and timestamp=%s and username=%s",[ideaId,data['text'],timestamp,data['username']])
+
+			closedb(db,cursor)
+
 			return json.dumps({"ok": True, "attachmentId": cursor.fetchone()['id']})
 
 		# 创意不属于该用户
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 	
 	else:
@@ -380,6 +439,8 @@ def api_idea_addText():
 def api_attachment_remove():
 	data = request.form
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		attachmentId = data['attachmentId']
 		cursor.execute("select * from attachment where id=%s",[attachmentId])
@@ -394,9 +455,12 @@ def api_attachment_remove():
 			# 删除创意记录
 			cursor.execute('delete from attachment where id=%s', [attachmentId])
 
+			closedb(db,cursor)
+
 			return json.dumps({"ok": True})
 
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 
 	else:
@@ -409,6 +473,8 @@ def api_attachment_remove():
 def api_attachment_edit():
 	data = request.form
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		attachmentId = data['attachmentId']
 		cursor.execute("select * from attachment where id=%s",[attachmentId])
@@ -417,9 +483,13 @@ def api_attachment_edit():
 		if attachment['username'] == data['username']:
 			# 附件确实属于该用户
 			cursor.execute("update attachment set url=%s where id=%s",[data['content'],attachmentId])
+
+			closedb(db,cursor)
+
 			return json.dumps({"ok": True})
 
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 
 	else:
@@ -432,6 +502,8 @@ def api_attachment_edit():
 def api_idea_edit():
 	data = request.form
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		cursor.execute("select owner from idea where id=%s",[ideaId])
@@ -490,10 +562,13 @@ def api_idea_edit():
 
 				cursor.execute("update idea set thumbnail=%s,feature=%s where id=%s",[relapath,relapath1,ideaId])
 
+			closedb(db,cursor)
+
 			return json.dumps({"ok": True})
 
 		# 创意不属于该用户
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 	
 	else:
@@ -506,6 +581,8 @@ def api_idea_edit():
 def api_idea_change_thumbnail():
 	data = request.form
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		cursor.execute("select owner from idea where id=%s",[ideaId])
@@ -547,10 +624,14 @@ def api_idea_change_thumbnail():
 				os.remove(WECOROOT + oldfeature)
 
 			cursor.execute("update idea set thumbnail=%s,feature=%s where id=%s",[relapath,relapath1,ideaId])
+
+			closedb(db,cursor)
+
 			return json.dumps({"ok": True})
 
 		# 创意不属于该用户
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 	
 	else:
@@ -563,6 +644,8 @@ def api_idea_change_thumbnail():
 def api_idea_comment():
 	data = request.form
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		username = data['username']
@@ -585,6 +668,9 @@ def api_idea_comment():
 		ideaTitle = owner['title']
 		owner = owner['owner']
 		cursor.execute("insert into activity(me,other,otherNickname,ideaId,ideaTitle,comment,activityType,timestamp) values(%s,%s,%s,%s,%s,%s,%s,%s)",[owner,username,nickname,ideaId,ideaTitle,content,3,str(int(time.time()))])
+
+		closedb(db,cursor)
+
 		return json.dumps({"ok": True})
 	
 	else:
@@ -597,6 +683,8 @@ def api_idea_comment():
 def api_idea_publish():
 	data = request.form
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		ideaId = data['ideaId']
 		cursor.execute("select owner from idea where id=%s",[ideaId])
@@ -604,10 +692,14 @@ def api_idea_publish():
 		# 创意确实属于用户
 		if cursor.fetchone()['owner'] == data['username']:	
 			cursor.execute("update idea set published=1 where id=%s",[ideaId])
+
+			closedb(db,cursor)
+
 			return json.dumps({"ok": True})
 
 		# 创意不属于该用户
 		else:
+			closedb(db,cursor)
 			return json.dumps({"ok": False, "error": "invalid token"})
 	
 	else:

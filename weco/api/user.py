@@ -2,7 +2,7 @@
 
 from flask import *
 from weco import app
-from weco import cursor
+from weco import connectdb,closedb
 import time
 import base64
 import random
@@ -27,10 +27,14 @@ def genKey():
 
 # 验证token是否属于用户并检测是否有效
 def validate(username, token):
+	(db,cursor) = connectdb()
+
 	count = cursor.execute("select lastActive, TTL from user where username = %s and token = %s", [username, token])
 	if count == 0:
+		closedb(db,cursor)
 		return False
 	else:
+		closedb(db,cursor)
 		return True
 		user = cursor.fetchone()
 		lastActive = user['lastActive']
@@ -47,8 +51,13 @@ def validate(username, token):
 # 注册时判断用户名是否存在
 @app.route('/api/user/existName', methods=['POST'])
 def api_user_exist_name():
+	(db,cursor) = connectdb()
+
 	data = request.form
 	count = cursor.execute("select username from user where username = %s", [data['username']])
+
+	closedb(db,cursor)
+	
 	if count > 0:
 		return json.dumps({"ok": True, "exist": True})
 	else:
@@ -57,8 +66,13 @@ def api_user_exist_name():
 # 注册时判断邮箱是否存在
 @app.route('/api/user/existEmail', methods=['POST'])
 def api_user_exist_email():
+	(db,cursor) = connectdb()
+
 	data = request.form
 	count = cursor.execute("select email from user where email = %s", [data['email']])
+
+	closedb(db,cursor)
+
 	if count > 0:
 		return json.dumps({"ok": True, "exist": True})
 	else:
@@ -70,6 +84,8 @@ def api_user_exist_email():
 def api_user_edit():
 	data = request.form
 	if validate(data['username'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证成功
 		nickname = data['nickname']
 		gender = data['gender']
@@ -127,6 +143,8 @@ def api_user_edit():
 			# 更新该用户所有评论的头像路径
 			cursor.execute("update comment set portrait=%s where username=%s",[relapath,data['username']])
 
+		closedb(db,cursor)
+
 		return json.dumps({"ok": True})
 
 	else:
@@ -139,6 +157,8 @@ def api_user_edit():
 def api_user_follow():
 	data = request.form
 	if validate(data['source'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证通过
 		source = data['source']
 		target = data['target']
@@ -173,6 +193,9 @@ def api_user_follow():
 		
 		# 添加类别1动态，我被别人关注了
 		cursor.execute("insert into activity(me,other,otherNickname,activityType,timestamp) values(%s,%s,%s,%s,%s)",[target,source,nickname,1,str(int(time.time()))])
+
+		closedb(db,cursor)
+
 		return json.dumps({"ok": True})
 
 	else:
@@ -185,6 +208,8 @@ def api_user_follow():
 def api_user_disfollow():
 	data = request.form
 	if validate(data['source'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证成功
 		source = data['source']
 		target = data['target']
@@ -215,6 +240,8 @@ def api_user_disfollow():
 		fans = temp[:-1]
 		cursor.execute("update user set fans = %s where username = %s", [fans, target])
 
+		closedb(db,cursor)
+
 		return json.dumps({"ok": True})
 
 	else:
@@ -227,6 +254,8 @@ def api_user_disfollow():
 def api_chat_send():
 	data = request.form
 	if validate(data['source'], data['token']):
+		(db,cursor) = connectdb()
+
 		# 验证成功
 		source = data['source']
 		target = data['target']
@@ -237,6 +266,8 @@ def api_chat_send():
 		cursor.execute("select nickname from user where username=%s",[source])
 		sourceNickname = cursor.fetchone()['nickname']
 		cursor.execute("insert into chat(source,sourceNickname,target,targetNickname,content,timestamp) values(%s,%s,%s,%s,%s,%s)",[source,sourceNickname,target,targetNickname,content,timestamp])
+
+		closedb(db,cursor)
 
 		return json.dumps({"ok": True})
 

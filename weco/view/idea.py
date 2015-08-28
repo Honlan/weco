@@ -2,7 +2,7 @@
 
 from flask import *
 from weco import app
-from weco import cursor
+from weco import connectdb,closedb
 import time
 import base64
 import random
@@ -22,6 +22,7 @@ def genKey():
 # 主页，展示热门创意
 @app.route('/')
 def index():
+	(db,cursor) = connectdb()
 	cursor.execute('select * from idea where published=1 and locked=0 order by praise desc, timestamp desc limit 10')
 
 	# 转换时间戳
@@ -38,12 +39,15 @@ def index():
 			temp = str(temp/(3600*24)) + 'd'
 		item['timestamp'] = temp
 
+	closedb(db,cursor)
+
 	return render_template('index/index.html', ideas=ideas, hot=True)
 
 # 主页，展示最新创意
 @app.route('/<mode>')
 def index_latest(mode):
 	if mode == 'latest':
+		(db,cursor) = connectdb()
 		cursor.execute('select * from idea where published=1 and locked=0 order by timestamp desc, praise desc limit 10')
 
 		# 转换时间戳
@@ -60,6 +64,8 @@ def index_latest(mode):
 				temp = str(temp/(3600*24)) + 'd'
 			item['timestamp'] = temp
 
+		closedb(db,cursor)
+
 		return render_template('index/index.html', ideas=ideas, hot=False)
 
 # 发布创意
@@ -71,9 +77,12 @@ def idea_new():
 			# 获取热门标签
 			category = ['社会创新','设计','生活','城市','娱乐','健康','旅行','教育','运动','产品','艺术','科技','工程','广告','其他']
 			hotTags = {}
+			(db,cursor) = connectdb()
 			for item in category:
 				cursor.execute("select tag from ideaTagStat where category=%s order by count desc limit 10",[item])
 				hotTags[item] = cursor.fetchall()
+
+			closedb(db,cursor)
 
 			return render_template('idea/idea_new.html',hotTags=hotTags)
 
@@ -86,6 +95,7 @@ def idea_new():
 		# 用户已经登陆
 		if not session.get('username') == None:
 			# 新增创意数据
+			(db,cursor) = connectdb()
 			username = request.form['username']
 			title = request.form['title']
 			category = request.form['category']
@@ -149,6 +159,8 @@ def idea_new():
 				else:
 					count = int(record['count']) + 1
 					cursor.execute("update ideaTagStat set count=%s where tag=%s and category=%s",[count,tag,category])
+
+			closedb(db,cursor)
 			
 			return json.dumps({"ideaId": ideaId})
 
@@ -162,6 +174,8 @@ def idea_new():
 def idea(ideaId):
 	# 如果创意已被锁定，则给出错误提示
 	# TO DO
+
+	(db,cursor) = connectdb()
 
 	# 缓存该创意的阅读、点赞等用户行为
 	if session.get('ideas') == None:
@@ -224,14 +238,18 @@ def idea(ideaId):
 	if not session.get('username') == None:
 		cursor.execute("update user set TTL=100 where username=%s",[session.get('username')])
 
+	closedb(db,cursor)
+
 	return render_template('idea/idea.html', idea=idea, liked=liked, attachments=attachments, comments=comments, commentsCount=commentsCount, fans=fans, hotTags=hotTags)
 
 # 为创意添加文本内容
 @app.route('/idea/addText/<ideaId>',methods=['POST'])
 def idea_add_text(ideaId):
 	if not session.get('username') == None:
+		(db,cursor) = connectdb()
 		text = request.form['content']
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,text,str(int(time.time())), session.get('username')])
+		closedb(db,cursor)
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
 		session['url'] = WECOPREFIX + request.path
@@ -241,6 +259,7 @@ def idea_add_text(ideaId):
 @app.route('/idea/addVideo/<ideaId>', methods=['POST'])
 def idea_add_video(ideaId):
 	if not session.get('username') == None:
+		(db,cursor) = connectdb()
 		image = request.files['content']
 		today = time.strftime('%Y%m%d', time.localtime(time.time()))
 		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
@@ -249,6 +268,7 @@ def idea_add_video(ideaId):
 		relapath = os.path.join(UPLOAD_FOLDER, filename)
 		image.save(filepath)
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,2,relapath,str(int(time.time())), session.get('username')])
+		closedb(db,cursor)
 		return redirect(url_for('idea', ideaId=ideaId))
 	else:
 		session['url'] = WECOPREFIX + request.path

@@ -2,7 +2,7 @@
 
 from flask import *
 from weco import app
-from weco import cursor
+from weco import connectdb,closedb
 import time
 import math
 
@@ -12,6 +12,7 @@ def search():
 	recent = None
 	hot = None
 
+	(db,cursor) = connectdb()
 	if not session.get('username') == None:
 		# 获取当前用户的最近搜索记录
 		cursor.execute("select * from search where username=%s and keyword!='' group by keyword,target order by timestamp desc limit 10",[session.get('username')])
@@ -19,7 +20,7 @@ def search():
 	
 	# 获取热门搜索记录
 	cursor.execute("select keyword, target, count(*) as count from search where timestamp > %s and keyword!='' group by keyword,target order by count(*) desc limit 10",[int(time.time())-3600*24*7])
-	hot = cursor.fetchall();
+	hot = cursor.fetchall()
 
 	# 获取各个类别的创意数量
 	cursor.execute("select count(id) as count, category from idea where published=1 and locked=0 group by category")
@@ -28,11 +29,16 @@ def search():
 	for item in categoryStat:
 		temp[item['category']] = item['count']
 	categoryStat = temp
+
+	closedb(db,cursor)
+
 	return render_template('search/search.html',recent=recent,hot=hot,categoryStat=categoryStat)
 
 # 关键词搜索
 @app.route('/search/keyword')
 def search_keyword():
+	(db,cursor) = connectdb()
+
 	target = request.args.get('target')
 	keyword = request.args.get('keyword')
 	key = keyword
@@ -98,13 +104,17 @@ def search_keyword():
 
 	# 关键词搜索无返回结果时查看当前热门搜索
 	cursor.execute("select keyword, target, count(*) as count from search where timestamp > %s and keyword!='' group by keyword,target order by count(*) desc limit 10",[int(time.time())-3600*24*7])
-	hot = cursor.fetchall();
+	hot = cursor.fetchall()
+
+	closedb(db,cursor)
 
 	return render_template('search/search_keyword.html', target=target, keyword=key, count=count, start=start, end=end, current=int(pageId), pages=pages, total=total, result=result, hot=hot)
 
 # 根据分类返回创意
 @app.route('/search/category')
 def search_category():
+	(db,cursor) = connectdb()
+
 	category = request.args.get('category')
 	pageId = request.args.get('pageId')
 	numPerPage = 10
@@ -141,5 +151,7 @@ def search_category():
 	pages = []
 	for i in xrange(start, end + 1):
 		pages.append(i)
+
+	closedb(db,cursor)
 
 	return render_template('search/search_category.html', category=category, count=count, start=start, end=end, current=int(pageId), pages=pages, total=total, ideas=ideas)

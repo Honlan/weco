@@ -2,13 +2,15 @@
 
 from flask import *
 from weco import app
-from weco import cursor
+from weco import connectdb,closedb
 from weco.conf.configure import WECOPREFIX
 
 # 我的主页
 @app.route('/user')
 def home():
 	if not session.get('username') == None:
+		(db,cursor) = connectdb()
+
 		# 用户已登陆
 		cursor.execute('select * from user where username=%s', [session.get('username')])
 		user = cursor.fetchone()
@@ -95,6 +97,8 @@ def home():
 		else:
 			fans = None
 
+		closedb(db,cursor)
+
 		return render_template('user/home.html', user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount, followUserStr=followUserStr, hotTags=hotTags)
 	
 	else:
@@ -110,6 +114,8 @@ def user(username):
 		return redirect(url_for('home'))
 
 	else:
+		(db,cursor) = connectdb()
+
 		# 访问其他用户
 		cursor.execute('select username,email,nickname,portrait,tags,description,gender,wechat,ideas,followIdeas,fans,followUsers,lastActive from user where username=%s',[username])
 		user = cursor.fetchone()
@@ -184,6 +190,8 @@ def user(username):
 		if not me == None:
 			cursor.execute('select followUsers from user where username=%s',[me])
 			followUserStr = cursor.fetchone()['followUsers']
+
+		closedb(db,cursor)
 
 		return render_template('user/user.html',user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount, followUserStr=followUserStr)
 

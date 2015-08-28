@@ -27,6 +27,18 @@ db = MySQLdb.connect(host=HOST, user=USER, passwd=PASSWORD, db=DATABASE, port=PO
 db.autocommit(True)
 cursor = db.cursor()
 
+def connectdb():
+	db = MySQLdb.connect(host=HOST, user=USER, passwd=PASSWORD, db=DATABASE, port=PORT, charset=CHARSET, cursorclass = MySQLdb.cursors.DictCursor)
+	db.autocommit(True)
+	cursor = db.cursor()
+	return (db,cursor)
+
+# 关闭数据库
+def closedb(db,cursor):
+	db.close()
+	cursor.close()
+
+
 # 加载其他模块代码
 import weco.api.user
 import weco.api.idea
