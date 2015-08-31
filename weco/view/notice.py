@@ -6,6 +6,15 @@ from weco import connectdb,closedb
 import time
 from weco.conf.configure import WECOPREFIX
 
+# 更新token
+def updateToken(username):
+	(db,cursor) = connectdb()
+	cursor.execute('select token,lastActive from user where username=%s',[username])
+	token = cursor.fetchone()
+	if token['lastActive'] > session.get('lastActive') and (not token['token'] == session.get('token')):
+		session['token'] = token['token']
+		session['lastActive'] = token['lastActive']
+
 # 通知提醒
 @app.route('/notice')
 def notice():
