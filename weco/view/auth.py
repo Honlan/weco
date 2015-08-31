@@ -43,19 +43,12 @@ def login():
 			closedb(db,cursor)
 			return render_template('user/login.html', error=error)
 		else:
-			cursor.execute("select logined,token from user where username=%s or email=%s",[username,username])
-			token = cursor.fetchone()
-			logined = token['logined']
-			token = token['token']
-			if logined > 0:
-				cursor.execute("update user set lastActive=%s,logined=%s where username=%s or email=%s",[str(int(time.time())),logined+1,username,username])
-				session['username'] = username
-				session['token'] =  token
-			else:
-				newtoken = genKey()
-				cursor.execute("update user set lastActive=%s,token=%s,logined=1 where username=%s or email=%s",[str(int(time.time())),newtoken,username,username])
-				session['username'] = username
-				session['token'] =  newtoken
+			token = genKey()
+			lastActive = int(time.time())
+			cursor.execute("update user set lastActive=%s,token=%s where username=%s or email=%s",[str(lastActive),token,username,username])
+			session['username'] = username
+			session['token'] =  token
+			session['lastActive'] = lastActive
 
 			closedb(db,cursor)
 			
@@ -70,14 +63,9 @@ def login():
 @app.route('/logout')
 def logout():
 	if not session.get('username') == None:
-		(db,cursor) = connectdb()
-		cursor.execute("select logined from user where username=%s",[session.get('username')])
-		logined = int(cursor.fetchone()['logined']) - 1
-		cursor.execute("update user set logined=%s where username=%s",[logined,session.get('username')])
-		closedb(db,cursor)
 		session.pop('username', None)
 		session.pop('token', None)
-
+		session.pop('lastActive', None)
 
 		return redirect(url_for('login'))
 	else:
@@ -100,11 +88,12 @@ def register():
 
 		# 注册完毕，直接登录
 		cursor.execute("update user set lastActive=%s, token=%s, TTL=100 where username=%s and email=%s",[str(int(time.time())),genKey(),username,email])
-		cursor.execute("select username, token from user where username=%s and email=%s", [username,email])
+		cursor.execute("select username, token, lastActive from user where username=%s and email=%s", [username,email])
 		user = cursor.fetchone()
 		closedb(db,cursor)
 		session['username'] = user['username']
 		session['token'] =  user['token']
+		session['lastActive']
 		if not session.get('url') == None:
 			url = session.get('url')
 			session.pop('url', None)

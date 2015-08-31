@@ -14,6 +14,7 @@ def notice():
 		session['url'] = WECOPREFIX + request.path
 		return redirect(url_for('login'))
 	else:
+		updateToken(session.get('username'))
 		# 获取和当前用户有关的动态
 		(db,cursor) = connectdb()
 		username = session.get('username')
@@ -62,6 +63,7 @@ def chat(username):
 		session['url'] = WECOPREFIX + request.path
 		return redirect(url_for('login'))
 	else:
+		updateToken(session.get('username'))
 		(db,cursor) = connectdb()
 		# 用户已经登陆，获取所有聊天记录
 		me = session.get('username')

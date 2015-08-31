@@ -19,6 +19,15 @@ def genKey():
 	key = unicode(md5(key + str(int(time.time()))).hexdigest().upper())
 	return key
 
+# 更新token
+def updateToken(username):
+	(db,cursor) = connectdb()
+	cursor.execute('select token,lastActive from user where username=%s',[username])
+	token = cursor.fetchone()
+	if token['lastActive'] > session.get('lastActive') and (not token['token'] == session.get('token')):
+		session['token'] = token['token']
+		session['lastActive'] = token['lastActive']
+
 # 主页，展示热门创意
 @app.route('/')
 def index():
@@ -74,6 +83,8 @@ def idea_new():
 	if request.method == 'GET':
 		# 用户已经登陆
 		if not session.get('username') == None:
+			updateToken(session.get('username'))
+
 			# 获取热门标签
 			category = ['社会创新','设计','生活','城市','娱乐','健康','旅行','教育','运动','产品','艺术','科技','工程','广告','其他']
 			hotTags = {}
@@ -175,6 +186,9 @@ def idea(ideaId):
 	# 如果创意已被锁定，则给出错误提示
 	# TO DO
 
+	if not session.get('username') == None:
+		updateToken(session.get('username'))
+		
 	(db,cursor) = connectdb()
 
 	# 缓存该创意的阅读、点赞等用户行为
@@ -246,6 +260,7 @@ def idea(ideaId):
 @app.route('/idea/addText/<ideaId>',methods=['POST'])
 def idea_add_text(ideaId):
 	if not session.get('username') == None:
+		updateToken(session.get('username'))
 		(db,cursor) = connectdb()
 		text = request.form['content']
 		cursor.execute("insert into attachment(ideaId,fileType,url,timestamp,username) values(%s,%s,%s,%s,%s)",[ideaId,0,text,str(int(time.time())), session.get('username')])
@@ -259,6 +274,7 @@ def idea_add_text(ideaId):
 @app.route('/idea/addVideo/<ideaId>', methods=['POST'])
 def idea_add_video(ideaId):
 	if not session.get('username') == None:
+		updateToken(session.get('username'))
 		(db,cursor) = connectdb()
 		image = request.files['content']
 		today = time.strftime('%Y%m%d', time.localtime(time.time()))

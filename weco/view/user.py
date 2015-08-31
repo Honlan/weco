@@ -9,6 +9,7 @@ from weco.conf.configure import WECOPREFIX
 @app.route('/user')
 def home():
 	if not session.get('username') == None:
+		updateToken(session.get('username'))
 		(db,cursor) = connectdb()
 
 		# 用户已登陆
@@ -114,6 +115,8 @@ def user(username):
 		return redirect(url_for('home'))
 
 	else:
+		if not session.get('username') == None:
+			updateToken(session.get('username'))
 		(db,cursor) = connectdb()
 
 		# 访问其他用户
