@@ -90,7 +90,7 @@ def idea_new():
 			hotTags = {}
 			(db,cursor) = connectdb()
 			for item in category:
-				cursor.execute("select tag from ideaTagStat where category=%s order by count desc limit 10",[item])
+				cursor.execute("select tag from ideaTagStat where category=%s and tag!=%s order by count desc limit 10",[item,item])
 				hotTags[item] = cursor.fetchall()
 
 			closedb(db,cursor)
@@ -246,7 +246,7 @@ def idea(ideaId):
 	category = ['社会创新','设计','生活','城市','娱乐','健康','旅行','教育','运动','产品','艺术','科技','工程','广告','其他']
 	hotTags = {}
 	for item in category:
-		cursor.execute("select tag from ideaTagStat where category=%s order by count desc limit 10",[item])
+		cursor.execute("select tag from ideaTagStat where category=%s and tag!=%s order by count desc limit 10",[item,item])
 		hotTags[item] = cursor.fetchall()
 
 	if not session.get('username') == None:

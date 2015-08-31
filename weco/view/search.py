@@ -19,7 +19,7 @@ def search():
 		recent = cursor.fetchall()
 	
 	# 获取热门搜索记录
-	cursor.execute("select keyword, target, count(*) as count from search where timestamp > %s and keyword!='' group by keyword,target order by count(*) desc limit 10",[int(time.time())-3600*24*7])
+	cursor.execute("select keyword, count(*) as count from search where timestamp > %s and keyword!='' and target='idea' group by keyword order by count(*) desc limit 10",[int(time.time())-3600*24*7])
 	hot = cursor.fetchall()
 
 	# 获取各个类别的创意数量
@@ -103,7 +103,7 @@ def search_keyword():
 		pages.append(i)
 
 	# 关键词搜索无返回结果时查看当前热门搜索
-	cursor.execute("select keyword, target, count(*) as count from search where timestamp > %s and keyword!='' group by keyword,target order by count(*) desc limit 10",[int(time.time())-3600*24*7])
+	cursor.execute("select keyword, count(*) as count from search where timestamp > %s and keyword!='' and target='idea' group by keyword order by count(*) desc limit 10",[int(time.time())-3600*24*7])
 	hot = cursor.fetchall()
 
 	closedb(db,cursor)
