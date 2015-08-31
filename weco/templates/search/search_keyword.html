@@ -257,7 +257,7 @@ $(document).ready(function() {
     <h4 style="text-align:center;font-size:14px;color:#888;">看看其他内容？</h4>
     <div id="hot">
         <p><span>实时热搜</span></p> {% for item in hot %}
-        <a href="{{url_for('search_keyword',target=item.target,keyword=item.keyword,pageId=0)}}">
+        <a href="{{url_for('search_keyword',target='idea',keyword=item.keyword,pageId=0)}}">
             <span>{{item.keyword}}</span>
         </a> {% endfor %}
     </div>
