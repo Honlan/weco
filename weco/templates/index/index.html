@@ -358,7 +358,7 @@ $(document).ready(function() {
     </div>
     <div id="ideas">
         {% for item in ideas %}
-        <div class="idea" name="{{item.id}}" style="opacity:0;">
+        <div class="idea" name="{{item.id}}">
             <div class="idea_header">
                 <a href="{{url_for('idea',ideaId=item.id)}}"><img src="{{url_for('static',filename=item.feature[8:])}}"></a>
                 <div class="idea_info">
@@ -407,9 +407,6 @@ $(document).ready(function() {
         auto_imgHeight: true,
         insert_type: 1
     }
-    setTimeout(function() {
-        $('#ideas .idea').animate({opacity:1});
-    }, 200);
     $('#ideas').waterfall(opt);
 });
 </script>
