@@ -79,9 +79,9 @@
 
 #idea #owner img {
     position: absolute;
-    left: 18px;
+    left: 5px;
     top: 5px;
-    width: 70px;
+    width: 50px;
     border-radius: 50%;
 }
 
@@ -96,7 +96,7 @@
 
 #idea #owner #idea_control {
     position: absolute;
-    right: 10px;
+    right: 0px;
     top: 5px;
     text-align: center;
 }
@@ -114,8 +114,11 @@
 #idea #owner #idea_control #readCount,
 #idea #owner #idea_control #comment {
     display: inline-block;
-    margin-left: 10px;
+    margin-left: 3px;
     margin-right: 0;
+}
+#idea #owner #idea_control #praise {
+    margin-left: 0;
 }
 
 #idea #owner #idea_control #praise span.active,
@@ -262,6 +265,7 @@
     margin-right: 10%;
     overflow-x: hidden;
     border-radius: 5px;
+    z-index: 1;
 }
 
 #idea #idea_add_content #add_text textarea {
@@ -405,10 +409,10 @@ $(document).ready(function() {
                 <a href="{{url_for('user',username=idea.owner)}}">
                     <img src="{{url_for('static',filename=idea.portrait[8:])}}">
                 </a>
-                <div style="margin-left:102px;margin-right:90px;padding-top:5px;">
+                <div style="margin-left:84px;margin-right:80px;padding-top:5px;">
                     <a href="{{url_for('user',username=idea.owner)}}" style="color:#555;">
                         <p style="font-size:16px;margin-bottom:3px;margin-top:3px;">{{idea.nickname}}</p>
-                        <p style="font-size:10px;color:#999;margin-bottom:5px;">发布于 {{idea.timestamp}}</p>
+                        <p style="font-size:10px;color:#999;margin-bottom:5px;">{{idea.timestamp}}</p>
                     </a>
                     <p style="font-size:12px;color:#009c81;">Ta的粉丝：{{fans}}人</p>
                 </div>
@@ -445,10 +449,11 @@ $(document).ready(function() {
                         <!-- JiaThis Button END -->
                     </div>
                 </div>
+                {% if idea.owner == session.get('username') %}
                 <div style="position:absolute;top:50px;right:10px;width:100px;text-align:center;">
-                    {% if idea.owner == session.get('username') %}
-                    <span id="edit">编辑</span> {% endif %}
+                    <span id="edit">编辑</span> 
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
