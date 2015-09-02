@@ -836,12 +836,10 @@ $(document).ready(function() {
     });
 
     // 用户改变了头像
-    $('#me #edit_user_info input[name="portrait"]').click(function() {
+    $('#me #edit_user_info input[name="portrait"]').change(function() {
         // 处理图片的代码在cropit中
-        if ($(this)[0].files.length != 0) {
-            $('#me #edit_user_info #preview').modal();
-            change_portrait = true;
-        }
+        $('#me #edit_user_info #preview').modal();
+        change_portrait = true;
     });
 
     // 根据用户性别显示对应icon
