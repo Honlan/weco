@@ -1,0 +1,44 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#about {
+	padding: 15px 20px;
+}
+#about .weco_form {
+	padding: 20px 30px;
+	color: #666;
+}
+#about #about_us p {
+	text-indent: 2em;
+	font-size: 14px;
+}
+#about ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+    font-size: 10px;
+    color: #888;
+}
+#about ul span {
+    color: #009c81;
+}
+</style>
+{% endblock %} {% block body %}
+<script>
+$(document).ready(function(){
+	$('#header p#page_title').text("关于WECO");
+});
+</script>
+<div id="about">
+    <div class="weco_form" id="about_us">
+        <p><span style="color:#e4007e;">WECO开放创意众创社区</span>是一个<span style="color:#009c81;">让大众参与解决问题与发布创意的开源化平台</span>，最大化发挥大众的创新价值、发挥众创的力量。这是中国第一个围绕全民创意进行社交的平台，在这里，你可以充分发挥你的想象力和创造力、结交志同道合的创新创意伙伴、寻找创意灵感。</p>
+        <p><span style="color:#e4007e;">如果有好的创意就来WECO吧</span>，<span style="color:#009c81;">这里能给您意想不到的收获</span>。我们相信大众的创新力量，即刻引爆全球！我们是跨界协作、团结互助、共享成果、有料有趣的众创社区。如果有好的创意就来WECO吧，这里能给您意想不到的收获！</p>
+    </div>
+    <div class="weco_form">
+        <p style="color:#e4007e;font-size:14px;">如果觉得WECO不错，那就收藏我们吧</p>
+        <ul>
+            <li>在微信浏览器中，点击右上角的三个点，选择“<span>收藏</span>”，之后就可以在“我”－“收藏”里面找到WECO</li>
+            <li>在手机浏览器中，在选项中找到<span>收藏</span>，将WECO保存至标签页或手机桌面即可</li>
+            <li>也可以在微信浏览器中，点击右上角的三个点，选择“<span>在浏览器中打开</span>”，从而跳转至手机浏览器访问WECO</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

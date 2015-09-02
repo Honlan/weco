@@ -41,17 +41,14 @@ a:hover {
 	box-shadow: 0px -1px 1px rgba(20,20,20,0.3);
 	z-index: 999;
 	display: none;
+	text-align: center;
 }
 #header #setting-menu p {
-	display: inline-block;
 	margin-bottom: 0;
 	padding: 10px 20px;
-	border-bottom: 1px solid #333;
 	color: #009c81;
 	font-size: 13px;
-}
-#header #setting-menu p:last-child {
-	border-bottom: none;
+	border-bottom: 1px solid rgba(160,160,160,0.3);
 }
 #header p#page_title {
 	text-align: center;

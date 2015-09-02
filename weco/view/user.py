@@ -207,3 +207,13 @@ def user(username):
 
 		return render_template('user/user.html',user=user, ideas=ideas, ideasCount=ideasCount, followIdeas=followIdeas, followIdeasCount=followIdeasCount, followUsers=followUsers, followUsersCount=followUsersCount, fans=fans, fansCount=fansCount, followUserStr=followUserStr)
 
+# 关于weco
+@app.route('/about')
+def about():
+	if not session.get('username') == None:
+		return render_template('user/about.html')
+	else:
+		session['url'] = WECOPREFIX + request.path
+		return redirect(url_for('login'))
+
+
