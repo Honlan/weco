@@ -51,7 +51,7 @@
 }
 
 #idea #ideaInfo #tags {
-    margin-left: 90px;
+    margin-left: 66px;
     min-height: 40px;
     padding-top: 5px;
 }
@@ -79,9 +79,9 @@
 
 #idea #owner img {
     position: absolute;
-    left: 5px;
+    left: 10px;
     top: 5px;
-    width: 50px;
+    width: 56px;
     border-radius: 50%;
 }
 
@@ -409,7 +409,7 @@ $(document).ready(function() {
                 <a href="{{url_for('user',username=idea.owner)}}">
                     <img src="{{url_for('static',filename=idea.portrait[8:])}}">
                 </a>
-                <div style="margin-left:84px;margin-right:80px;padding-top:5px;">
+                <div style="margin-left:80px;margin-right:80px;padding-top:5px;">
                     <a href="{{url_for('user',username=idea.owner)}}" style="color:#555;">
                         <p style="font-size:16px;margin-bottom:3px;margin-top:3px;">{{idea.nickname}}</p>
                         <p style="font-size:10px;color:#999;margin-bottom:5px;">{{idea.timestamp}}</p>
