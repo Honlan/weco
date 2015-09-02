@@ -22,11 +22,6 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.secret_key = "1DA2DG3HYK9KU1T6WRSFSF2GCSG6GSDSYL9UL1Q2S3X4A1"
 
-# 数据库连接
-db = MySQLdb.connect(host=HOST, user=USER, passwd=PASSWORD, db=DATABASE, port=PORT, charset=CHARSET, cursorclass = MySQLdb.cursors.DictCursor)
-db.autocommit(True)
-cursor = db.cursor()
-
 def connectdb():
 	db = MySQLdb.connect(host=HOST, user=USER, passwd=PASSWORD, db=DATABASE, port=PORT, charset=CHARSET, cursorclass = MySQLdb.cursors.DictCursor)
 	db.autocommit(True)
