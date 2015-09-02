@@ -93,7 +93,7 @@ def register():
 		closedb(db,cursor)
 		session['username'] = user['username']
 		session['token'] =  user['token']
-		session['lastActive']
+		session['lastActive'] = user['lastActive']
 		if not session.get('url') == None:
 			url = session.get('url')
 			session.pop('url', None)
