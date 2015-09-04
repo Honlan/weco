@@ -460,7 +460,13 @@ $(document).ready(function() {
         </div>
         <div class="weco_form" style="border-top-left-radius:0;border-top-right-radius:0;">
             <div id="ideaInfo">
-                <span class="category">{{idea.category}}</span>
+                <span class="category">
+                    {% if idea.category == '社会创新' %}
+                    社创
+                    {% else %}
+                    {{idea.category}}
+                    {% endif %}
+                </span>
                 <div id="tags">
                     {% for tag in idea.tags.split(' ') %}
                     <span class="tag">{{tag}}</span> {% endfor %}
