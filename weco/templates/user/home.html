@@ -668,11 +668,8 @@ $(document).ready(function() {
 
     // 图像裁剪完毕并预览
     $('#me #edit_user_info #preview button').click(function() {
-        var imageData = $('#me #edit_user_info .image-editor').cropit('export', {
-            type: 'image/jpeg',
-            quality: .4
-        });
-        $('#me #edit_user_info #portrait').attr('src', imageData);
+        var canvas = $('#me #edit_user_info .image-editor').cropit('export');
+        $('#me #edit_user_info #portrait').attr('src', canvas.toDataURL('image/jpeg',0.75));
     });
 
     // 待删除创意
