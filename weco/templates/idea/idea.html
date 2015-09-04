@@ -586,7 +586,7 @@ $(document).ready(function() {
             </p>
             {% elif item.fileType == 1 %}
             <img src="{{url_for('static',filename=item.url[8:])}}"> {% elif item.fileType == 2 %}
-            <video controls="controls" loop="loop" muted>
+            <video controls="controls" loop="loop" muted preload="auto">
                 <source src="{{url_for('static',filename=item.url[8:])}}" type="video/mp4">
             </video> {% endif %}
         </div>
