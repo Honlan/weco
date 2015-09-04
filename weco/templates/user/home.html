@@ -669,8 +669,8 @@ $(document).ready(function() {
     // 图像裁剪完毕并预览
     $('#me #edit_user_info #preview button').click(function() {
         var imageData = $('#me #edit_user_info .image-editor').cropit('export', {
-            type: 'image/webp',
-            quality: 1
+            type: 'image/jpeg',
+            quality: .5
         });
         $('#me #edit_user_info #portrait').attr('src', imageData);
     });
