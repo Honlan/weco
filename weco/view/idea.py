@@ -233,7 +233,7 @@ def idea(ideaId):
 			item['url'] = temp
 		if item['fileType'] == 2:
 			temp = item['url'].rfind('.')
-			item['suffix'] = item['url'][temp:]
+			item['suffix'] = item['url'][(temp+1):]
 
 	# 获取该创意所有评论
 	cursor.execute("select * from comment where ideaId=%s order by praise desc, timestamp desc", [ideaId])
@@ -282,7 +282,7 @@ def idea_add_video(ideaId):
 		(db,cursor) = connectdb()
 		image = request.files['content']
 		today = time.strftime('%Y%m%d', time.localtime(time.time()))
-		filename = today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)
+		filename = (today + '_' + secure_filename(genKey()[:10] + '_' + image.filename)).lower()
 		UPLOAD_FOLDER = '/static/uploads/video'
 		filepath = os.path.join(WECOROOT + UPLOAD_FOLDER, filename)
 		relapath = os.path.join(UPLOAD_FOLDER, filename)
