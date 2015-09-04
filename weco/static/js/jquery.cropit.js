@@ -755,8 +755,7 @@
 
                             var preresizedImage = this.preresizeImage(this.image, zoomedSize.w, zoomedSize.h);
                             canvasContext.drawImage(preresizedImage, this.offset.x * exportZoom, this.offset.y * exportZoom, zoomedSize.w, zoomedSize.h);
-
-                            alert(canvas.toDataURL(exportOptions.type, exportOptions.quality))
+                            
                             return canvas.toDataURL(exportOptions.type, exportOptions.quality);
                         }
                     }, {
