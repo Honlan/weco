@@ -586,7 +586,8 @@ $(document).ready(function() {
             </p>
             {% elif item.fileType == 1 %}
             <img src="{{url_for('static',filename=item.url[8:])}}"> {% elif item.fileType == 2 %}
-            <video src="{{url_for('static',filename=item.url[8:])}}" controls="controls" loop="loop" muted>
+            <video controls="controls" loop="loop" muted>
+                <source src="{{url_for('static',filename=item.url[8:])}}">
             </video> {% endif %}
         </div>
         {% else %}
@@ -614,7 +615,7 @@ $(document).ready(function() {
             <form enctype="multipart/form-data" method="post" action="{{url_for('idea_add_video',ideaId=idea.id)}}" style="position:relative;">
                 <div style="position:relative;">
                     <p style="height:51px;padding:15px;color:#aaa;margin-bottom:0;">給创意再添加一段视频吧</p>
-                    <input type="file" accept="video/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content">
+                    <input type="file" accept="video/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;" name="content"capture="camera">
                 </div>
                 <button type="submit"><img src="{{url_for('static',filename='img/icon/icon-20.png')}}"></button>
             </form>
