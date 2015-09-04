@@ -100,3 +100,32 @@ def register():
 			return redirect(url)
 		else:
 			return redirect(url_for('home'))
+
+# 更改密码
+@app.route('/changePwd', methods=['GET','POST'])
+def changePwd():
+	if request.method == 'GET':
+		if not session.get('username') == None:
+			return render_template('user/changePwd.html',error='')
+		else:
+			return redirect(url_for('login'))
+	elif request.method == 'POST':
+		if not session.get('username') == None:
+			username = session.get('username')
+			oldpassword = request.form['oldpassword']
+			newpassword = request.form['newpassword']
+			newpassword1 = request.form['newpassword1']
+			(db,cursor) = connectdb()
+			if cursor.execute('select id from user where username=%s and password=%s',[username,unicode(md5(oldpassword).hexdigest().upper())]) == 0:
+				closedb(db,cursor)
+				return render_template('user/changePwd.html',error='原始密码错误')
+			elif not newpassword == newpassword1:
+				closedb(db,cursor)
+				return render_template('user/changePwd.html',error='两次密码输入不一致')
+			else:
+				cursor.execute('update user set password=%s where username=%s',[unicode(md5(newpassword).hexdigest().upper()),username])
+				closedb(db,cursor)
+				return redirect(url_for('logout'))
+		else:
+			return redirect(url_for('login'))
+		

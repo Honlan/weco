@@ -217,5 +217,3 @@ def about():
 	else:
 		session['url'] = WECOPREFIX + request.path
 		return redirect(url_for('login'))
-
-

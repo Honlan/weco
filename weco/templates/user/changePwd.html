@@ -1,0 +1,63 @@
+{% extends "layout.html" %} {% block style %}
+<style>
+#changePwd {
+    padding: 20px 30px;
+}
+
+#changePwd .weco_input input {
+    padding-left: 90px;
+}
+
+#changePwd #error {
+    font-size: 12px;
+    color: #F75E5E;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+#changePwd #save {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: #009c81;
+    border: none;
+    background-color: #efefef;
+}
+
+#changePwd #save>span {
+    background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
+    background-size: 100% 100%;
+    padding: 12px 27px 10px 30px;
+    cursor: pointer;
+}
+</style>
+{% endblock %} {% block body %}
+<script>
+$(document).ready(function() {
+    $('#header p#page_title').text("更改密码");
+});
+</script>
+<div id="changePwd">
+    <form method="post" action="{{url_for('changePwd')}}">
+        <div class="weco_form">
+            <div class="weco_input">
+                <p>原始密码</p>
+                <input type="password" name="oldpassword">
+            </div>
+            <div class="weco_input">
+                <p>新密码</p>
+                <input type="password" name="newpassword">
+            </div>
+            <div class="weco_input" style="border-bottom:0;">
+                <p>确认密码</p>
+                <input type="password" name="newpassword1">
+            </div>
+        </div>
+        {% if not error == '' %}
+        <p id="error">{{error}}</p>
+        {% endif %}
+        <div style="text-align:center;">
+            <button type="submit" id="save"><span>更改</span></button>
+        </div>
+    </form>
+</div>
+{% endblock %}
