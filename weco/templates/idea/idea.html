@@ -117,6 +117,7 @@
     margin-left: 3px;
     margin-right: 0;
 }
+
 #idea #owner #idea_control #praise {
     margin-left: 0;
 }
@@ -263,9 +264,53 @@
     width: 80%;
     margin-left: 10%;
     margin-right: 10%;
-    overflow-x: hidden;
     border-radius: 5px;
     z-index: 1;
+}
+
+@keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
+}
+
+@-o-keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
+}
+
+@-ms-keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
+}
+
+@-moz-keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
+}
+
+@-webkit-keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
 }
 
 #idea #idea_add_content #add_text textarea {
@@ -280,6 +325,11 @@
     border: 0;
     display: none;
     background-color: #f9f9f9;
+    animation: button_animation .6s infinite alternate;
+    -o-animation: button_animation .6s infinite alternate;
+    -ms-animation: button_animation .6s infinite alternate;
+    -moz-animation: button_animation .6s infinite alternate;
+    -webkit-animation: button_animation .6s infinite alternate;
 }
 
 #idea #idea_add_content #add_text button:hover {
@@ -300,6 +350,11 @@
     cursor: pointer;
     width: 25px;
     color: #009c81;
+    animation: button_animation .6s infinite alternate;
+    -o-animation: button_animation .6s infinite alternate;
+    -ms-animation: button_animation .6s infinite alternate;
+    -moz-animation: button_animation .6s infinite alternate;
+    -webkit-animation: button_animation .6s infinite alternate;
 }
 
 #idea #idea_add_content #add_image span img {
@@ -314,6 +369,11 @@
     border: 0;
     display: none;
     background-color: #f9f9f9;
+    animation: button_animation .6s infinite alternate;
+    -o-animation: button_animation .6s infinite alternate;
+    -ms-animation: button_animation .6s infinite alternate;
+    -moz-animation: button_animation .6s infinite alternate;
+    -webkit-animation: button_animation .6s infinite alternate;
 }
 
 #idea #idea_add_content #add_video button:hover {
@@ -452,7 +512,7 @@ $(document).ready(function() {
                 </div>
                 {% if idea.owner == session.get('username') %}
                 <div style="position:absolute;top:50px;right:10px;width:100px;text-align:center;">
-                    <span id="edit">编辑</span> 
+                    <span id="edit">编辑</span>
                 </div>
                 {% endif %}
             </div>

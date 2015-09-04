@@ -43,12 +43,12 @@ def login():
 			closedb(db,cursor)
 			return render_template('user/login.html', error=error)
 		else:
-			token = genKey()
-			lastActive = int(time.time())
-			cursor.execute("update user set lastActive=%s,token=%s where username=%s or email=%s",[str(lastActive),token,username,username])
-			session['username'] = username
-			session['token'] =  token
-			session['lastActive'] = lastActive
+			cursor.execute("update user set lastActive=%s,token=%s where username=%s or email=%s",[str(int(time.time())),genKey(),username,username])
+			cursor.execute("select username,lastActive,token from user where username=%s or email=%s",[username,username])
+			user = cursor.fetchone()
+			session['username'] = user['username']
+			session['token'] =  user['token']
+			session['lastActive'] = user['lastActive']
 
 			closedb(db,cursor)
 			
