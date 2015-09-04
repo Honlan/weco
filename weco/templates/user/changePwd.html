@@ -16,18 +16,16 @@
 }
 
 #changePwd #save {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    color: #009c81;
     border: none;
-    background-color: #efefef;
-}
-
-#changePwd #save>span {
+    background: transparent;
+    color: #009c81;
+    font-size: 15px;
+    z-index: 999;
+    margin-top: 10px;
     background-image: url("{{url_for('static',filename='img/icon/green2.png')}}");
     background-size: 100% 100%;
-    padding: 12px 27px 10px 30px;
-    cursor: pointer;
+    padding: 12px 30px 10px 30px;
+    background-position: -2px 0px;
 }
 </style>
 {% endblock %} {% block body %}
@@ -56,7 +54,7 @@ $(document).ready(function() {
         <p id="error">{{error}}</p>
         {% endif %}
         <div style="text-align:center;">
-            <button type="submit" id="save"><span>更改</span></button>
+            <button type="submit" id="save" class="btn btn-default">更改</button>
         </div>
     </form>
 </div>
