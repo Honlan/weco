@@ -728,6 +728,7 @@ $(document).ready(function() {
 
     // 删除创意
     $('body').on('click', '#me #user-profile-content .delete_idea', function() {
+        event.stopPropagation();
         var ideaId = $(this).attr('name');
         var $p = $(this).parent().parent('.myIdea');
         $.ajax({
