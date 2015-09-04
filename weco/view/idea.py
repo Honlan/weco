@@ -231,6 +231,9 @@ def idea(ideaId):
 				if not i == '':
 					temp.append(i)
 			item['url'] = temp
+		if item['fileType'] == 2:
+			temp = item['url'].rfind('.')
+			item['suffix'] = item['url'][temp:]
 
 	# 获取该创意所有评论
 	cursor.execute("select * from comment where ideaId=%s order by praise desc, timestamp desc", [ideaId])
