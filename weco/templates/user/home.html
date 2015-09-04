@@ -668,10 +668,11 @@ $(document).ready(function() {
 
     // 图像裁剪完毕并预览
     $('#me #edit_user_info #preview button').click(function() {
-        var imageData = $('.image-editor').cropit('export', {
+        var imageData = $('#me #edit_user_info .image-editor').cropit('export', {
             type: 'image/jpeg',
             quality: .2
         });
+        alert(imageData);
         $('#me #edit_user_info #portrait').attr('src', imageData);
     });
 
