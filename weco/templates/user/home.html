@@ -459,13 +459,13 @@ $(document).ready(function() {
                 <p class="summary">我发布了<span class="ideasCount">{{ideasCount}}</span>个创意</p>
                 <div id="myIdeas">
                     {% for item in ideas%}
-                    <div class="myIdea">
+                    <div class="myIdea" style="position:relative;">
                         <a href="{{url_for('idea',ideaId=item.id)}}">
                             <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
-                                <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="delete_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:20px;" title="删除创意"></span>
                             </div>
                             <p>{{item.title}}</p>
                         </a>
+                        <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="delete_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:20px;" title="删除创意"></span>
                     </div>
                     {% endfor %}
                 </div>
@@ -494,13 +494,13 @@ $(document).ready(function() {
                 {% else %}
                 <p class="summary">我喜欢了<span class="followIdeasCount">{{followIdeasCount}}</span>个创意</p>
                 {% for item in followIdeas%}
-                <div class="otherIdea">
+                <div class="otherIdea" style="position:relative;">
                     <a href="{{url_for('idea',ideaId=item.id)}}">
                         <div style="width:100%;height:120px;background-image:url({{url_for('static',filename=item.feature[8:])}});background-size:cover;background-position:center;border-top-left-radius:5px;border-top-right-radius:5px;position:relative;">
-                            <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="disfollow_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:25px;" title="不喜欢了"></span>
                         </div>
                         <p>{{item.title}}</p>
                     </a>
+                    <span name="{{item.id}}" style="position:absolute;right:5px;top:5px;cursor:pointer" class="disfollow_idea"><img src="{{url_for('static',filename='img/icon/icon-19.png')}}" style="width:25px;" title="不喜欢了"></span>
                 </div>
                 {% endfor %} {% endif %}
             </div>
@@ -727,10 +727,9 @@ $(document).ready(function() {
     // });
 
     // 删除创意
-    $('body').on('click', '#me #user-profile-content .delete_idea', function() {
-        event.stopPropagation();
+    $('#me #user-profile-content .delete_idea').click(function() {
         var ideaId = $(this).attr('name');
-        var $p = $(this).parent().parent('.myIdea');
+        var $p = $(this).parent('.myIdea');
         $.ajax({
             url: "{{url_for('api_idea_delete')}}",
             type: 'POST',
@@ -751,7 +750,7 @@ $(document).ready(function() {
 
     // 不喜欢创意了
     $('#me #user-profile-content .disfollow_idea').click(function() {
-        var $p = $(this).parent().parent('.otherIdea');
+        var $p = $(this).parent('.otherIdea');
         var ideaId = $(this).attr('name');
         $.ajax({
             url: "{{url_for('api_idea_disfollow')}}",
