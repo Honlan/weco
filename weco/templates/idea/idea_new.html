@@ -99,13 +99,61 @@
     border-radius: 10px;
     max-width: 100%;
 }
+@keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
+}
 
+@-o-keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
+}
+
+@-ms-keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
+}
+
+@-moz-keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
+}
+
+@-webkit-keyframes button_animation {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: 18px;
+    }
+}
 #idea_draft #idea_add_content span {
     position: absolute;
     right: 0;
     bottom: 10px;
     display: none;
     cursor: pointer;
+    animation: button_animation .6s infinite alternate;
+    -o-animation: button_animation .6s infinite alternate;
+    -ms-animation: button_animation .6s infinite alternate;
+    -moz-animation: button_animation .6s infinite alternate;
+    -webkit-animation: button_animation .6s infinite alternate;
 }
 
 #idea_draft #idea_add_content span img {

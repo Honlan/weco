@@ -11,6 +11,7 @@ def updateToken(username):
 	(db,cursor) = connectdb()
 	cursor.execute('select token,lastActive from user where username=%s',[username])
 	token = cursor.fetchone()
+	closedb(db,cursor) 
 	if token['lastActive'] > session.get('lastActive') and (not token['token'] == session.get('token')):
 		session['token'] = token['token']
 		session['lastActive'] = token['lastActive']
