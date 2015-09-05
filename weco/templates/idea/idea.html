@@ -671,14 +671,14 @@ $(document).ready(function() {
         lrz($(this)[0].files[0], {
                 width: 960,
                 height: 960,
-                quality: 0.8
+                quality: 0.6
             })
             .then(function(rst) {
                 var temp = rst;
                 lrz($('#idea #idea_info input[name="direct_change"]')[0].files[0], {
                         width: 320,
                         height: 320,
-                        quality: 0.8
+                        quality: 0.6
                     })
                     .then(function(rst) {
                         $.ajax({
@@ -747,14 +747,14 @@ $(document).ready(function() {
             lrz($('#idea #edit_idea_info #change_thumbnail input')[0].files[0], {
                     width: 960,
                     height: 960,
-                    quality: 0.8
+                    quality: 0.6
                 })
                 .then(function(rst) {
                     var temp = rst;
                     lrz($('#idea #edit_idea_info #change_thumbnail input')[0].files[0], {
                             width: 320,
                             height: 320,
-                            quality: 0.8
+                            quality: 0.6
                         })
                         .then(function(rst) {
                             $.ajax({
@@ -956,7 +956,7 @@ $(document).ready(function() {
         lrz($('#idea #idea_add_content #add_image input')[0].files[0], {
                 width: 960,
                 height: 960,
-                quality: 0.8
+                quality: 0.6
             })
             .then(function(rst) {
                 $.ajax({

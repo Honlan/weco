@@ -7,7 +7,7 @@
 #login {
     width: 100%;
     text-align: center;
-    padding-top: 60px;
+    padding-top: 30px;
     padding-bottom: 50px;
 }
 
@@ -69,13 +69,25 @@
     padding: 12px 30px 10px 30px;
     background-position: -2px 0px;
 }
+
+#login #wechat_login {
+    padding: 20px;
+    margin-top: 20px;
+}
+#login #wechat_login a {
+    color: #009c81;
+    font-size: 15px;
+    background-color: #f9f9f9;
+    width: 100%;
+    text-align: center;
+}
 </style>
 {% endblock %} {% block body %}
 <script>
 $(document).ready(function() {
     // 更改页面标题
     $('#header p#page_title').text("登录");
-    $('#login #forget_a').click(function(){
+    $('#login #forget_a').click(function() {
         event.preventDefault();
     });
 });
@@ -96,6 +108,9 @@ $(document).ready(function() {
             <a href="" id="forget_a">忘记密码</a>
             <!-- <a href="" class="btn btn-default">使用QQ登录</a> -->
             <!-- <a href="" class="btn btn-default">使用微信登录</a> -->
+        </div>
+        <div class="weco_form" id="wechat_login">
+            <a href="">微信登录</a>
         </div>
     </form>
 </div>

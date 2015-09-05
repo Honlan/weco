@@ -483,7 +483,7 @@
                             lrz($('#me #edit_user_info .cropit-image-input')[0].files[0], {
                                     width: 720,
                                     height: 720,
-                                    quality: 1
+                                    quality: 0.6
                                 })
                                 .then(function(rst) {
                                     temp.image.src = temp.imageSrc = rst.base64;
