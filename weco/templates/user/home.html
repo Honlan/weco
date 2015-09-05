@@ -661,18 +661,26 @@ $(document).ready(function() {
         imageBackgroundBorderWidth: 20,
         width: 200,
         height: 200,
-        initialZoom: 'image',
-        exportZoom: 0.5
-            // imageState: {
-            //     src: 'http://lorempixel.com/500/400/',
-            // },
     });
 
     // 图像裁剪完毕并预览
     $('#me #edit_user_info #preview button').click(function() {
-        var canvas = $('#me #edit_user_info .image-editor').cropit('export');
-        var imageData = canvas.toDataURL('image/jpeg');
-        $('#me #edit_user_info #portrait').attr('src', imageData);
+        var params = $('#me #edit_user_info .image-editor').cropit('export');
+        $.ajax({
+            url: "{{url_for('api_image_cut')}}",
+            type: 'POST',
+            data: {
+                image: params['image'],
+                offset: params['offset'],
+                size: params['size'],
+                zoom: params['zoom']
+            },
+            dataType: 'json',
+            error: function() {},
+            success: function(data) {
+                $('#me #edit_user_info #portrait').attr('src', data['image']);
+            }
+        });
     });
 
     // 待删除创意

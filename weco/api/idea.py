@@ -8,6 +8,8 @@ import base64
 import random
 from hashlib import md5
 import os
+from PIL import Image
+import StringIO
 from weco.conf.configure import WECOROOT
 
 '''
@@ -47,6 +49,36 @@ def validate(username, token):
 			TTL = TTL - 1
 			cursor.execute("update user set TTL = %s where username = %s", [str(TTL), username])
 			return True
+
+# 图片裁剪
+@app.route('/api/image/cut', methods=['POST'])
+def api_image_cut():
+	data = request.form
+	imgBase = data['image']
+	x = float(data['offset[x]'])
+	y = float(data['offset[y]'])
+	if x < 0:
+		x = -x
+	if y < 0:
+		y = -y
+	imgBase = imgBase[imgBase.find('base64')+7:]
+	imageData = base64.b64decode(imgBase)
+	w = float(data['size[width]'])
+	h = float(data['size[height]'])
+	zoom = float(data['zoom'])
+	x = int(x)
+	y = int(y)
+	w = int(w)
+	h = int(h)
+	image = Image.open(StringIO.StringIO(imageData))
+	box = (int(x/zoom),int(y/zoom),int((x+w)/zoom),int((y+h)/zoom))
+	image = image.crop(box)
+	image = image.resize((200,200))
+	imageStr = StringIO.StringIO()
+	image.save(imageStr,format="jpeg")
+	imageStr = base64.b64encode(imageStr.getvalue())
+	imageStr = "data:image/jpeg;base64," + imageStr
+	return json.dumps({"ok": True,"image":imageStr})
 
 # 根据offset获取热门创意
 @app.route('/api/idea/hot', methods=['POST'])

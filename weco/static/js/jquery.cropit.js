@@ -744,7 +744,7 @@
                             }
 
                             var exportDefaults = {
-                                type: 'image/png',
+                                type: 'image/jpeg',
                                 quality: 0.75,
                                 originalSize: false,
                                 fillBg: '#fff'
@@ -773,7 +773,19 @@
                             canvasContext.drawImage(preresizedImage, this.offset.x * exportZoom, this.offset.y * exportZoom, zoomedSize.w, zoomedSize.h);
 
                             // return canvas.toDataURL(exportOptions.type, exportOptions.quality);
-                            return canvas;
+
+                            return {
+                                "image": this.imageSrc,
+                                "offset": {
+                                    "x": this.offset.x * exportZoom,
+                                    "y": this.offset.y * exportZoom
+                                },
+                                "size": {
+                                    "width": this.previewSize.w * exportZoom,
+                                    "height": this.previewSize.h * exportZoom
+                                },
+                                "zoom": this.zoom
+                            };
                         }
                     }, {
                         key: 'preresizeImage',
