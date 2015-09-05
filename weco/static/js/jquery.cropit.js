@@ -481,8 +481,8 @@
 
                             var temp = this;
                             lrz($('#me #edit_user_info .cropit-image-input')[0].files[0], {
-                                    width: 480,
-                                    height: 480,
+                                    width: 320,
+                                    height: 320,
                                     quality: 0.5
                                 })
                                 .then(function(rst) {
