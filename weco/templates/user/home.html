@@ -669,7 +669,7 @@ $(document).ready(function() {
     // 图像裁剪完毕并预览
     $('#me #edit_user_info #preview button').click(function() {
         var canvas = $('#me #edit_user_info .image-editor').cropit('export');
-        var imageData = canvas.toDataURL('image/jpeg', 0.5);
+        var imageData = canvas.toDataURL('image/jpeg');
         $('#me #edit_user_info #portrait').attr('src', imageData);
     });
 
