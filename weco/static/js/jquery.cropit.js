@@ -481,9 +481,9 @@
 
                             var temp = this;
                             lrz($('#me #edit_user_info .cropit-image-input')[0].files[0], {
-                                    width: 960,
-                                    height: 960,
-                                    quality: 0.8
+                                    width: 320,
+                                    height: 320,
+                                    quality: 0.4
                                 })
                                 .then(function(rst) {
                                     temp.image.src = temp.imageSrc = rst.base64;
