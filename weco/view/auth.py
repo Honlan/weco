@@ -32,7 +32,13 @@ def login():
 			return render_template('user/login.html', error=error)
 	elif request.method == 'POST':
 		username = request.form['username']
+		if username == '':
+			error = u"请输入账号或邮箱"
+			return render_template('user/login.html', error=error)
 		password = request.form['password']
+		if password == '':
+			error = u"请输入密码"
+			return render_template('user/login.html', error=error)
 		(db,cursor) = connectdb()
 		if cursor.execute("select id from user where username=%s or email=%s", [username,username]) == 0:
 			error = u"账号或邮箱不存在"

@@ -49,7 +49,7 @@
 </style>
 {% endblock %} {% block body %}
 <script>
-$(document).ready(function(){
+$(document).ready(function() {
     // 更改页面标题
     $('#header p#page_title').text("注册");
 });
@@ -80,7 +80,7 @@ $(document).ready(function() {
         ok3 = false;
 
     // 用户名完成输入
-    $('#register input[name="username"]').blur(function() {
+    $('#register input[name="username"]').keyup(function() {
         var username = $(this).val();
         // 用户名不为空的话则判断是否已存在
         if (username != '') {
@@ -110,11 +110,14 @@ $(document).ready(function() {
                     }
                 }
             });
+        } else {
+            ok1 = false;
+            $('#register button[type="submit"]').addClass('disabled');
         }
     });
 
     // 邮箱完成输入
-    $('#register input[name="email"]').blur(function() {
+    $('#register input[name="email"]').keyup(function() {
         var email = $(this).val();
         // 邮箱不为空的话则判断是否已存在
         if (email != '') {
@@ -144,6 +147,9 @@ $(document).ready(function() {
                     }
                 }
             });
+        } else {
+            ok2 = false;
+            $('#register button[type="submit"]').addClass('disabled');
         }
     });
 
@@ -167,8 +173,11 @@ $(document).ready(function() {
                 $('#register #register_error').fadeOut();
                 $('#register button[type="submit"]').removeClass('disabled');
             }
+        } else {
+            ok3 = false;
+            $('#register button[type="submit"]').addClass('disabled');
         }
-    });    
+    });
 
     // 重复密码正在输入
     $('#register input[name="password1"]').keyup(function() {
@@ -190,6 +199,9 @@ $(document).ready(function() {
                 $('#register #register_error').fadeOut();
                 $('#register button[type="submit"]').removeClass('disabled');
             }
+        } else {
+            ok3 = false;
+            $('#register button[type="submit"]').addClass('disabled');
         }
     });
 });
