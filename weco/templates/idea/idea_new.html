@@ -99,6 +99,7 @@
     border-radius: 10px;
     max-width: 100%;
 }
+
 @keyframes button_animation {
     0% {
         bottom: 10px;
@@ -143,6 +144,7 @@
         bottom: 18px;
     }
 }
+
 #idea_draft #idea_add_content span {
     position: absolute;
     right: 0;
@@ -559,6 +561,22 @@ $(document).ready(function() {
 
     // 编辑完毕，发布创意
     $('#idea_draft #publish_idea span').click(function() {
+        var text = $('#idea_draft #idea_add_content #add_text textarea').val();
+        if (text != '') {
+            $.ajax({
+                url: '{{url_for("api_idea_addText")}}',
+                type: 'POST',
+                data: {
+                    username: "{{session.get('username')}}",
+                    token: "{{session.get('token')}}",
+                    ideaId: ideaId,
+                    text: text
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {}
+            });
+        }
         $.ajax({
             url: '{{url_for("api_idea_publish")}}',
             type: 'POST',
