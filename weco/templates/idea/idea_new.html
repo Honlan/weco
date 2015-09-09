@@ -436,7 +436,7 @@ $(document).ready(function() {
     });
 
     // 编辑文字
-    $('#idea_draft #idea_add_content #add_text textarea').keyup(function() {
+    $('#idea_draft #idea_add_content #add_text textarea').keydown(function() {
         var content = $(this).val();
         if (content != '') {
             $('#idea_draft #idea_add_content #add_text span').fadeIn();
