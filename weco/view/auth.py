@@ -33,7 +33,7 @@ def login():
 	elif request.method == 'POST':
 		username = request.form['username']
 		if username == '':
-			error = u"请输入账号或电话"
+			error = u"请输入账号或手机号"
 			return render_template('user/login.html', error=error)
 		password = request.form['password']
 		if password == '':
@@ -41,7 +41,7 @@ def login():
 			return render_template('user/login.html', error=error)
 		(db,cursor) = connectdb()
 		if cursor.execute("select id from user where username=%s or email=%s", [username,username]) == 0:
-			error = u"账号或电话不存在"
+			error = u"账号或手机号不存在"
 			closedb(db,cursor)
 			return render_template('user/login.html', error=error)
 		elif cursor.execute("select id from user where username=%s and password=%s", [username,unicode(md5(password).hexdigest().upper())]) + cursor.execute("select id from user where email=%s and password=%s", [username,unicode(md5(password).hexdigest().upper())]) == 0:

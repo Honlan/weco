@@ -63,7 +63,7 @@ def api_user_exist_name():
 	else:
 		return json.dumps({"ok": True, "exist": False})
 
-# 注册时判断电话是否存在
+# 注册时判断手机号是否存在
 @app.route('/api/user/existEmail', methods=['POST'])
 def api_user_exist_email():
 	(db,cursor) = connectdb()
