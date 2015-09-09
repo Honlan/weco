@@ -33,7 +33,7 @@ def login():
 	elif request.method == 'POST':
 		username = request.form['username']
 		if username == '':
-			error = u"请输入账号或邮箱"
+			error = u"请输入账号或电话"
 			return render_template('user/login.html', error=error)
 		password = request.form['password']
 		if password == '':
@@ -41,7 +41,7 @@ def login():
 			return render_template('user/login.html', error=error)
 		(db,cursor) = connectdb()
 		if cursor.execute("select id from user where username=%s or email=%s", [username,username]) == 0:
-			error = u"账号或邮箱不存在"
+			error = u"账号或电话不存在"
 			closedb(db,cursor)
 			return render_template('user/login.html', error=error)
 		elif cursor.execute("select id from user where username=%s and password=%s", [username,unicode(md5(password).hexdigest().upper())]) + cursor.execute("select id from user where email=%s and password=%s", [username,unicode(md5(password).hexdigest().upper())]) == 0:
@@ -63,7 +63,7 @@ def login():
 				session.pop('url', None)
 				return redirect(url)
 			else:
-				return redirect(url_for('home'))
+				return redirect(url_for('index'))
 
 # 注销
 @app.route('/logout')
@@ -78,7 +78,7 @@ def logout():
 		return redirect(url_for('login')) 
 
 # 注册
-@app.route('/register', methods=['GET','POST'])
+@app.route('/', methods=['GET','POST'])
 def register():
 	if request.method == 'GET':
 		if not session.get('username') == None:

@@ -59,7 +59,7 @@ $(document).ready(function() {
     <form class="form-inline" method="post" action="{{ url_for('register') }}">
         <div class="weco_form">
             <input style="border-bottom:1px solid rgba(201, 201, 202, 0.4);" type="text" name="username" placeholder="账号&nbsp;&nbsp;&nbsp;&nbsp;英文字母、数字和下划线">
-            <input style="border-bottom:1px solid rgba(201, 201, 202, 0.4);" type="email" name="email" placeholder="邮箱&nbsp;&nbsp;&nbsp;&nbsp;输入您的常用邮箱">
+            <input style="border-bottom:1px solid rgba(201, 201, 202, 0.4);" type="email" name="email" placeholder="电话&nbsp;&nbsp;&nbsp;&nbsp;输入您的常用电话">
             <input style="border-bottom:1px solid rgba(201, 201, 202, 0.4);" type="password" name="password" placeholder="密码">
             <input type="password" name="password1" placeholder="确认密码">
         </div>
@@ -116,10 +116,10 @@ $(document).ready(function() {
         }
     });
 
-    // 邮箱完成输入
+    // 电话完成输入
     $('#register input[name="email"]').keyup(function() {
         var email = $(this).val();
-        // 邮箱不为空的话则判断是否已存在
+        // 电话不为空的话则判断是否已存在
         if (email != '') {
             $.ajax({
                 url: '{{url_for("api_user_exist_email")}}',
@@ -131,13 +131,13 @@ $(document).ready(function() {
                 error: function() {},
                 success: function(data) {
                     if (data['exist']) {
-                        $('#register #register_error').fadeIn().text('邮箱已注册');
+                        $('#register #register_error').fadeIn().text('电话已注册');
                         $('#register button[type="submit"]').addClass('disabled');
                         $('#register input[name="email"]').focus();
                         ok2 = false;
                     } else {
                         ok2 = true;
-                        if ($('#register #register_error').text() == '邮箱已注册') {
+                        if ($('#register #register_error').text() == '电话已注册') {
                             $('#register #register_error').fadeOut();
                         }
                     }

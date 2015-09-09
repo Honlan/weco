@@ -30,7 +30,7 @@ def updateToken(username):
 		session['lastActive'] = token['lastActive']
 
 # 主页，展示热门创意
-@app.route('/')
+@app.route('/index')
 def index():
 	(db,cursor) = connectdb()
 	cursor.execute('select * from idea where published=1 and locked=0 order by praise desc, timestamp desc limit 10')
