@@ -27,7 +27,7 @@ def login():
 	error = None
 	if request.method == 'GET':
 		if not session.get('username') == None:
-			return redirect(url_for('home'))
+			return redirect(url_for('index'))
 		else:
 			return render_template('user/login.html', error=error)
 	elif request.method == 'POST':
@@ -82,7 +82,7 @@ def logout():
 def register():
 	if request.method == 'GET':
 		if not session.get('username') == None:
-			return redirect(url_for('home'))
+			return redirect(url_for('index'))
 		else:
 			return render_template('user/register.html')
 	elif request.method == 'POST':
@@ -105,7 +105,7 @@ def register():
 			session.pop('url', None)
 			return redirect(url)
 		else:
-			return redirect(url_for('home'))
+			return redirect(url_for('index'))
 
 # 更改密码
 @app.route('/changePwd', methods=['GET','POST'])
