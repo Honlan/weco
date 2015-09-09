@@ -132,7 +132,7 @@ def user(username):
 
 		# 访问其他用户
 		# cursor.execute('select username,email,nickname,portrait,tags,description,gender,wechat,ideas,followIdeas,fans,followUsers,lastActive from user where username=%s',[username])
-		cursor.execute('select username,nickname,portrait,tags,description,gender,wechat,ideas,followIdeas,fans,followUsers,lastActive from user where username=%s',[username])
+		cursor.execute('select username,nickname,portrait,tags,description,gender,wechat,hobby,location,ideas,followIdeas,fans,followUsers,lastActive from user where username=%s',[username])
 		user = cursor.fetchone()
 
 		# 获取其他用户的创意
