@@ -173,14 +173,16 @@
     font-size: 13px;
 }
 
-#idea_draft #idea_content .content_cell span.fa {
+#idea_draft #idea_content .content_cell img.remove_attachment {
     position: absolute;
     right: -20px;
     top: 50%;
-    margin-top: -7px;
+    width: 16px;
+    margin: 0;
+    margin-top: -10px;
 }
 
-#idea_draft #idea_content .content_cell span.fa:hover {
+#idea_draft #idea_content .content_cell img.remove_attachment:hover {
     cursor: pointer;
 }
 
@@ -463,7 +465,7 @@ $(document).ready(function() {
             dataType: 'json',
             error: function() {},
             success: function(data) {
-                $p = '<div class="content_cell"><span class="fa fa-fw fa-times" name="' + data['attachmentId'] + '"></span><p style="word-wrap:break-word;word-break:break-all;" name="' + data['attachmentId'] + '"></p></div>';
+                $p = '<div class="content_cell"><img src="' + "{{url_for('static',filename='img/icon/icon-19.png')}}" + '" class="remove_attachment" name="' + data['attachmentId'] + '"><p style="word-wrap:break-word;word-break:break-all;" name="' + data['attachmentId'] + '"></p></div>';
                 $('#idea_draft #idea_content').append($p);
 
                 text = text.split('\n');
@@ -505,7 +507,7 @@ $(document).ready(function() {
                     dataType: 'json',
                     error: function() {},
                     success: function(data) {
-                        $p = '<div class="content_cell"><span class="fa fa-fw fa-times" name="' + data['attachmentId'] + '"></span><img src="' + rst.base64 + '"></div>';
+                        $p = '<div class="content_cell"><img src="' + "{{url_for('static',filename='img/icon/icon-19.png')}}" + '" class="remove_attachment" name="' + data['attachmentId'] + '"><img src="' + rst.base64 + '"></div>';
                         $('#idea_draft #idea_content').append($p);
                         $('#idea_draft #idea_add_content #add_image form').remove();
                         $('#idea_draft #idea_add_content #add_image').append($image_input.clone());
@@ -594,7 +596,7 @@ $(document).ready(function() {
     });
 
     // 删除附件
-    $('body').on('click', '#idea_draft #idea_content .content_cell span.fa', function() {
+    $('body').on('click', '#idea_draft #idea_content .content_cell img.remove_attachment', function() {
         var attachmentId = $(this).attr('name');
         var $p = $(this).parent('.content_cell');
         $.ajax({

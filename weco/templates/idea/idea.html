@@ -247,14 +247,16 @@
     font-size: 13px;
 }
 
-#idea #idea_content .content_cell span.fa {
+#idea #idea_content .content_cell img.remove_attachment {
     position: absolute;
     right: -20px;
     top: 50%;
-    margin-top: -7px;
+    width: 16px;
+    margin: 0;
+    margin-top: -10px;
 }
 
-#idea #idea_content .content_cell span.fa:hover {
+#idea #idea_content .content_cell img.remove_attachment:hover {
     cursor: pointer;
 }
 
@@ -579,7 +581,8 @@ $(document).ready(function() {
         {% for item in attachments %}
         <div class="content_cell">
             {% if idea.owner == session.get('username') %}
-            <span class="fa fa-fw fa-times" name="{{item.id}}"></span> {% endif %} {% if item.fileType == 0 %}
+            <!--span class="fa fa-fw fa-times" name="{{item.id}}"></span--> 
+            <img src="{{url_for('static',filename='img/icon/icon-19.png')}}" class="remove_attachment" name="{{item.id}}">{% endif %} {% if item.fileType == 0 %}
             <p style="word-wrap:break-word;word-break:break-all;" name="{{item.id}}">
                 {% for i in item.url %} {{i}}
                 <br> {% endfor %}
@@ -999,7 +1002,7 @@ $(document).ready(function() {
     });
 
     // 用户移除了创意附件
-    $('#idea #idea_content .content_cell span.fa').click(function() {
+    $('#idea #idea_content .content_cell img.remove_attachment').click(function() {
         var attachmentId = $(this).attr('name');
         $.ajax({
             url: '{{url_for("api_attachment_remove")}}',
