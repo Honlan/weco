@@ -7,8 +7,8 @@
 #register {
     text-align: center;
     width: 100%;
-    padding-top: 40px;
-    padding-bottom: 50px;
+    padding-top: 30px;
+    padding-bottom: 0px;
 }
 
 #register form {
@@ -55,7 +55,7 @@ $(document).ready(function() {
 });
 </script>
 <div id="register">
-    <!-- <img class="weco_logo" src="{{url_for('static',filename='img/icon/icon-01.png')}}"> -->
+    <img class="weco_logo" src="{{url_for('static',filename='img/icon/icon-01.png')}}">
     <form class="form-inline" method="post" action="{{ url_for('register') }}">
         <div class="weco_form">
             <input style="border-bottom:1px solid rgba(201, 201, 202, 0.4);" type="text" name="username" placeholder="账号&nbsp;&nbsp;&nbsp;&nbsp;英文字母、数字和下划线">
