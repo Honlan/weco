@@ -243,8 +243,10 @@ def idea(ideaId):
 	commentsCount = len(comments)
 	
 	# 获取该创意发起人粉丝人数
-	cursor.execute("select fans from user where username=%s",[idea['owner']])
-	fans = len(cursor.fetchone()['fans'].split(','))
+	cursor.execute("select nickname,fans from user where username=%s",[idea['owner']])
+	user = cursor.fetchone()
+	fans = len(user['fans'].split(','))
+	idea['nickname'] = user['nickname']
 
 	# 获取热门标签以供编辑
 	category = ['社会创新','设计','生活','城市','娱乐','健康','旅行','教育','运动','产品','艺术','科技','工程','广告','其他']
